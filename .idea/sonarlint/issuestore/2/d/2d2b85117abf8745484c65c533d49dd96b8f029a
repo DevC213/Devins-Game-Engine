@@ -1,0 +1,46 @@
+
+k	java:S117p"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ş…ª˜øÿÿÿÿ
+f	java:S117w"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·ÙİÙ
+l	java:S117Ÿ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ßõµøÿÿÿÿÿ
+g	java:S117±"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·ÙİÙ
+`
+java:S2095{"EUse try-with-resources or close this "Scanner" in a "finally" clause.(Ìß­ñşÿÿÿÿ
+\
+java:S2095µ"EUse try-with-resources or close this "Scanner" in a "finally" clause.(Î”…•
+\
+java:S2095£"EUse try-with-resources or close this "Scanner" in a "finally" clause.(Î”…•
+`
+java:S20957"EUse try-with-resources or close this "Scanner" in a "finally" clause.(Ìß­ñşÿÿÿÿ
+`
+java:S2095="EUse try-with-resources or close this "Scanner" in a "finally" clause.(Ìß­ñşÿÿÿÿ
+q	java:S116""WRename this field "damage_tiles" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Û•ëñúÿÿÿÿ
+2
+java:S11169"Remove this empty statement.(õî™’
+N	java:S106I"9Replace this use of System.out or System.err by a logger.(¶¡
+J
+java:S2864N"4Iterate over the "entrySet" instead of the "keySet".(‚ñ›ù
+J
+java:S2864U"4Iterate over the "entrySet" instead of the "keySet".(‚ñ›ù
+T
+java:S1854w">Remove this useless assignment to local variable "items_temp".(·ÙİÙ
+C
+java:S1481t"-Remove this unused "itemfile" local variable.(ŞØŠ×
+E
+java:S1481w"/Remove this unused "items_temp" local variable.(·ÙİÙ
+V
+java:S1854¥"?Remove this useless assignment to local variable "monsterInfo".(•“ÿ´
+L
+java:S1481"0Remove this unused "monsterInfo" local variable.(¨…ğüÿÿÿÿÿ
+T	java:S106©"9Replace this use of System.out or System.err by a logger.(™ÿâûúÿÿÿÿ
+O	java:S106Å"9Replace this use of System.out or System.err by a logger.(Ëã½ù
+B
+java:S1168Ó"+Return an empty collection instead of null.(¥¹ï
+i	java:S100£"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(“¨Ù‹øÿÿÿÿ
+i	java:S100¶"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ğ ­Şùÿÿÿÿ
+i	java:S100¿"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ«œ­ÿÿÿÿÿ
+K
+java:S2864Å"4Iterate over the "entrySet" instead of the "keySet".(‚ñ›ù
+K
+java:S2864Ì"4Iterate over the "entrySet" instead of the "keySet".(‚ñ›ù
+B
+java:S1068$",Remove this unused "monsters" private field.(ô·…Ç

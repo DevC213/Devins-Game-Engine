@@ -1,0 +1,4 @@
+MapData/Key.txt
+MapData/Overworld_Maps/Overworld1/MapData.txt
+MapData/Cave_Maps/Cave1/MapData.txt
+MapData/Cave_Maps/Cave2/MapData.txt

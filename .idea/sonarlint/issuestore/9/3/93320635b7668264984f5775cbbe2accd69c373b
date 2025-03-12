@@ -1,0 +1,9 @@
+
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ζΪ‰·
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(µ…©λωÿÿÿÿ
+i	java:S116	"ORename this field "East" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ρΪώ©ϊÿÿÿÿ
+i	java:S116
+"ORename this field "West" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(θΏώÿÿÿÿ
+j	java:S116"PRename this field "North" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(χς›ÿÿÿÿÿ
+e	java:S116"PRename this field "South" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Νΐβ
+>	java:S108")Either remove or fill this block of code.(όΨτ

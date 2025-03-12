@@ -1,0 +1,169 @@
+package com.adventure_logic;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
+public class Controller implements GuiEventListener {
+
+
+    public TextField health;
+    public TextField defence;
+    public TextField weapon;
+    public GridPane mainGrid;
+    public GridPane miniMap;
+    private static final int SIZE = 5;
+
+    @FXML
+    private TextField commandInput;
+    @FXML
+    private TextField cords;
+    @FXML
+    private TextArea inventory;
+    @FXML
+    private TextArea script;
+    @FXML
+    private Button start;
+
+    private Adventure adventure;
+    private boolean activated = false;
+    private boolean gameOver = false;
+    /**
+     * Constructor for controller.
+     */
+
+    public Controller() {
+        script = new TextArea();
+    }
+
+    /**
+     * passes Controller to Adventure.
+     */
+    @FXML
+    public void gameStart(){
+
+        if(adventure == null){
+            adventure = Adventure.getAdventure();
+        }
+
+        if (activated) {
+            adventure.resetGame();
+            gameOver = false;
+        } else {
+            for(int i = 0; i < SIZE; i++) {
+                for(int j = 0; j < SIZE; j++) {
+                    ImageView img = new ImageView();
+                    img.fitWidthProperty().bind(miniMap.widthProperty().divide(SIZE));
+                    img.fitHeightProperty().bind(miniMap.heightProperty().divide(SIZE));
+                    img.setPreserveRatio(false);
+                    miniMap.add(img,i,j);
+                }
+            }
+            adventure.setController(this);
+            activated = true;
+        }
+        activateFields();
+        script.clear();
+        adventure.intro();
+        start.setVisible(false);
+    }
+    @FXML
+    private void activateFields(){
+        inventory.setVisible(true);
+        health.setVisible(true);
+        defence.setVisible(true);
+        cords.setVisible(true);
+        commandInput.setVisible(true);
+        commandInput.setEditable(true);
+        weapon.setVisible(true);
+    }
+    @FXML @Override
+    public void GameOver() {
+        script.clear();
+        script.appendText("Game Over, press start to begin again.");
+        if (!gameOver) {
+            start.setVisible(true);
+            inventory.setVisible(false);
+            health.setVisible(false);
+            defence.setVisible(false);
+            cords.setVisible(false);
+            commandInput.setVisible(false);
+            commandInput.setEditable(false);
+            weapon.setVisible(false);
+            gameOver = true;
+        }
+    }
+    /**
+     * Clears Input box.
+     */
+    public void clearInput() {
+        commandInput.clear();
+    }
+    /**
+     * Updates GUI
+     * @param message - message to append
+     * @param box -> which box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
+     */
+    @Override
+    public void UIUpdate(String message, int box){
+        String rtn = message + "\n";
+        switch (box) {
+            case 0 -> {
+                script.appendText(rtn);
+                script.positionCaret(script.getText().length());
+            }
+            case 1 -> {
+                inventory.clear();
+                inventory.appendText(rtn);
+            }
+            case 2 -> cords.setText(rtn);
+            case 3 -> health.setText(rtn);
+            case 4 -> defence.setText(rtn);
+            case 5 -> weapon.setText(rtn);
+            default -> {}
+        }
+    }
+    /**
+     * Sets image for minimap.
+     * @param row row
+     * @param col column
+     * @param imagePath image location
+     */
+    public void modifyImage(final int row, final int col, final String imagePath) {
+        try {
+            Path absPath = Paths.get(imagePath);
+            String fileLocation = absPath.toAbsolutePath().toString();
+            for (javafx.scene.Node node : miniMap.getChildren()) {
+                Integer r = GridPane.getRowIndex(node);
+                Integer c = GridPane.getColumnIndex(node);
+                r = (r == null ? 0 : r);
+                c = (c == null ? 0 : c);
+
+                if (r == row && c == col && node instanceof ImageView) {
+                    ((ImageView) node).setImage(new Image(fileLocation));
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * get text from Command Input.
+     * @return Input text
+     */
+    public String getCommand() {
+        return commandInput.getText();
+    }
+
+}

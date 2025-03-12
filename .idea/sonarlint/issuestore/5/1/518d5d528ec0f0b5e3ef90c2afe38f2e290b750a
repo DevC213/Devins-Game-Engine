@@ -1,0 +1,14 @@
+
+r	java:S116"XRename this field "healing_items" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ˆŸššÿÿÿÿÿ
+{
+java:S1149"eReplace the synchronized class "Vector" by an unsynchronized one such as "ArrayList" or "LinkedList".(ßã¤Ÿ
+€
+java:S1149"eReplace the synchronized class "Vector" by an unsynchronized one such as "ArrayList" or "LinkedList".(ˆŸššÿÿÿÿÿ
+{
+java:S11498"eReplace the synchronized class "Vector" by an unsynchronized one such as "ArrayList" or "LinkedList".(ÄĞãó
+A
+java:S1168:"+Return an empty collection instead of null.(¥¹ï
+L
+java:S1068"1Remove this unused "healing_items" private field.(ˆŸššÿÿÿÿÿ
+?
+java:S1068")Remove this unused "armor" private field.(Àû´ö

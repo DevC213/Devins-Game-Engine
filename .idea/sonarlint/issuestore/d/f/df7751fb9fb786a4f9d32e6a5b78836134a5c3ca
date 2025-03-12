@@ -1,0 +1,6 @@
+
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(²À­Ýùÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(™¡ˆ•
+e	java:S116"QRename this field "DROP_I" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢õŒ
+6
+java:S1170"!Make this final field static too.(¢õŒ

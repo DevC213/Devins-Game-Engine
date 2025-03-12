@@ -1,0 +1,3 @@
+MapData/Cave_Maps/Cave2/cave.txt
+MapData/Cave_Maps/Cave2/items.txt
+MapData/Cave_Maps/Cave2/Monsters.txt

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="mainGrid" prefHeight="960.0" prefWidth="1080" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.adventure_logic.Controller">
+
+    <Label id="welcomeText" GridPane.hgrow="SOMETIMES" GridPane.vgrow="SOMETIMES" />
+
+    <!-- Text Areas -->
+    <TextField fx:id="commandInput" editable="false"
+               visible="false" GridPane.columnIndex="0"
+               GridPane.columnSpan="4" GridPane.hgrow="SOMETIMES"
+               GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" />
+    <TextArea fx:id="script"
+              editable="false"
+              text="Welcome to Devin's Text Adventure Game press 'start game' to begin:"
+              GridPane.columnIndex="0" GridPane.columnSpan="5"
+              GridPane.rowIndex="0" GridPane.rowSpan="4">
+        Welcome to Devin's Text Adventure Game press 'start game' to begin:</TextArea>
+
+    <Button fx:id="start" onAction="#gameStart" text="Start" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.vgrow="SOMETIMES" />
+
+    <!-- Player Information -->
+    <GridPane GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="5">
+        <TextField fx:id="cords" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES"
+                   GridPane.rowIndex="1" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES"/>
+        <TextArea fx:id="inventory" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.rowSpan="4" GridPane.vgrow="SOMETIMES" />
+        <TextField fx:id="health" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Health: 100</TextField>
+        <TextField fx:id="defence" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Defence: 0</TextField>
+        <TextField fx:id="weapon" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES" />
+    </GridPane>
+
+    <!--Map-->
+    <GridPane fx:id="miniMap"
+              GridPane.columnIndex="0" GridPane.columnSpan="2"
+              GridPane.rowIndex="5" GridPane.rowSpan="5"
+              xmlns="http://javafx.com/javafx"
+              xmlns:fx="http://javafx.com/fxml/1">
+
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20.0" minWidth="10.0"/>
+            <ColumnConstraints percentWidth="20.0" minWidth="10.0"/>
+            <ColumnConstraints percentWidth="20.0" minWidth="10.0"/>
+            <ColumnConstraints percentWidth="20.0" minWidth="10.0"/>
+            <ColumnConstraints percentWidth="20.0" minWidth="10.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints percentHeight="20.0" minHeight="10.0"/>
+            <RowConstraints percentHeight="20.0" minHeight="10.0"/>
+            <RowConstraints percentHeight="20.0" minHeight="10.0"/>
+            <RowConstraints percentHeight="20.0" minHeight="10.0"/>
+            <RowConstraints percentHeight="20.0" minHeight="10.0"/>
+        </rowConstraints>
+    </GridPane>
+
+    <columnConstraints>
+        <ColumnConstraints percentWidth="25.0"/>
+        <ColumnConstraints percentWidth="25.0"/>
+        <ColumnConstraints percentWidth="25.0"/>
+        <ColumnConstraints percentWidth="25.0"/>
+    </columnConstraints>
+</GridPane>
