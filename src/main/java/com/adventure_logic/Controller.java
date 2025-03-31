@@ -32,21 +32,13 @@ public class Controller implements GuiEventListener {
     private TextArea script;
     @FXML
     private Button start;
-
     private Adventure adventure;
     private boolean activated = false;
     private boolean gameOver = false;
-    /**
-     * Constructor for controller.
-     */
 
     public Controller() {
         script = new TextArea();
     }
-
-    /**
-     * passes Controller to Adventure.
-     */
     @FXML
     public void gameStart(){
 
@@ -101,19 +93,13 @@ public class Controller implements GuiEventListener {
             gameOver = true;
         }
     }
-    /**
-     * Clears Input box.
-     */
+    @Override
     public void clearInput() {
         commandInput.clear();
     }
-    /**
-     * Updates GUI
-     * @param message - message to append
-     * @param box -> which box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
-     */
     @Override
     public void UIUpdate(String message, int box){
+        //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
         String rtn = message + "\n";
         switch (box) {
             case 0 -> {
@@ -131,12 +117,6 @@ public class Controller implements GuiEventListener {
             default -> {}
         }
     }
-    /**
-     * Sets image for minimap.
-     * @param row row
-     * @param col column
-     * @param imagePath image location
-     */
     public void modifyImage(final int row, final int col, final String imagePath) {
         try {
             Path absPath = Paths.get(imagePath);
@@ -157,11 +137,6 @@ public class Controller implements GuiEventListener {
             System.out.println(e.getMessage());
         }
     }
-
-    /**
-     * get text from Command Input.
-     * @return Input text
-     */
     public String getCommand() {
         return commandInput.getText();
     }

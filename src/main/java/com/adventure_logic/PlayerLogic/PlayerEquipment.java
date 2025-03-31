@@ -9,6 +9,7 @@ class PlayerEquipment {
     private int defence;
     private Weapon weapon;
     private int extraDamage;
+
     PlayerEquipment(){
         defence = 0;
         extraDamage = 0;

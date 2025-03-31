@@ -2,6 +2,7 @@ package com.adventure_logic.PlayerLogic;
 
 import com.adventure_logic.Adventure;
 import com.adventure_logic.GuiEventListener;
+import com.adventure_logic.MapLogic.MapController;
 
 class PlayerMovement {
     private int column;
@@ -9,23 +10,24 @@ class PlayerMovement {
     private final int maxC;
     private final int maxR;
     PlayerController playerController;
-    Adventure adventure = Adventure.getAdventure();
+    MapController mapController;
 
     PlayerMovement(final int c, final int r, final int maxC, final int maxR,
-                   PlayerController playerController) {
+                   PlayerController playerController, MapController mapController) {
         column = c;
         row = r;
         this.maxC = maxC;
         this.maxR = maxR;
         this.playerController = playerController;
+        this.mapController = mapController;
 
     }
     public void changeRow(int movement){
         if ((row < maxR - 1 || row > 0) && playerController.getHealth() > 0) {
-            if(adventure.getCanCross(new int[]{column, row+movement})) {
+            if(mapController.getMovementOrDamage(mapController.getMapValue(column, row+movement),2)){
                 row+= movement;
-            } else if (adventure.getDoesDamage(new int[]{column, row + movement})) {
-                playerController.damage(adventure.tileDamage(new int[]{column, row + movement}));
+            } else if (mapController.getMovementOrDamage(mapController.getMapValue(column, row+movement),0)) {
+                playerController.damage(mapController.Damage(mapController.getMapValue(column,row+movement)));
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {
@@ -36,14 +38,13 @@ class PlayerMovement {
                 }
             }
         }
-
     }
     public void changeColumn(int movement){
         if ((column < maxC - 1 || column > 0)&& playerController.getHealth() > 0) {
-            if (adventure.getCanCross(new int[]{column + movement, row})) {
+            if (mapController.getMovementOrDamage(mapController.getMapValue(column + movement, row),2)) {
                 column+= movement;
-            }else if (adventure.getDoesDamage(new int[]{column + movement, row})){
-                playerController.damage(adventure.tileDamage(new int[]{column + movement, row}));
+            }else if (mapController.getMovementOrDamage(mapController.getMapValue(column+movement, row),0)){
+                playerController.damage(mapController.Damage(mapController.getMapValue(column + movement, row)));
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {

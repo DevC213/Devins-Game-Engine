@@ -1,5 +1,7 @@
 package com.adventure_logic.MapLogic;
 
+import com.adventure_logic.GuiEventListener;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -14,11 +16,12 @@ public class MapController {
     private final Vector<MapItemController> items = new Vector<>();
     private final  Vector<MapMonsterController> monsters = new Vector<>();
     private final MapMovementController mapMovementController;
+    private final GuiEventListener guiEventListener;
     private int level = 0;
 
 
     //Constructors/Map Generation:
-    public MapController(final String mapName) {
+    public MapController(final String mapName, final GuiEventListener guiEventListener) {
 
         File myfile;
         Scanner reader;
@@ -40,6 +43,7 @@ public class MapController {
             System.out.println("Error Reading Map info, loading default map");
             maps.add(new MapGeneration());
         }
+        this.guiEventListener = guiEventListener;
     }
     private void processMaps(String File) throws FileNotFoundException {
         File myfile;
@@ -51,7 +55,7 @@ public class MapController {
             switch (fileLine) {
                 case 0 -> maps.add(new MapGeneration(reader.nextLine()));
                 case 1 -> items.add(new MapItemController(reader.nextLine()));
-                case 2 -> monsters.add(new MapMonsterController(reader.nextLine()));
+                case 2 -> monsters.add(new MapMonsterController(reader.nextLine(),guiEventListener));
             }
             fileLine++;
 
@@ -85,24 +89,25 @@ public class MapController {
     public boolean isCave(final String terrain){
         return mapMovementController.isCave(terrain);
     }
+
     public Vector<Vector<String>> getKey(){
         return MapGeneration.getKey();
     }
     public String getImage(final String terrain) {return maps.get(0).getImage(terrain);}
     public Vector<String> getItems(final int[] location) {return items.get(level).getItems(location);}
+    public int[] getCords(){return maps.get(level).getColumnsAndRows();}
     public Vector<String> getMonsters(final int[] location){return monsters.get(level).getMonsters(location);}
+
     public void addItem(final int[] location, final String item) {
         items.get(level).addItem(location,item);
     }
     public String grabItem(final int[] location, final String item) {
         return items.get(level).grabItem(location,item);
     }
-    public int[] getCords(){return maps.get(level).getColumnsAndRows();}
-    public void attackMonster(String monster, int attack, final int[] location) {monsters.get(level).attackMonster(monster, attack ,location);}
 
+
+    public void attackMonster(String monster, int attack, final int[] location) {monsters.get(level).attackMonster(monster, attack ,location);}
     public Vector<Double> getMonstersAttacks(final int[] location) {
         return monsters.get(level).getMonsterAttacks(location);
     }
-
-
 }

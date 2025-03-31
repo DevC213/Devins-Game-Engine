@@ -11,17 +11,10 @@ class MapGeneration {
     private int rows;
     private String[] MapData;
 
-    /**
-     * Default Map constructor(10x10), calls default map method.
-     */
+
     public MapGeneration() {
         defaultMap();
     }
-
-    /**
-     * Generates map from file, in case of error calls default map method.
-     * @param mapName map file
-     */
     public MapGeneration(final String mapName) {
         processMap(mapName);
     }
@@ -35,15 +28,9 @@ class MapGeneration {
             temp.clear();
         }
     }
-
     public static Vector<Vector<String>> getKey() {
         return key;
     }
-
-    /**
-     * Generates default map, in-case of error, or no file.
-     * Default map: 10x10 of terrain type "."
-     */
     private void defaultMap() {
         StringBuilder row = new StringBuilder();
 
@@ -77,9 +64,6 @@ class MapGeneration {
             defaultMap();
         }
         MapData = mapTemp.toArray(new String[0]);
-    }
-    public String[] getMap() {
-        return MapData;
     }
     public String getImage(final String terrain) {
         for (Vector<String> j: MapGeneration.key) {

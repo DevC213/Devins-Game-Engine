@@ -7,11 +7,11 @@ import java.util.Objects;
 import java.util.Vector;
 
 class PlayerHealth {
-    private Vector<RecoveryItem> healing_items;
+    private Vector<healingItem> healingItems;
     private double health;
     public PlayerHealth(){
         health = 100;
-        healing_items = new Vector<>(Arrays.asList(new bread(), new health_pot()));
+        healingItems = new Vector<>(Arrays.asList(new healingItem("Bread", 10), new healingItem("Health Pot", 20)));
     }
     public double UpdateHealth(double change){
         health += change;
@@ -19,7 +19,7 @@ class PlayerHealth {
     }
     public String useHealthItem(String item){
 
-        for (RecoveryItem i: healing_items) {
+        for (healingItem i: healingItems) {
             if(Objects.equals(i.getName(), item)){
                 if(health == 100){
                     return "You're at max health!";
@@ -29,7 +29,7 @@ class PlayerHealth {
                 }else {
                     health += i.use();
                 }
-                healing_items.remove(i);
+                healingItems.remove(i);
                 return "Used " + item;
             }
         }
@@ -37,27 +37,27 @@ class PlayerHealth {
     }
     public void reset(){
         health = 100;
-        healing_items = new Vector<>(Arrays.asList(new bread(), new health_pot()));
+        healingItems = new Vector<>(Arrays.asList(new healingItem("Bread", 10), new healingItem("Health Pot", 20)));
     }
-    public void addHealthItem(RecoveryItem item){
-        healing_items.add(item);
+    public void addHealthItem(healingItem item){
+        healingItems.add(item);
     }
     public StringBuilder getHealing_items() {
         StringBuilder rtnString = new StringBuilder();
-        if(healing_items.isEmpty()){
+        if(healingItems.isEmpty()){
             return null;
         } else{
-            for(RecoveryItem i: healing_items){
+            for(healingItem i: healingItems){
                 rtnString.append(i.getName()).append("\n");
             }
         }
         return rtnString;
     }
     public void EmergencyUse(){
-        if(healing_items.isEmpty()){
+        if(healingItems.isEmpty()){
             return;
         }
-        useHealthItem(healing_items.get(0).getName());
+        useHealthItem(healingItems.get(0).getName());
 
     }
 }

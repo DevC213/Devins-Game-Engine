@@ -40,17 +40,12 @@ class MapItemController {
             dItemLocation.put(j, temp);
         }
     }
-
-    public Map<String, Vector<String>> getItemLocation() {
-        return itemLocation;
-    }
     public Vector<String> getItems(final int[] location){
         if (itemLocation.containsKey(location[0] + "." + location[1])) {
             return itemLocation.get(location[0] + "." + location[1]);
         }
         return null;
     }
-
     public String grabItem(final int[] location, final String item) {
         StringBuilder rtnString = new StringBuilder();
         if (Objects.equals(item.toLowerCase(Locale.ROOT), "all")) {

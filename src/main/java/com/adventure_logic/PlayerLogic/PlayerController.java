@@ -2,6 +2,7 @@ package com.adventure_logic.PlayerLogic;
 
 import com.adventure_logic.Adventure;
 import com.adventure_logic.GuiEventListener;
+import com.adventure_logic.MapLogic.MapController;
 
 import java.util.Vector;
 
@@ -15,6 +16,7 @@ public class PlayerController {
     PlayerHealth playerHealth;
     PlayerInventory playerInventory;
     private final GuiEventListener guiEventListener;
+    private MapController mapController;
     /**
      * Constructor for player.
      *
@@ -23,12 +25,14 @@ public class PlayerController {
      * @param maxc max column value
      * @param maxr max row value
      */
-    public PlayerController(final int c, final int r, final int maxc, final int maxr, GuiEventListener guiEventListener) {
+    public PlayerController(final int c, final int r, final int maxc, final int maxr,
+                            GuiEventListener guiEventListener, MapController mapController) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
-        playerMovement = new PlayerMovement(c,r,maxc,maxr, this);
+        this.mapController = mapController;
+        playerMovement = new PlayerMovement(c,r,maxc,maxr, this, this.mapController);
     }
     public Vector<String> InventoryCommands(String[] items, int command){
         switch (command) {
@@ -47,7 +51,6 @@ public class PlayerController {
         }
         return null;
     }
-
     public void movement(int movement, int command){
         switch (command) {
             case 1 -> playerMovement.changeRow(movement);
@@ -56,9 +59,10 @@ public class PlayerController {
             }
         }
     }
-    public StringBuilder getHealing_items() {
-        return playerHealth.getHealing_items();
+    public boolean contains(String item){
+        return playerInventory.itemExists(item);
     }
+
     public void useHealing(String item){
         String rtnString = playerHealth.useHealthItem(item);
         if (rtnString != null){
@@ -89,10 +93,8 @@ public class PlayerController {
     public void damage(double damage){
         guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage*(100.00/(100+playerEquipment.getDefence()))),3);
     }
-    /**
-     * gets players coordinates as an array.
-     * @return coordinates as array
-     */
+
+
     public int[] getCords() {
         return playerMovement.getCords();
     }
@@ -102,6 +104,10 @@ public class PlayerController {
     public double getHealth() {
         return playerHealth.UpdateHealth(0);
     }
+    public StringBuilder getHealing_items() {
+        return playerHealth.getHealing_items();
+    }
+
     public void resetPlayer(){
         playerMovement.resetLocation();
         playerHealth.reset();
@@ -113,7 +119,6 @@ public class PlayerController {
     public int getAttack() {
        return playerEquipment.attack();
     }
-
     public void gameOver(){
         guiEventListener.GameOver();
     }

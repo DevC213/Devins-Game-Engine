@@ -22,7 +22,9 @@ class PlayerInventory {
             inventory.add(i);
         }
     }
-
+    public boolean itemExists(final String items) {
+        return inventory.contains(items);
+    }
     public void dropItem(final String item) {
         inventory.remove(item);
     }

@@ -1,4 +1,4 @@
-.;plains;MapPics/plain.png;yes;
+.;plains;MapPics/Plains.png;yes;
 M;mountain;MapPics/mountain.png;yes;
 f;forest;MapPics/forest.png;yes;
 ~;water;MapPics/water.png;yes;

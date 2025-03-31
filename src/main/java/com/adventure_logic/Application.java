@@ -4,10 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
-
 public class Application extends javafx.application.Application {
 
 
@@ -34,7 +30,7 @@ public class Application extends javafx.application.Application {
         assert scene != null;
         scene.setOnKeyReleased(event -> {
             String keyPressed = String.valueOf(event.getCode());
-            adventure.control(keyPressed);
+            adventure.commandProcessor(keyPressed);
         });
     }
     public static void main(final String[] args) {

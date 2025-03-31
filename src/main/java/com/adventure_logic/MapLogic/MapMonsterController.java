@@ -3,6 +3,7 @@ package com.adventure_logic.MapLogic;
 import com.Monsters.Monster;
 import com.Monsters.MonsterFactory;
 import com.adventure_logic.Adventure;
+import com.adventure_logic.GuiEventListener;
 
 
 import java.io.File;
@@ -16,11 +17,12 @@ class MapMonsterController {
     Map<String, Vector<Monster>> monsterVectorMap;
     Map<String, Vector<Monster>> defaultMonsterVectorMap;
     MonsterFactory monsterFactory;
-    Adventure adventure = Adventure.getAdventure();
-    MapMonsterController(String data){
+    GuiEventListener guiEventListener;
+    MapMonsterController(String data,GuiEventListener guiEventListener){
         monsterFactory = new MonsterFactory();
         monsterVectorMap = new HashMap<>();
         defaultMonsterVectorMap = new HashMap<>();
+        this.guiEventListener = guiEventListener;
         processFiles(data);
     }
     private void processFiles(String file){
@@ -64,7 +66,7 @@ class MapMonsterController {
         boolean monsterKilled = false;
         int index = 0;
         if(monsterVectorMap.get(location[0] + "." + location[1]) == null){
-            adventure.sendMessage("No monster on tile");
+            guiEventListener.UIUpdate("No monster on tile",0);
             return;
         }
         for(Monster i: monsterVectorMap.get(location[0] + "." + location[1])){
@@ -81,7 +83,6 @@ class MapMonsterController {
             monsterVectorMap.get(location[0] + "." + location[1]).remove(index);
         }
     }
-
     public void resetMonsters(){
         monsterVectorMap.clear();
         for(String j: defaultMonsterVectorMap.keySet()){
@@ -89,12 +90,11 @@ class MapMonsterController {
             defaultMonsterVectorMap.put(j, temp);
         }
     }
-
     public Vector<Double> getMonsterAttacks(int[] location) {
 
         Vector<Double> rtnVec = new Vector<>();
         if(monsterVectorMap.get(location[0] + "." + location[1]) == null){
-            adventure.sendMessage("No monster on tile");
+            guiEventListener.UIUpdate("No monster on tile",0);
             return rtnVec;
         }
         for(Monster i: monsterVectorMap.get(location[0] + "." + location[1])){
