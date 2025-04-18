@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+
 public class Application extends javafx.application.Application {
 
 
@@ -33,7 +34,5 @@ public class Application extends javafx.application.Application {
             adventure.commandProcessor(keyPressed);
         });
     }
-    public static void main(final String[] args) {
-        launch();
-    }
+    public static void main(final String[] args) {launch();}
 }

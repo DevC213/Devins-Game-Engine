@@ -52,7 +52,7 @@ class MapGeneration {
         Scanner reader;
         Vector<String> mapTemp = new Vector<>();
         try {
-            myfile = new File(map_file);
+            myfile = new File(getClass().getResource(map_file).getPath());
             reader = new Scanner(myfile);
             while (reader.hasNext()) {
                     String mapLine = reader.nextLine();

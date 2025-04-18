@@ -3,11 +3,12 @@ package com.adventure_logic;
 import com.Movement.Movement_Controller;
 import com.adventure_logic.MapLogic.MapController;
 import com.adventure_logic.PlayerLogic.PlayerController;
+import javafx.scene.image.Image;
+import javafx.embed.swing.SwingFXUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class GameController {
 
     GameController(Controller controller) {
         this.controller = controller;
-        this.mapController = new MapController("MapData/Maps/Map1.txt", this.controller);
+        this.mapController = new MapController("/MapData/Maps/Map1.txt", this.controller);
         this.playerController = new PlayerController(0, 0,
                 mapController.getCords()[1], mapController.getCords()[0], controller, mapController);
         this.combatSystem = new CombatSystem(mapController, playerController, controller);
@@ -77,6 +78,8 @@ public class GameController {
                 }
                 controller.UIUpdate("Which monster?", 0);
                 commandState = CommandState.ATTACK;
+                controller.setFocus();
+
             }
             default -> {if (Objects.equals(keyPressed, "ENTER")) {processCommand(controller.getCommand());}}
         }
@@ -137,10 +140,10 @@ public class GameController {
     public void move(int movement, char dir){
         switch (dir) {
             case 'r':
-                playerController.movement(movement,1);
+                visibility = playerController.movement(movement,1);
                 break;
             case 'c':
-                playerController.movement(movement,2);
+                visibility = playerController.movement(movement,2);
                 break;
             default:
                 break;
@@ -170,20 +173,17 @@ public class GameController {
     }
 
     //Mini-Map Control
-    public void minimap() {
-        String player;
-        try {
-            createBlend(playerController);
-            player = "2";
-        } catch (Exception e){
-            player = "1";
-        }
+    public void minimap(){
         for (int j = 0; j < SQUARE_CHANGE.length; j++) {
             for (int k = 0; k < SQUARE_CHANGE.length; k++) {
                 if(Math.abs(SQUARE_CHANGE[j]) > visibility || Math.abs(SQUARE_CHANGE[k]) > visibility ){
                     controller.modifyImage(k,j,mapController.getImage("?"));
                 } else if (SQUARE_CHANGE[j] == 0 && SQUARE_CHANGE[k] == 0) {
-                    controller.modifyImage(k, j, mapController.getImage(player));
+                    try {
+                        controller.modifyImage(k, j, createBlend(playerController));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(playerController.getCords()[0]
                             + SQUARE_CHANGE[j],playerController.getCords()[1] + SQUARE_CHANGE[k])));
@@ -191,7 +191,7 @@ public class GameController {
             }
         }
     }
-    private void createBlend(final PlayerController plays) throws IOException {
+    private Image createBlend(final PlayerController plays) throws IOException {
         BufferedImage player;
         BufferedImage tile;
         BufferedImage blend;
@@ -200,22 +200,24 @@ public class GameController {
         Graphics merger;
 
         String valAtPlayer = mapController.getMapValue(plays.getCords()[0], plays.getCords()[1]);
-        player = ImageIO.read(new File(mapController.getImage("1")));
-        tile = ImageIO.read(new File(mapController.getImage(valAtPlayer)));
-        imageWidth = Math.max(player.getWidth(),tile.getWidth());
+
+        // Correct way to load from resources
+        player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage("1"))));
+        tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));
+
+        imageWidth = Math.max(player.getWidth(), tile.getWidth());
         imageHeight = Math.max(player.getHeight(), tile.getHeight());
-        blend = new BufferedImage(imageWidth,imageHeight,BufferedImage.TYPE_INT_ARGB);
+
+        blend = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
         merger = blend.getGraphics();
-        merger.drawImage(tile,0,0,null);
-        merger.drawImage(player,0,0,null);
+        merger.drawImage(tile, 0, 0, null);
+        merger.drawImage(player, 0, 0, null);
         merger.dispose();
 
-        ImageIO.write(blend,"PNG", new File("MapPics", "PlayerBlend"));
+        return SwingFXUtils.toFXImage(blend, null);
     }
-    public void setVisibility(int visibility) {
-        this.visibility = visibility;
-    }
+
 
     //checking map
     private void checkForItems() {
@@ -249,7 +251,7 @@ public class GameController {
 
 
     /*
-        Un-used memthods, that may come in handy.
+        Un-used methods, that may come in handy.
 
         public void resumeGame() {
         if (playerController.getHealth() < 1) {
@@ -262,6 +264,9 @@ public class GameController {
         }
     }
 
+        public void setVisibility(int visibility) {
+            this.visibility = visibility;
+        }
      */
 
 }

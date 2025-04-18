@@ -16,20 +16,20 @@ class MapItemController {
         File myFile;
         Scanner reader;
         try {
-            myFile = new File(map);
+            myFile = new File(Objects.requireNonNull(getClass().getResource(map)).getPath());
             reader = new Scanner(myFile);
             while (reader.hasNext()) {
                 String[] cordsAndItems = reader.nextLine().split(";");
                 Vector<String> item = new Vector<>();
                 Collections.addAll(item, cordsAndItems[2]);
-                Integer[] cordinants = {Integer.parseInt(cordsAndItems[0]),
+                Integer[] coordinates = {Integer.parseInt(cordsAndItems[0]),
                         Integer.parseInt(cordsAndItems[1])};
-                if (itemLocation.containsKey(cordinants[0] + "."
-                        + cordinants[1])) {
-                    itemLocation.get(cordinants[0] + "."
-                            + cordinants[1]).add(cordsAndItems[2]);
+                if (itemLocation.containsKey(coordinates[0] + "."
+                        + coordinates[1])) {
+                    itemLocation.get(coordinates[0] + "."
+                            + coordinates[1]).add(cordsAndItems[2]);
                 } else {
-                    itemLocation.put(cordinants[0] + "." + cordinants[1], item);
+                    itemLocation.put(coordinates[0] + "." + coordinates[1], item);
                 }
             }
         } catch (Exception e) {

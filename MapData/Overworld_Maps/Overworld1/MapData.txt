@@ -1,3 +1,0 @@
-MapData/Overworld_Maps/Overworld1/Overworld.txt
-MapData/Overworld_Maps/Overworld1/Items.txt
-MapData/Overworld_Maps/Overworld1/Monsters.txt

@@ -51,11 +51,16 @@ public class PlayerController {
         }
         return null;
     }
-    public void movement(int movement, int command){
+    public int movement(int movement, int command){
         switch (command) {
-            case 1 -> playerMovement.changeRow(movement);
-            case 2 -> playerMovement.changeColumn(movement);
+            case 1 -> {
+                return playerMovement.changeRow(movement);
+            }
+            case 2 -> {
+                return playerMovement.changeColumn(movement);
+            }
             default -> {
+                return 0;
             }
         }
     }

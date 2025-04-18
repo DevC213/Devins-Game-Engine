@@ -2,7 +2,6 @@ package com.adventure_logic.MapLogic;
 
 import com.Monsters.Monster;
 import com.Monsters.MonsterFactory;
-import com.adventure_logic.Adventure;
 import com.adventure_logic.GuiEventListener;
 
 
@@ -29,7 +28,7 @@ class MapMonsterController {
         File myFile;
         Scanner reader;
         try {
-            myFile = new File(file);
+            myFile = new File(Objects.requireNonNull(getClass().getResource(file)).getPath());
             reader = new Scanner(myFile);
             while (reader.hasNext()) {
                 String[] monsterData =  reader.nextLine().split(";");

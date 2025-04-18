@@ -28,7 +28,7 @@ class MapMovementController {
             case 2 -> {
                 for (Vector<String> j : mapController.getKey()) {
                     if (j.contains(terrain)) {
-                        return Objects.equals(j.get(j.size() - 1), "yes");
+                        return Objects.equals(j.get(j.size() - 2), "yes");
                     }
                 }
             }
@@ -37,6 +37,14 @@ class MapMovementController {
             }
         }
         return false;
+    }
+    public int getVisibility(final String terrain){
+        for (Vector<String> j : mapController.getKey()) {
+            if (j.contains(terrain)) {
+                return Integer.parseInt(j.getLast());
+            }
+        }
+        return 0;
     }
     public int Damage(final String terrain) {
         if (damage_tiles.contains(terrain)) {

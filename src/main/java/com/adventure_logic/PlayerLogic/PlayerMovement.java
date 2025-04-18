@@ -22,7 +22,7 @@ class PlayerMovement {
         this.mapController = mapController;
 
     }
-    public void changeRow(int movement){
+    public int changeRow(int movement){
         if ((row < maxR - 1 || row > 0) && playerController.getHealth() > 0) {
             if(mapController.getMovementOrDamage(mapController.getMapValue(column, row+movement),2)){
                 row+= movement;
@@ -38,8 +38,9 @@ class PlayerMovement {
                 }
             }
         }
+        return mapController.getVisibility(mapController.getMapValue(column, row));
     }
-    public void changeColumn(int movement){
+    public int changeColumn(int movement){
         if ((column < maxC - 1 || column > 0)&& playerController.getHealth() > 0) {
             if (mapController.getMovementOrDamage(mapController.getMapValue(column + movement, row),2)) {
                 column+= movement;
@@ -56,6 +57,7 @@ class PlayerMovement {
                 }
             }
         }
+        return mapController.getVisibility(mapController.getMapValue(column, row));
     }
     public int[] getCords() {
         return new int[]{column , row};

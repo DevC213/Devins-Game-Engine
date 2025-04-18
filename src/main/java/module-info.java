@@ -15,6 +15,7 @@
 module com.example.adventuregui {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.swing;
     requires java.desktop;
 
     opens com.adventure_logic to javafx.fxml;

@@ -7,6 +7,6 @@ public class West extends direction {
     }
     @Override
     public void move(Adventure adventure) {
-        adventure.movePlayer(-1, 'c');
+        adventure. movePlayer(-1, 'c');
     }
 }

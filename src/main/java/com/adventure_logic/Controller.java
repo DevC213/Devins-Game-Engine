@@ -7,9 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Objects;
 
 
 public class Controller implements GuiEventListener {
@@ -40,7 +38,7 @@ public class Controller implements GuiEventListener {
         script = new TextArea();
     }
     @FXML
-    public void gameStart(){
+    public void gameStart() {
 
         if(adventure == null){
             adventure = Adventure.getAdventure();
@@ -119,8 +117,6 @@ public class Controller implements GuiEventListener {
     }
     public void modifyImage(final int row, final int col, final String imagePath) {
         try {
-            Path absPath = Paths.get(imagePath);
-            String fileLocation = absPath.toAbsolutePath().toString();
             for (javafx.scene.Node node : miniMap.getChildren()) {
                 Integer r = GridPane.getRowIndex(node);
                 Integer c = GridPane.getColumnIndex(node);
@@ -128,7 +124,25 @@ public class Controller implements GuiEventListener {
                 c = (c == null ? 0 : c);
 
                 if (r == row && c == col && node instanceof ImageView) {
-                    ((ImageView) node).setImage(new Image(fileLocation));
+                    ((ImageView) node).setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void modifyImage(final int row, final int col, final Image image) {
+        try {
+            for (javafx.scene.Node node : miniMap.getChildren()) {
+                Integer r = GridPane.getRowIndex(node);
+                Integer c = GridPane.getColumnIndex(node);
+                r = (r == null ? 0 : r);
+                c = (c == null ? 0 : c);
+
+                if (r == row && c == col && node instanceof ImageView) {
+                    ((ImageView) node).setImage(image);
                     break;
                 }
             }
@@ -139,6 +153,9 @@ public class Controller implements GuiEventListener {
     }
     public String getCommand() {
         return commandInput.getText();
+    }
+    public void setFocus(){
+        commandInput.requestFocus();
     }
 
 }

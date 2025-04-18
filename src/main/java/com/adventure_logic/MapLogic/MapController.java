@@ -4,8 +4,6 @@ import com.adventure_logic.GuiEventListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Vector;
@@ -17,6 +15,7 @@ public class MapController {
     private final  Vector<MapMonsterController> monsters = new Vector<>();
     private final MapMovementController mapMovementController;
     private final GuiEventListener guiEventListener;
+
     private int level = 0;
 
 
@@ -24,32 +23,30 @@ public class MapController {
     public MapController(final String mapName, final GuiEventListener guiEventListener) {
 
         File myfile;
-        Scanner reader;
         int fileLine = 0;
         mapMovementController = new MapMovementController(this);
-        Vector<String> files = new Vector<>();
         try {
-            myfile = new File(mapName);
-            reader = new Scanner(myfile);
+            myfile = new File(Objects.requireNonNull(getClass().getResource(mapName)).getPath());
+            Scanner reader = new Scanner(myfile);
             while (reader.hasNext()) {
                 if(fileLine == 0){
-                    MapGeneration.processKey(reader.nextLine());
+                    MapGeneration.processKey(Objects.requireNonNull(getClass().getResource(reader.nextLine())).getPath());
                 } else{
                     processMaps(reader.nextLine());
                 }
                 fileLine ++;
             }
-        } catch (FileNotFoundException e){
+        } catch (Exception e){
             System.out.println("Error Reading Map info, loading default map");
             maps.add(new MapGeneration());
         }
         this.guiEventListener = guiEventListener;
     }
-    private void processMaps(String File) throws FileNotFoundException {
+    private void processMaps(String File) throws FileNotFoundException, NullPointerException {
         File myfile;
         Scanner reader;
         int fileLine = 0;
-        myfile = new File(File);
+        myfile = new File(Objects.requireNonNull(getClass().getResource(File)).getPath());
         reader = new Scanner(myfile);
         while (reader.hasNext()) {
             switch (fileLine) {
@@ -83,6 +80,9 @@ public class MapController {
     public boolean getMovementOrDamage(final String terrain, final int command){
         return mapMovementController.getMovementOrDamage(terrain, command);
     }
+    public int getVisibility(final String terrain){
+        return mapMovementController.getVisibility(terrain);
+    }
     public boolean isLadder(final String terrain){
         return mapMovementController.isLadder(terrain);
     }
@@ -93,7 +93,7 @@ public class MapController {
     public Vector<Vector<String>> getKey(){
         return MapGeneration.getKey();
     }
-    public String getImage(final String terrain) {return maps.get(0).getImage(terrain);}
+    public String getImage(final String terrain) {return maps.getFirst().getImage(terrain);}
     public Vector<String> getItems(final int[] location) {return items.get(level).getItems(location);}
     public int[] getCords(){return maps.get(level).getColumnsAndRows();}
     public Vector<String> getMonsters(final int[] location){return monsters.get(level).getMonsters(location);}
