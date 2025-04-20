@@ -32,7 +32,6 @@ public class MapController {
                 String line = reader.nextLine();
                 if(fileLine == 0){
                     MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(line.trim())));
-                    Thread.sleep(5000);
                 } else{
                     processMaps(line);
                 }

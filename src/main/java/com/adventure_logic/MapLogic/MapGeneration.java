@@ -27,7 +27,6 @@ class MapGeneration {
         while (reader.hasNext()) {
             String line = reader.nextLine();
             temp.addAll(Arrays.asList(line.split(";")));
-            System.out.println("Line: [" + line + "]");
             key.add(new Vector<>(temp));
             temp.clear();
         }
