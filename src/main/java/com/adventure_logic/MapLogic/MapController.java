@@ -93,7 +93,6 @@ public class MapController {
         return MapGeneration.getKey();
     }
     public String getImage(final String terrain) {
-        guiEventListener.UIUpdate("Image for: " + terrain + " " + maps.getFirst().getImage(terrain), 0);
         return maps.getFirst().getImage(terrain);}
     public Vector<String> getItems(final int[] location) {return items.get(level).getItems(location);}
     public int[] getCords(){return maps.get(level).getColumnsAndRows();}
