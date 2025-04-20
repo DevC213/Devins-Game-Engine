@@ -44,9 +44,11 @@ public class Adventure {
         }
         return adventure;
     }
+
     public void setController(final Controller control) {
         this.controller = control;
         gameController = new GameController(control);
+
     }
 
     //Game progression controls
@@ -87,4 +89,7 @@ public class Adventure {
         gameController.move(movement, dir);
     }
 
+    public void Errors(String message){
+        controller.UIUpdate(message,0);
+    }
 }

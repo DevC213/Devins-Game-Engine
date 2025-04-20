@@ -6,6 +6,7 @@ import com.adventure_logic.GuiEventListener;
 
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 class MapMonsterController {
@@ -25,11 +26,11 @@ class MapMonsterController {
         processFiles(data);
     }
     private void processFiles(String file){
-        File myFile;
+        InputStream input;
         Scanner reader;
         try {
-            myFile = new File(Objects.requireNonNull(getClass().getResource(file)).getPath());
-            reader = new Scanner(myFile);
+            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
+            reader = new Scanner(input);
             while (reader.hasNext()) {
                 String[] monsterData =  reader.nextLine().split(";");
                 if(monsterVectorMap.containsKey(monsterData[0]+"."+monsterData[1])){
@@ -40,7 +41,7 @@ class MapMonsterController {
                 monsterVectorMap.put(monsterData[0]+"."+monsterData[1],new Vector<>(m));
             }}
         } catch (Exception e) {
-            System.out.println(e + "Error loading items for: " + file);
+            guiEventListener.UIUpdate(e + "Error loading items for: " + file, 0);
         }
         for(String j: monsterVectorMap.keySet()){
             Vector<Monster> temp = new Vector<>(monsterVectorMap.get(j));

@@ -1,7 +1,10 @@
 package com.adventure_logic.MapLogic;
 
+import com.adventure_logic.Controller;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.*;
 
 class MapGeneration {
@@ -18,12 +21,13 @@ class MapGeneration {
     public MapGeneration(final String mapName) {
         processMap(mapName);
     }
-    public static void processKey(String keyFile) throws FileNotFoundException {
-        File myfile = new File(keyFile);
-        Scanner reader = new Scanner(myfile);
+    public static void processKey(InputStream keyFile){
+        Scanner reader = new Scanner(keyFile);
         Vector<String> temp = new Vector<>();
         while (reader.hasNext()) {
-            temp.addAll(Arrays.asList(reader.nextLine().split(";")));
+            String line = reader.nextLine();
+            temp.addAll(Arrays.asList(line.split(";")));
+            System.out.println("Line: [" + line + "]");
             key.add(new Vector<>(temp));
             temp.clear();
         }
@@ -48,12 +52,12 @@ class MapGeneration {
         MapData = map.clone();
     }
     private void processMap(String map_file) {
-        File myfile;
+        InputStream input;
         Scanner reader;
         Vector<String> mapTemp = new Vector<>();
         try {
-            myfile = new File(getClass().getResource(map_file).getPath());
-            reader = new Scanner(myfile);
+            input = Objects.requireNonNull(getClass().getResourceAsStream(map_file));
+            reader = new Scanner(input);
             while (reader.hasNext()) {
                     String mapLine = reader.nextLine();
                     columns = mapLine.length();

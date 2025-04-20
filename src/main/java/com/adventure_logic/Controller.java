@@ -122,7 +122,6 @@ public class Controller implements GuiEventListener {
                 Integer c = GridPane.getColumnIndex(node);
                 r = (r == null ? 0 : r);
                 c = (c == null ? 0 : c);
-
                 if (r == row && c == col && node instanceof ImageView) {
                     ((ImageView) node).setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
                     break;
@@ -130,7 +129,7 @@ public class Controller implements GuiEventListener {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            UIUpdate(e.getMessage(), 0);
         }
     }
     public void modifyImage(final int row, final int col, final Image image) {

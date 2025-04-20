@@ -1,6 +1,7 @@
 package com.adventure_logic.MapLogic;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 class MapItemController {
@@ -8,16 +9,16 @@ class MapItemController {
 
     private final Map<String, Vector<String>> itemLocation = new HashMap<>();
     private final Map<String, Vector<String>> dItemLocation = new HashMap<>();
-    public MapItemController(String map) {
+    public MapItemController(String map) throws Exception {
         processItems(map);
     }
 
-    private void processItems(String map){
-        File myFile;
+    private void processItems(String map) throws Exception{
+        InputStream input;
         Scanner reader;
         try {
-            myFile = new File(Objects.requireNonNull(getClass().getResource(map)).getPath());
-            reader = new Scanner(myFile);
+            input = Objects.requireNonNull(getClass().getResourceAsStream(map));
+            reader = new Scanner(input);
             while (reader.hasNext()) {
                 String[] cordsAndItems = reader.nextLine().split(";");
                 Vector<String> item = new Vector<>();
@@ -33,7 +34,7 @@ class MapItemController {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e + "Error loading items for: " + map);
+            throw e;
         }
         for(String j: itemLocation.keySet()){
             Vector<String> temp = new Vector<>(itemLocation.get(j));

@@ -3,7 +3,7 @@ package com.adventure_logic.MapLogic;
 import com.adventure_logic.GuiEventListener;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Vector;
@@ -15,39 +15,39 @@ public class MapController {
     private final  Vector<MapMonsterController> monsters = new Vector<>();
     private final MapMovementController mapMovementController;
     private final GuiEventListener guiEventListener;
-
     private int level = 0;
 
 
     //Constructors/Map Generation:
     public MapController(final String mapName, final GuiEventListener guiEventListener) {
 
-        File myfile;
+        InputStream input;
         int fileLine = 0;
         mapMovementController = new MapMovementController(this);
+        this.guiEventListener = guiEventListener;
         try {
-            myfile = new File(Objects.requireNonNull(getClass().getResource(mapName)).getPath());
-            Scanner reader = new Scanner(myfile);
+            input = Objects.requireNonNull(getClass().getResourceAsStream(mapName));
+            Scanner reader = new Scanner(input);
             while (reader.hasNext()) {
+                String line = reader.nextLine();
                 if(fileLine == 0){
-                    MapGeneration.processKey(Objects.requireNonNull(getClass().getResource(reader.nextLine())).getPath());
+                    MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(line.trim())));
+                    Thread.sleep(5000);
                 } else{
-                    processMaps(reader.nextLine());
+                    processMaps(line);
                 }
                 fileLine ++;
             }
         } catch (Exception e){
-            System.out.println("Error Reading Map info, loading default map");
+            this.guiEventListener.UIUpdate("Error Reading Map info, loading default map",0);
             maps.add(new MapGeneration());
         }
-        this.guiEventListener = guiEventListener;
+
     }
-    private void processMaps(String File) throws FileNotFoundException, NullPointerException {
-        File myfile;
-        Scanner reader;
+    private void processMaps(String File) throws Exception {
         int fileLine = 0;
-        myfile = new File(Objects.requireNonNull(getClass().getResource(File)).getPath());
-        reader = new Scanner(myfile);
+        InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(File));
+        Scanner reader = new Scanner(input);
         while (reader.hasNext()) {
             switch (fileLine) {
                 case 0 -> maps.add(new MapGeneration(reader.nextLine()));
@@ -93,7 +93,9 @@ public class MapController {
     public Vector<Vector<String>> getKey(){
         return MapGeneration.getKey();
     }
-    public String getImage(final String terrain) {return maps.getFirst().getImage(terrain);}
+    public String getImage(final String terrain) {
+        guiEventListener.UIUpdate("Image for: " + terrain + " " + maps.getFirst().getImage(terrain), 0);
+        return maps.getFirst().getImage(terrain);}
     public Vector<String> getItems(final int[] location) {return items.get(level).getItems(location);}
     public int[] getCords(){return maps.get(level).getColumnsAndRows();}
     public Vector<String> getMonsters(final int[] location){return monsters.get(level).getMonsters(location);}

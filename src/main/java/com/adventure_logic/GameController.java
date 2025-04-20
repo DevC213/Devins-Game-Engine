@@ -182,9 +182,11 @@ public class GameController {
                     try {
                         controller.modifyImage(k, j, createBlend(playerController));
                     } catch (IOException e) {
+                        controller.UIUpdate(e.getMessage(), 0);
                         throw new RuntimeException(e);
                     }
                 } else {
+
                     controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(playerController.getCords()[0]
                             + SQUARE_CHANGE[j],playerController.getCords()[1] + SQUARE_CHANGE[k])));
                 }
@@ -200,7 +202,6 @@ public class GameController {
         Graphics merger;
 
         String valAtPlayer = mapController.getMapValue(plays.getCords()[0], plays.getCords()[1]);
-
         // Correct way to load from resources
         player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage("1"))));
         tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));
