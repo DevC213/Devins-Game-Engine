@@ -11,9 +11,10 @@ class MapMovementController {
     MapMovementController(MapController mapController){
         this.mapController = mapController;
     }
-    private final Vector<String> damage_tiles = new Vector<>(Arrays.asList("l", "Poison", "acid"));
-    private final Vector<Integer> damage = new Vector<>(Arrays.asList(5, 8, 11));
+    private final Vector<String> damage_tiles = new Vector<>(Arrays.asList("l", "p", "a", "X", "&", "G", "t"));
+    private final Vector<Integer> damage = new Vector<>(Arrays.asList(5,8,11,3,7,5,2));
     public boolean getMovementOrDamage(final String terrain, final int command){
+        System.out.println(terrain);
         switch (command) {
             case 0 -> {
                 return damage_tiles.contains(terrain);

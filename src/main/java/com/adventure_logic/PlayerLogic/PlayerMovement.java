@@ -1,7 +1,5 @@
 package com.adventure_logic.PlayerLogic;
 
-import com.adventure_logic.Adventure;
-import com.adventure_logic.GuiEventListener;
 import com.adventure_logic.MapLogic.MapController;
 
 class PlayerMovement {
@@ -30,6 +28,10 @@ class PlayerMovement {
                 playerController.damage(mapController.Damage(mapController.getMapValue(column,row+movement)));
                 playerController.sendMessage("Ouch!");
             }
+            if (mapController.getMovementOrDamage(mapController.getMapValue(column, row),0)) {
+                playerController.damage(mapController.Damage(mapController.getMapValue(column, row)));
+                playerController.sendMessage("Ouch!");
+            }
             if (playerController.getHealth() <= 0) {
                 if (playerController.getHealing_items() == null) {
                     playerController.gameOver();
@@ -38,14 +40,20 @@ class PlayerMovement {
                 }
             }
         }
+
         return mapController.getVisibility(mapController.getMapValue(column, row));
     }
     public int changeColumn(int movement){
         if ((column < maxC - 1 || column > 0)&& playerController.getHealth() > 0) {
             if (mapController.getMovementOrDamage(mapController.getMapValue(column + movement, row),2)) {
-                column+= movement;
-            }else if (mapController.getMovementOrDamage(mapController.getMapValue(column+movement, row),0)){
+                column += movement;
+
+            } else if (mapController.getMovementOrDamage(mapController.getMapValue(column+movement, row),0)){
                 playerController.damage(mapController.Damage(mapController.getMapValue(column + movement, row)));
+                playerController.sendMessage("Ouch!");
+            }
+            if (mapController.getMovementOrDamage(mapController.getMapValue(column, row),0)) {
+                playerController.damage(mapController.Damage(mapController.getMapValue(column, row)));
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {

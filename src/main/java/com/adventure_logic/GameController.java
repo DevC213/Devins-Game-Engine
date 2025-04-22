@@ -219,7 +219,6 @@ public class GameController {
         return SwingFXUtils.toFXImage(blend, null);
     }
 
-
     //checking map
     private void checkForItems() {
         if (mapController.getItems(playerController.getCords()) != null) {
@@ -239,36 +238,18 @@ public class GameController {
             combatSystem.toggleMonster();
         }
     }
+
     public void newGame() {
         playerController.resetPlayer();
         mapController.setLevel(0);
         mapController.resetMap();
         updateGameInfo();
+        visibility = 2;
     }
 
     //facade & communication functions
     public int[] getCords(){return mapController.getCords();}
     public double getHealth(){return playerController.getHealth();}
-
-
-    /*
-        Un-used methods, that may come in handy.
-
-        public void resumeGame() {
-        if (playerController.getHealth() < 1) {
-            System.out.println(playerController.getHealing_items());
-            if (playerController.getHealing_items() == null) {
-                controller.GameOver();
-            } else {
-                playerController.EmergencyUse();
-            }
-        }
-    }
-
-        public void setVisibility(int visibility) {
-            this.visibility = visibility;
-        }
-     */
 
 }
 

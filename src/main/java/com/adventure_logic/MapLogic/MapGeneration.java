@@ -1,9 +1,5 @@
 package com.adventure_logic.MapLogic;
 
-import com.adventure_logic.Controller;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 

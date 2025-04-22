@@ -1,6 +1,5 @@
 package com.adventure_logic.PlayerLogic;
 
-import com.adventure_logic.Adventure;
 import com.adventure_logic.GuiEventListener;
 import com.adventure_logic.MapLogic.MapController;
 
@@ -16,7 +15,7 @@ public class PlayerController {
     PlayerHealth playerHealth;
     PlayerInventory playerInventory;
     private final GuiEventListener guiEventListener;
-    private MapController mapController;
+    private final MapController mapController;
     /**
      * Constructor for player.
      *
@@ -43,9 +42,7 @@ public class PlayerController {
             case 3 -> {
                 return playerInventory.viewInventory();
             }
-            case 4 ->{
-                playerInventory.dropItem(String.join("",items));
-            }
+            case 4 -> playerInventory.dropItem(String.join("",items));
             default -> {
             }
         }

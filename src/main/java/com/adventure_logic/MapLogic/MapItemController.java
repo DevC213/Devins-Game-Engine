@@ -1,6 +1,5 @@
 package com.adventure_logic.MapLogic;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -9,11 +8,11 @@ class MapItemController {
 
     private final Map<String, Vector<String>> itemLocation = new HashMap<>();
     private final Map<String, Vector<String>> dItemLocation = new HashMap<>();
-    public MapItemController(String map) throws Exception {
+    public MapItemController(String map){
         processItems(map);
     }
 
-    private void processItems(String map) throws Exception{
+    private void processItems(String map){
         InputStream input;
         Scanner reader;
         try {
@@ -33,9 +32,7 @@ class MapItemController {
                     itemLocation.put(coordinates[0] + "." + coordinates[1], item);
                 }
             }
-        } catch (Exception e) {
-            throw e;
-        }
+        } catch (Exception _) { }
         for(String j: itemLocation.keySet()){
             Vector<String> temp = new Vector<>(itemLocation.get(j));
             dItemLocation.put(j, temp);

@@ -89,7 +89,4 @@ public class Adventure {
         gameController.move(movement, dir);
     }
 
-    public void Errors(String message){
-        controller.UIUpdate(message,0);
-    }
 }
