@@ -62,7 +62,7 @@ public class Adventure {
         controller.UIUpdate("""                                                        
                                 Enter Take or Drop to pickup or drop item.
                                 Then press enter. Use z to enter cave, and x
-                                to climb ladder.
+                                to climb ladder, an v to attack.
                          
                                 Use arrow keys for movement, Inventory is on
                                 Side of map.

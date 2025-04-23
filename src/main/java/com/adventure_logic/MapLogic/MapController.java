@@ -2,7 +2,6 @@ package com.adventure_logic.MapLogic;
 
 import com.adventure_logic.GuiEventListener;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
@@ -16,7 +15,6 @@ public class MapController {
     private final MapMovementController mapMovementController;
     private final GuiEventListener guiEventListener;
     private int level = 0;
-
 
     //Constructors/Map Generation:
     public MapController(final String mapName, final GuiEventListener guiEventListener) {
@@ -43,7 +41,7 @@ public class MapController {
         }
 
     }
-    private void processMaps(String File) throws Exception {
+    private void processMaps(String File){
         int fileLine = 0;
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(File));
         Scanner reader = new Scanner(input);
@@ -75,9 +73,9 @@ public class MapController {
 
     //Facade functions:
     public String getMapValue(final int c, final int r) {return maps.get(level).getMapValue(c,r);}
-    public int Damage(final String terrain){return mapMovementController.Damage(terrain);}
-    public boolean getMovementOrDamage(final String terrain, final int command){
-        return mapMovementController.getMovementOrDamage(terrain, command);
+    public int damage(final String terrain){return mapMovementController.getDamage(terrain);}
+    public boolean getMovement(final String terrain, final int command){
+        return mapMovementController.getCanCross(terrain, command);
     }
     public int getVisibility(final String terrain){
         return mapMovementController.getVisibility(terrain);
@@ -88,7 +86,6 @@ public class MapController {
     public boolean isCave(final String terrain){
         return mapMovementController.isCave(terrain);
     }
-
     public Vector<Vector<String>> getKey(){
         return MapGeneration.getKey();
     }
@@ -97,15 +94,12 @@ public class MapController {
     public Vector<String> getItems(final int[] location) {return items.get(level).getItems(location);}
     public int[] getCords(){return maps.get(level).getColumnsAndRows();}
     public Vector<String> getMonsters(final int[] location){return monsters.get(level).getMonsters(location);}
-
     public void addItem(final int[] location, final String item) {
         items.get(level).addItem(location,item);
     }
     public String grabItem(final int[] location, final String item) {
         return items.get(level).grabItem(location,item);
     }
-
-
     public void attackMonster(String monster, int attack, final int[] location) {monsters.get(level).attackMonster(monster, attack ,location);}
     public Vector<Double> getMonstersAttacks(final int[] location) {
         return monsters.get(level).getMonsterAttacks(location);

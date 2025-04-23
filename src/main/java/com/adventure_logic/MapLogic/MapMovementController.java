@@ -1,24 +1,27 @@
 package com.adventure_logic.MapLogic;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 class MapMovementController {
 
     MapController mapController;
+    private final Map<String,Integer> damageMap = new HashMap<>();
     MapMovementController(MapController mapController){
         this.mapController = mapController;
+        initializeDamageMap();
     }
-    private final Vector<String> damage_tiles = new Vector<>(Arrays.asList("l", "p", "a", "X", "&", "G", "t"));
-    private final Vector<Integer> damage = new Vector<>(Arrays.asList(5,8,11,3,7,5,2));
-    public boolean getMovementOrDamage(final String terrain, final int command){
-        System.out.println(terrain);
+
+    private void initializeDamageMap(){
+        damageMap.put("l", 5);
+        damageMap.put("p", 8);
+        damageMap.put("a", 11);
+        damageMap.put("X", 3);
+        damageMap.put("&", 7);
+        damageMap.put("G", 5);
+        damageMap.put("t", 2);
+    }
+    public boolean getCanCross(final String terrain, final int command){
         switch (command) {
-            case 0 -> {
-                return damage_tiles.contains(terrain);
-            }
             case 1 -> {
                 for (Vector<String> j : mapController.getKey()) {
                     if (j.contains(terrain)) {
@@ -39,17 +42,17 @@ class MapMovementController {
         }
         return false;
     }
+    public int getDamage(final String terrain){
+        if (damageMap.containsKey(terrain)){
+            return damageMap.get(terrain);
+        }
+        return 0;
+    }
     public int getVisibility(final String terrain){
         for (Vector<String> j : mapController.getKey()) {
             if (j.contains(terrain)) {
                 return Integer.parseInt(j.getLast());
             }
-        }
-        return 0;
-    }
-    public int Damage(final String terrain) {
-        if (damage_tiles.contains(terrain)) {
-            return damage.get(damage_tiles.indexOf(terrain));
         }
         return 0;
     }

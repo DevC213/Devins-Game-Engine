@@ -1,5 +1,6 @@
 package com.adventure_logic;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -11,7 +12,6 @@ import java.util.Objects;
 
 
 public class Controller implements GuiEventListener {
-
 
     public TextField health;
     public TextField defence;
@@ -64,6 +64,7 @@ public class Controller implements GuiEventListener {
         script.clear();
         adventure.intro();
         start.setVisible(false);
+        Platform.runLater(() -> script.setScrollTop(0));
     }
     @FXML
     private void activateFields(){
@@ -74,6 +75,8 @@ public class Controller implements GuiEventListener {
         commandInput.setVisible(true);
         commandInput.setEditable(true);
         weapon.setVisible(true);
+        miniMap.setVisible(true);
+        Platform.runLater(() -> script.setScrollTop(0));
     }
     @FXML @Override
     public void GameOver() {
@@ -88,6 +91,7 @@ public class Controller implements GuiEventListener {
             commandInput.setVisible(false);
             commandInput.setEditable(false);
             weapon.setVisible(false);
+            miniMap.setVisible(false);
             gameOver = true;
         }
     }
@@ -95,6 +99,7 @@ public class Controller implements GuiEventListener {
     public void clearInput() {
         commandInput.clear();
     }
+
     @Override
     public void UIUpdate(String message, int box){
         //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence

@@ -22,6 +22,6 @@ X;spikes;/MapPics/spikes.png;yes;2
 ^;smoke;/MapPics/smoke.png;yes;1
 &;hotSmoke;/MapPics/hotSmoke.png;yes;1
 G;gas;/MapPics/gas.png;yes;1
-t;thorns;/MapPics/thorns.png;yes;2
+t;thorns;/MapPics/thorns.png;yes;1
 p;poison;/MapPics/poisonedWater.png;yes;2
 a;acid;/MapPics/acid.png;no;0

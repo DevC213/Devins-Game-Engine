@@ -35,6 +35,7 @@ public class CombatSystem {
         for (Double damage : mapController.getMonstersAttacks(playerController.getCords())) {
             monsterAttack(damage);
         }
+        guiEventListener.clearInput();
     }
 
     private void monsterAttack(Double damage) {

@@ -1,5 +1,4 @@
 package com.adventure_logic.PlayerLogic;
-
 import com.adventure_logic.MapLogic.MapController;
 
 class PlayerMovement {
@@ -22,14 +21,14 @@ class PlayerMovement {
     }
     public int changeRow(int movement){
         if ((row < maxR - 1 || row > 0) && playerController.getHealth() > 0) {
-            if(mapController.getMovementOrDamage(mapController.getMapValue(column, row+movement),2)){
+            if(mapController.getMovement(mapController.getMapValue(column, row+movement),2)){
                 row+= movement;
-            } else if (mapController.getMovementOrDamage(mapController.getMapValue(column, row+movement),0)) {
-                playerController.damage(mapController.Damage(mapController.getMapValue(column,row+movement)));
+            } else if (mapController.damage(mapController.getMapValue(column, row+movement)) != 0) {
+                playerController.damage(mapController.damage(mapController.getMapValue(column, row+movement)));
                 playerController.sendMessage("Ouch!");
             }
-            if (mapController.getMovementOrDamage(mapController.getMapValue(column, row),0)) {
-                playerController.damage(mapController.Damage(mapController.getMapValue(column, row)));
+            if (mapController.damage(mapController.getMapValue(column, row)) != 0) {
+                playerController.damage(mapController.damage(mapController.getMapValue(column, row)));
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {
@@ -45,15 +44,15 @@ class PlayerMovement {
     }
     public int changeColumn(int movement){
         if ((column < maxC - 1 || column > 0)&& playerController.getHealth() > 0) {
-            if (mapController.getMovementOrDamage(mapController.getMapValue(column + movement, row),2)) {
+            if (mapController.getMovement(mapController.getMapValue(column + movement, row),2)) {
                 column += movement;
 
-            } else if (mapController.getMovementOrDamage(mapController.getMapValue(column+movement, row),0)){
-                playerController.damage(mapController.Damage(mapController.getMapValue(column + movement, row)));
+            } else if (mapController.damage(mapController.getMapValue(column+movement, row)) != 0){
+                playerController.damage(mapController.damage(mapController.getMapValue(column+movement, row)));
                 playerController.sendMessage("Ouch!");
             }
-            if (mapController.getMovementOrDamage(mapController.getMapValue(column, row),0)) {
-                playerController.damage(mapController.Damage(mapController.getMapValue(column, row)));
+            if (mapController.damage(mapController.getMapValue(column, row)) != 0) {
+                playerController.damage(mapController.damage(mapController.getMapValue(column, row)));
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {
@@ -70,7 +69,9 @@ class PlayerMovement {
     public int[] getCords() {
         return new int[]{column , row};
     }
-    public int[] getRCords() {return new int[]{column - maxC/2, -(row - maxR/2)};}
+    public int[] getRCords() {
+        return new int[]{column - maxC/2, -(row - maxR/2)};
+    }
     public void resetLocation(){
         column = 0;
         row = 0;

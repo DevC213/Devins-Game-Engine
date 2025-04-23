@@ -20,8 +20,58 @@ public class GameController {
     private final InventoryManager inventoryManager;
     private final CombatSystem combatSystem;
     private final Movement_Controller movementController;
+    private final UIMapController uiMapController;
     private final int[] SQUARE_CHANGE = {-2, -1, 0, 1, 2};
     private int visibility = 2;
+
+    private class UIMapController{
+
+        public void minimap(){
+            for (int j = 0; j < SQUARE_CHANGE.length; j++) {
+                for (int k = 0; k < SQUARE_CHANGE.length; k++) {
+                    if(Math.abs(SQUARE_CHANGE[j]) > visibility || Math.abs(SQUARE_CHANGE[k]) > visibility ){
+                        controller.modifyImage(k,j,mapController.getImage("?"));
+                    } else if (SQUARE_CHANGE[j] == 0 && SQUARE_CHANGE[k] == 0) {
+                        try {
+                            controller.modifyImage(k, j, createBlend(playerController));
+                        } catch (IOException e) {
+                            controller.UIUpdate(e.getMessage(), 0);
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+
+                        controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(playerController.getCords()[0]
+                                + SQUARE_CHANGE[j],playerController.getCords()[1] + SQUARE_CHANGE[k])));
+                    }
+                }
+            }
+        }
+        private Image createBlend(final PlayerController plays) throws IOException {
+            BufferedImage player;
+            BufferedImage tile;
+            BufferedImage blend;
+            int imageWidth;
+            int imageHeight;
+            Graphics merger;
+
+            String valAtPlayer = mapController.getMapValue(plays.getCords()[0], plays.getCords()[1]);
+            // Correct way to load from resources
+            player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage("1"))));
+            tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));
+
+            imageWidth = Math.max(player.getWidth(), tile.getWidth());
+            imageHeight = Math.max(player.getHeight(), tile.getHeight());
+
+            blend = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+
+            merger = blend.getGraphics();
+            merger.drawImage(tile, 0, 0, null);
+            merger.drawImage(player, 0, 0, null);
+            merger.dispose();
+
+            return SwingFXUtils.toFXImage(blend, null);
+        }
+    }
 
     private enum CommandState {
         NONE,  // 0 - Not in a command
@@ -40,6 +90,14 @@ public class GameController {
         this.combatSystem = new CombatSystem(mapController, playerController, controller);
         this.inventoryManager = new InventoryManager(playerController, controller);
         this.movementController = new Movement_Controller();
+        uiMapController = new UIMapController();
+    }
+    public void newGame() {
+        playerController.resetPlayer();
+        mapController.setLevel(0);
+        mapController.resetMap();
+        updateGameInfo();
+        visibility = 2;
     }
     public void updateGameInfo() {
         controller.UIUpdate(java.util.Arrays.toString(playerController.getRCords()), 2);
@@ -151,7 +209,7 @@ public class GameController {
         minimap();
     }
     public void move(int dir){
-        if(mapController.getMovementOrDamage(mapController.getMapValue(playerController.getCords()[0],
+        if(mapController.getMovement(mapController.getMapValue(playerController.getCords()[0],
                 playerController.getCords()[1]),1)) {
             if(dir < 0 && mapController.isCave(mapController.getMapValue(playerController.getCords()[0],
                     playerController.getCords()[1]))){
@@ -174,49 +232,7 @@ public class GameController {
 
     //Mini-Map Control
     public void minimap(){
-        for (int j = 0; j < SQUARE_CHANGE.length; j++) {
-            for (int k = 0; k < SQUARE_CHANGE.length; k++) {
-                if(Math.abs(SQUARE_CHANGE[j]) > visibility || Math.abs(SQUARE_CHANGE[k]) > visibility ){
-                    controller.modifyImage(k,j,mapController.getImage("?"));
-                } else if (SQUARE_CHANGE[j] == 0 && SQUARE_CHANGE[k] == 0) {
-                    try {
-                        controller.modifyImage(k, j, createBlend(playerController));
-                    } catch (IOException e) {
-                        controller.UIUpdate(e.getMessage(), 0);
-                        throw new RuntimeException(e);
-                    }
-                } else {
-
-                    controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(playerController.getCords()[0]
-                            + SQUARE_CHANGE[j],playerController.getCords()[1] + SQUARE_CHANGE[k])));
-                }
-            }
-        }
-    }
-    private Image createBlend(final PlayerController plays) throws IOException {
-        BufferedImage player;
-        BufferedImage tile;
-        BufferedImage blend;
-        int imageWidth;
-        int imageHeight;
-        Graphics merger;
-
-        String valAtPlayer = mapController.getMapValue(plays.getCords()[0], plays.getCords()[1]);
-        // Correct way to load from resources
-        player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage("1"))));
-        tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));
-
-        imageWidth = Math.max(player.getWidth(), tile.getWidth());
-        imageHeight = Math.max(player.getHeight(), tile.getHeight());
-
-        blend = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-
-        merger = blend.getGraphics();
-        merger.drawImage(tile, 0, 0, null);
-        merger.drawImage(player, 0, 0, null);
-        merger.dispose();
-
-        return SwingFXUtils.toFXImage(blend, null);
+        uiMapController.minimap();
     }
 
     //checking map
@@ -239,17 +255,8 @@ public class GameController {
         }
     }
 
-    public void newGame() {
-        playerController.resetPlayer();
-        mapController.setLevel(0);
-        mapController.resetMap();
-        updateGameInfo();
-        visibility = 2;
-    }
-
     //facade & communication functions
     public int[] getCords(){return mapController.getCords();}
     public double getHealth(){return playerController.getHealth();}
-
 }
 

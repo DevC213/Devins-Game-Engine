@@ -115,7 +115,6 @@ public class PlayerController {
         playerHealth.reset();
         playerInventory.resetInventory();
         playerEquipment.Reset();
-
     }
 
     public int getAttack() {
