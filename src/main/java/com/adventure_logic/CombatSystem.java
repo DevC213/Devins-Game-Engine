@@ -26,7 +26,8 @@ public class CombatSystem {
     }
     public void attack(String monster) {
         if (monster == null || monster.isEmpty()) {
-            guiEventListener.UIUpdate("Missed", 0);
+            guiEventListener.UIUpdate("Missed.", 0);
+            monsterAttack();
             return;
         }
 
@@ -37,7 +38,11 @@ public class CombatSystem {
         }
         guiEventListener.clearInput();
     }
-
+    public void monsterAttack(){
+        for (Double damage : mapController.getMonstersAttacks(playerController.getCords())) {
+            monsterAttack(damage);
+        }
+    }
     private void monsterAttack(Double damage) {
         guiEventListener.UIUpdate("Monster hits you for: " + damage, 0);
         playerController.damage(damage);

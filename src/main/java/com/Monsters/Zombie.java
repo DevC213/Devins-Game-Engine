@@ -5,11 +5,13 @@ public class Zombie implements Monster{
     int damage;
     int health;
     String name;
+    int number;
 
-    public Zombie(int damage, int health) {
-        this.damage = damage;
+    public Zombie(int damage, int health, int number) {
         this.health = health;
-        name = "Zombie";
+        this.damage = damage;
+        this.name = "Zombie";
+        this.number = number;
     }
 
     @Override
@@ -25,6 +27,11 @@ public class Zombie implements Monster{
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getFullName() {
+        return name + " #" + number;
     }
 
     @Override

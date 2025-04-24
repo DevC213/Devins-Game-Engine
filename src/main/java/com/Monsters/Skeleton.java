@@ -1,22 +1,36 @@
 package com.Monsters;
 
 public class Skeleton implements Monster{
-    public Skeleton(int damage, int health) {
+    int damage;
+    int health;
+    String name;
+    int number;
+
+    public Skeleton(int damage, int health, int number) {
+        this.health = health;
+        this.damage = damage;
+        this.name = "Skeleton";
+        this.number = number;
     }
 
     @Override
     public double getBaseAttack() {
-        return 0;
+        return damage * 1.2;
     }
 
     @Override
     public int getHealth() {
-        return 0;
+        return health;
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
+    }
+
+    @Override
+    public String getFullName() {
+        return name + " #" + number;
     }
 
     @Override
@@ -31,6 +45,6 @@ public class Skeleton implements Monster{
 
     @Override
     public void attack(int damage) {
-
+        health -= damage;
     }
 }

@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 
 public class GameController {
 
@@ -23,7 +25,8 @@ public class GameController {
     private final UIMapController uiMapController;
     private final int[] SQUARE_CHANGE = {-2, -1, 0, 1, 2};
     private int visibility = 2;
-
+    private boolean escape = false;
+    private final Vector<String> directions= new Vector<>(List.of("LEFT", "RIGHT", "UP", "DOWN"));
     private class UIMapController{
 
         public void minimap(){
@@ -78,7 +81,8 @@ public class GameController {
         DROP,  // 1 - Dropping item
         TAKE,  // 2 - Taking item
         HEAL,  // 3 - Using health item
-        ATTACK // 4 - Attacking
+        ATTACK, // 4 - Attacking
+        HATTACK, //5 - Using health item during fight
     }
     private CommandState commandState = CommandState.NONE;
 
@@ -106,15 +110,23 @@ public class GameController {
         inventoryManager.updateInventoryDisplay();
     }
 
-    //Command processioning
+    //Command processing
     public void handleCommands(String keyPressed) {
         if (!commandState.equals(CommandState.NONE) && !keyPressed.equals("ENTER")) {
             return;
         }
-        if (combatSystem.isMonsterOnTile() && commandState != CommandState.ATTACK) {
-            if(!Objects.equals(keyPressed, "V")) {
-                controller.UIUpdate("Can't leave tile, until monster is killed!", 0);
-                return;
+        if (combatSystem.isMonsterOnTile() && !Objects.equals(keyPressed, "V") && !Objects.equals(keyPressed, "C")) {
+            if(directions.contains(keyPressed) ) {
+                int number = (int) (Math.floor(Math.random() * 10));
+                System.out.println(number);
+                if(number < 3){
+                    controller.UIUpdate("Escape success",0);
+                    escape = true;
+                } else {
+                    controller.UIUpdate("Failed Escape!", 0);
+                    combatSystem.monsterAttack();
+                    return;
+                }
             }
         }
         switch (keyPressed) {
@@ -126,12 +138,17 @@ public class GameController {
             case "X" -> move(1);
             case "C" -> {
                 controller.UIUpdate("Which healing item?", 0);
-                commandState = CommandState.HEAL;
+                if (commandState == CommandState.ATTACK) {
+                    commandState = CommandState.HATTACK;
+                } else {
+                    commandState = CommandState.HEAL;
+                }
             }
             case "V" -> {
                 if(mapController.getMonsters(playerController.getCords()) == null){
                     controller.UIUpdate("No monster on tile", 0);
                     commandState = CommandState.NONE;
+                    controller.clearInput();
                     return;
                 }
                 controller.UIUpdate("Which monster?", 0);
@@ -141,7 +158,7 @@ public class GameController {
             }
             default -> {if (Objects.equals(keyPressed, "ENTER")) {processCommand(controller.getCommand());}}
         }
-
+        controller.clearInput();
         updateGameInfo();
     }
     private void processCommand(String command) {
@@ -149,7 +166,11 @@ public class GameController {
             handleGameCommand(command);
         } else {
             executeCommand(command);
-            commandState = CommandState.NONE;
+            if (commandState.equals(CommandState.HATTACK)) {
+                commandState = CommandState.ATTACK;
+            } else {
+                commandState = CommandState.NONE;
+            }
         }
         controller.clearInput();
     }
@@ -194,7 +215,7 @@ public class GameController {
         }
     }
 
-    //Movement
+    //Command Processing for movement
     public void move(int movement, char dir){
         switch (dir) {
             case 'r':
@@ -227,7 +248,6 @@ public class GameController {
         } else{
             controller.UIUpdate("Can only change level on a ladder or a cave",0);
         }
-        controller.clearInput();
     }
 
     //Mini-Map Control
@@ -249,13 +269,16 @@ public class GameController {
             if (!combatSystem.isMonsterOnTile()) {
                 combatSystem.toggleMonster();
             }
-        } else if (combatSystem.isMonsterOnTile()) {
-            controller.UIUpdate("Monster Killed", 0);
+        } else if (escape){
+            escape = false;
+            combatSystem.toggleMonster();
+        }else if(combatSystem.isMonsterOnTile()) {
+            controller.UIUpdate("Monsters Killed", 0);
             combatSystem.toggleMonster();
         }
     }
 
-    //facade & communication functions
+    //facade & communication functions for Adventure class
     public int[] getCords(){return mapController.getCords();}
     public double getHealth(){return playerController.getHealth();}
 }

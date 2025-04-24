@@ -2,30 +2,41 @@ package com.Monsters;
 
 public class Goblin implements Monster{
 
+    int health;
+    int damage;
+    String name;
+    int number = 0;
 
 
-    public Goblin(int damage, int health) {
+    public Goblin(int damage, int health, int number) {
+        this.health = health;
+        this.damage = damage;
+        this.name = "Goblin";
+        this.number = number;
     }
 
     @Override
     public double getBaseAttack() {
-        return 0;
+        return damage * 1.5;
     }
 
     @Override
     public int getHealth() {
-        return 0;
+        return health;
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
-
     @Override
-    public void setHealth(int damage) {
-
+    public String getFullName() {
+        return name + " #" + number;
+    }
+    @Override
+    public void setHealth(int health) {
+        this.health -= health;
     }
 
     @Override
@@ -35,6 +46,6 @@ public class Goblin implements Monster{
 
     @Override
     public void attack(int damage) {
-
+        health -= damage;
     }
 }
