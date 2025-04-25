@@ -49,7 +49,7 @@ public class MapController {
             switch (fileLine) {
                 case 0 -> maps.add(new MapGeneration(reader.nextLine()));
                 case 1 -> items.add(new MapItemController(reader.nextLine()));
-                case 2 -> monsters.add(new MapMonsterController(reader.nextLine(),guiEventListener));
+                case 2 -> monsters.add(new MapMonsterController(reader.nextLine(),guiEventListener, maps.getFirst().getColumnsAndRows()));
             }
             fileLine++;
 
@@ -63,7 +63,6 @@ public class MapController {
     public void setLevel(int level) {this.level = level;}
     //Reset Map info:
     public void resetMap(){
-
         for(int i = 0; i < maps.size(); i++){
             items.get(i).resetMap();
             monsters.get(i).resetMonsters();
@@ -103,5 +102,8 @@ public class MapController {
     public void attackMonster(String monster, int attack, final int[] location) {monsters.get(level).attackMonster(monster, attack ,location);}
     public Vector<Double> getMonstersAttacks(final int[] location) {
         return monsters.get(level).getMonsterAttacks(location);
+    }
+    public void spawnMonster(int[] location){
+        monsters.get(level).spawnMonster(location);
     }
 }

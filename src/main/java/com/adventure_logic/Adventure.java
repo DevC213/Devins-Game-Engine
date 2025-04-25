@@ -58,7 +58,7 @@ public class Adventure {
                  what this Island has to offer but you know you need to hurry
                  you hear noises coming from the caves that you can see.
                  """,0);
-        gameController.minimap();
+        gameController.renderMinimap();
         controller.UIUpdate("""                                                        
                                 Enter Take or Drop to pickup or drop item.
                                 Then press enter. Use z to enter cave, and x
@@ -83,10 +83,10 @@ public class Adventure {
 
     //Facade functions
     public void commandProcessor(final String direction) {
-        gameController.handleCommands(direction);
+        gameController.handleKeyInput(direction);
    }
     public void movePlayer(int movement, char dir){
-        gameController.move(movement, dir);
+        gameController.moveOnLevel(movement, dir);
     }
 
 }

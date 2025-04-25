@@ -2,7 +2,7 @@ package com.Movement;
 
 import com.adventure_logic.Adventure;
 
-public class South extends direction {
+public class South extends Direction {
 
     South(){
 

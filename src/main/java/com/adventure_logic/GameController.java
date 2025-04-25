@@ -1,15 +1,9 @@
 package com.adventure_logic;
 
-import com.Movement.Movement_Controller;
+import com.Movement.MovementController;
 import com.adventure_logic.MapLogic.MapController;
 import com.adventure_logic.PlayerLogic.PlayerController;
-import javafx.scene.image.Image;
-import javafx.embed.swing.SwingFXUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -21,60 +15,11 @@ public class GameController {
     private final MapController mapController;
     private final InventoryManager inventoryManager;
     private final CombatSystem combatSystem;
-    private final Movement_Controller movementController;
+    private final MovementController movementController;
     private final UIMapController uiMapController;
-    private final int[] SQUARE_CHANGE = {-2, -1, 0, 1, 2};
-    private int visibility = 2;
     private boolean escape = false;
     private final Vector<String> directions= new Vector<>(List.of("LEFT", "RIGHT", "UP", "DOWN"));
-    private class UIMapController{
-
-        public void minimap(){
-            for (int j = 0; j < SQUARE_CHANGE.length; j++) {
-                for (int k = 0; k < SQUARE_CHANGE.length; k++) {
-                    if(Math.abs(SQUARE_CHANGE[j]) > visibility || Math.abs(SQUARE_CHANGE[k]) > visibility ){
-                        controller.modifyImage(k,j,mapController.getImage("?"));
-                    } else if (SQUARE_CHANGE[j] == 0 && SQUARE_CHANGE[k] == 0) {
-                        try {
-                            controller.modifyImage(k, j, createBlend(playerController));
-                        } catch (IOException e) {
-                            controller.UIUpdate(e.getMessage(), 0);
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-
-                        controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(playerController.getCords()[0]
-                                + SQUARE_CHANGE[j],playerController.getCords()[1] + SQUARE_CHANGE[k])));
-                    }
-                }
-            }
-        }
-        private Image createBlend(final PlayerController plays) throws IOException {
-            BufferedImage player;
-            BufferedImage tile;
-            BufferedImage blend;
-            int imageWidth;
-            int imageHeight;
-            Graphics merger;
-
-            String valAtPlayer = mapController.getMapValue(plays.getCords()[0], plays.getCords()[1]);
-            // Correct way to load from resources
-            player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage("1"))));
-            tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));
-
-            imageWidth = Math.max(player.getWidth(), tile.getWidth());
-            imageHeight = Math.max(player.getHeight(), tile.getHeight());
-
-            blend = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-
-            merger = blend.getGraphics();
-            merger.drawImage(tile, 0, 0, null);
-            merger.drawImage(player, 0, 0, null);
-            merger.dispose();
-
-            return SwingFXUtils.toFXImage(blend, null);
-        }
-    }
+    private int moves = 0;
 
     private enum CommandState {
         NONE,  // 0 - Not in a command
@@ -90,10 +35,10 @@ public class GameController {
         this.controller = controller;
         this.mapController = new MapController("/MapData/Maps/Map1.txt", this.controller);
         this.playerController = new PlayerController(0, 0,
-                mapController.getCords()[1], mapController.getCords()[0], controller, mapController);
-        this.combatSystem = new CombatSystem(mapController, playerController, controller);
-        this.inventoryManager = new InventoryManager(playerController, controller);
-        this.movementController = new Movement_Controller();
+                mapController.getCords()[1], mapController.getCords()[0], this.controller, mapController);
+        this.combatSystem = new CombatSystem(mapController, playerController, this.controller);
+        this.inventoryManager = new InventoryManager(playerController, this.controller);
+        this.movementController = new MovementController();
         uiMapController = new UIMapController();
     }
     public void newGame() {
@@ -101,7 +46,7 @@ public class GameController {
         mapController.setLevel(0);
         mapController.resetMap();
         updateGameInfo();
-        visibility = 2;
+        uiMapController.setVisibility(2);
     }
     public void updateGameInfo() {
         controller.UIUpdate(java.util.Arrays.toString(playerController.getRCords()), 2);
@@ -111,7 +56,7 @@ public class GameController {
     }
 
     //Command processing
-    public void handleCommands(String keyPressed) {
+    public void handleKeyInput(String keyPressed) {
         if (!commandState.equals(CommandState.NONE) && !keyPressed.equals("ENTER")) {
             return;
         }
@@ -122,6 +67,7 @@ public class GameController {
                 if(number < 3){
                     controller.UIUpdate("Escape success",0);
                     escape = true;
+                    commandState = CommandState.NONE;
                 } else {
                     controller.UIUpdate("Failed Escape!", 0);
                     combatSystem.monsterAttack();
@@ -134,8 +80,8 @@ public class GameController {
             case "RIGHT" -> movementController.direction("east");
             case "DOWN" -> movementController.direction("south");
             case "UP" -> movementController.direction("north");
-            case "Z" -> move(-1);
-            case "X" -> move(1);
+            case "Z" -> traverseLevels(-1);
+            case "X" -> traverseLevels(1);
             case "C" -> {
                 controller.UIUpdate("Which healing item?", 0);
                 if (commandState == CommandState.ATTACK) {
@@ -156,16 +102,17 @@ public class GameController {
                 controller.setFocus();
 
             }
-            default -> {if (Objects.equals(keyPressed, "ENTER")) {processCommand(controller.getCommand());}}
+            default -> {if (Objects.equals(keyPressed, "ENTER")) {
+                handleTextCommand(controller.getCommand());}}
         }
         controller.clearInput();
         updateGameInfo();
     }
-    private void processCommand(String command) {
+    private void handleTextCommand(String command) {
         if(commandState.equals(CommandState.NONE)) {
-            handleGameCommand(command);
+            handleInventoryCommands(command);
         } else {
-            executeCommand(command);
+            executePendingAction(command);
             if (commandState.equals(CommandState.HATTACK)) {
                 commandState = CommandState.ATTACK;
             } else {
@@ -174,7 +121,7 @@ public class GameController {
         }
         controller.clearInput();
     }
-    private void executeCommand(String command) {
+    private void executePendingAction(String command) {
         switch (commandState) {
             case DROP -> {
                 if(!playerController.contains(command) || Objects.equals(command, "")){
@@ -191,7 +138,7 @@ public class GameController {
             default -> controller.UIUpdate("Unexpected command state", 0);
         }
     }
-    private void handleGameCommand(String command) {
+    private void handleInventoryCommands(String command) {
         switch (command.toLowerCase()) {
             case "take" -> {
                 if(mapController.getItems(playerController.getCords()) == null){
@@ -216,31 +163,33 @@ public class GameController {
     }
 
     //Command Processing for movement
-    public void move(int movement, char dir){
+    public void moveOnLevel(int movement, char dir){
         switch (dir) {
             case 'r':
-                visibility = playerController.movement(movement,1);
+                uiMapController.setVisibility(playerController.movement(movement,1));
                 break;
             case 'c':
-                visibility = playerController.movement(movement,2);
+                uiMapController.setVisibility(playerController.movement(movement,2));
                 break;
             default:
                 break;
         }
-        minimap();
+        moves++;
+        renderMinimap();
+        spawnMonster();
     }
-    public void move(int dir){
+    public void traverseLevels(int dir){
         if(mapController.getMovement(mapController.getMapValue(playerController.getCords()[0],
                 playerController.getCords()[1]),1)) {
             if(dir < 0 && mapController.isCave(mapController.getMapValue(playerController.getCords()[0],
                     playerController.getCords()[1]))){
                 mapController.change_level(dir);
-                minimap();
+                renderMinimap();
             }
             else if(dir > 0 && mapController.isLadder(mapController.getMapValue(playerController.getCords()[0],
                     playerController.getCords()[1]))){
                 mapController.change_level(dir);
-                minimap();
+                renderMinimap();
             }
             else{
                 controller.UIUpdate("Can only go up on a ladder or down on a cave",0);
@@ -251,8 +200,8 @@ public class GameController {
     }
 
     //Mini-Map Control
-    public void minimap(){
-        uiMapController.minimap();
+    public void renderMinimap(){
+        uiMapController.minimap(controller, mapController, playerController);
     }
 
     //checking map
@@ -281,5 +230,16 @@ public class GameController {
     //facade & communication functions for Adventure class
     public int[] getCords(){return mapController.getCords();}
     public double getHealth(){return playerController.getHealth();}
+
+    private void spawnMonster() {
+        int MOVES_BEFORE_SPAWN = 10;
+        int random = (int) Math.floor(Math.random() * 20);
+
+        if (random > 15 & moves >= MOVES_BEFORE_SPAWN) {
+            mapController.spawnMonster(playerController.getCords());
+            controller.UIUpdate("Monster Spawned", 0);
+            moves = 0;
+        }
+    }
 }
 

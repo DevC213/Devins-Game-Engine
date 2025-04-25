@@ -1,6 +1,6 @@
 package com.adventure_logic.PlayerLogic;
 
-import com.recovery_items.*;
+import com.recoveryItems.*;
 
 import java.util.Arrays;
 import java.util.Objects;

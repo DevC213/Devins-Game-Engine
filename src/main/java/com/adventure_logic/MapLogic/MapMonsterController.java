@@ -17,12 +17,16 @@ class MapMonsterController {
     Map<String, Vector<Monster>> defaultMonsterVectorMap;
     MonsterFactory monsterFactory;
     GuiEventListener guiEventListener;
-    MapMonsterController(String data,GuiEventListener guiEventListener){
+    int mapSizeX;
+    int mapSizeY;
+    MapMonsterController(String data,GuiEventListener guiEventListener, int[] rowsAndColumns) {
         monsterFactory = new MonsterFactory();
         monsterVectorMap = new HashMap<>();
         defaultMonsterVectorMap = new HashMap<>();
         this.guiEventListener = guiEventListener;
         processFiles(data);
+        this.mapSizeX = rowsAndColumns[0];
+        this.mapSizeY = rowsAndColumns[1];
     }
     private void processFiles(String file){
         InputStream input;
@@ -35,11 +39,7 @@ class MapMonsterController {
             while (reader.hasNext()) {
                 String[] monsterData =  reader.nextLine().split(";");
                 key = monsterData[0] + "." + monsterData[1];
-                if(!monsters.containsKey(key + monsterData[4])) {
-                    monsters.put(key + monsterData[4], 1);
-                } else{
-                    monsters.replace(key + monsterData[4], monsters.get(key + monsterData[4]) + 1);
-                }
+                monsters.merge(key + monsterData[4], 1, Integer::sum);
                 if(monsterVectorMap.containsKey(key)){
                     monsterVectorMap.get(key).add(monsterFactory.MonsterFac(Integer.parseInt(monsterData[2]),Integer.parseInt(monsterData[3]),monsterData[4], monsters.get(key + monsterData[4])));
                 } else {
@@ -55,11 +55,19 @@ class MapMonsterController {
             monsterVectorMap.put(j, temp);
         }
     }
+    public void spawnMonster(int[] playerLocation){
+        Vector<Monster> m = new Vector<>();
+        m.add(monsterFactory.MonsterFac(5,5,"Zombie",1));
+        monsterVectorMap.put(playerLocation[0] + "." + playerLocation[1],  new Vector<>(m));
+    }
     public Vector<String> getMonsters(final int[] location){
         String key = location[0] + "." + location[1];
         Vector<String> rtnStrVec = new Vector<>();
         Vector<Monster> monsters = monsterVectorMap.get(key);
         Map<String,Integer> monstersNum = new HashMap<>();
+        if(monsters == null){
+            return null;
+        }
         for(Monster i: monsters){
             monstersNum.merge(i.getName(),1,Integer::sum);
         }

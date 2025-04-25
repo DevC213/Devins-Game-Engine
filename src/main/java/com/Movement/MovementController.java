@@ -2,18 +2,16 @@ package com.Movement;
 
 import com.adventure_logic.Adventure;
 
-import java.io.Console;
-
-public class Movement_Controller {
+public class MovementController {
 
 
-    direction East;
-    direction West;
-    direction North;
-    direction South;
-    direction movement;
+    Direction East;
+    Direction West;
+    Direction North;
+    Direction South;
+    Direction movement;
 
-    public Movement_Controller(){
+    public MovementController(){
         East = new East();
         West = new West();
         North = new North();

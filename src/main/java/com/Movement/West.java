@@ -2,7 +2,7 @@ package com.Movement;
 
 import com.adventure_logic.Adventure;
 
-public class West extends direction {
+public class West extends Direction {
     West(){
     }
     @Override

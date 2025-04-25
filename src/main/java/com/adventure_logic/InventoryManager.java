@@ -10,20 +10,6 @@ public class InventoryManager {
         this.playerController = playerController;
         this.guiEventListener = guiEventListener;
     }
-    public int useHealthPot() {
-        guiEventListener.clearInput();
-        guiEventListener.UIUpdate("Enter Item to use:", 0);
-        return 3;
-    }
-    public int useHealthPot(String item) {
-        if(item == null || item.isEmpty()){
-            guiEventListener.UIUpdate("No healing item entered.",0);
-            return 0;
-        }
-        playerController.useHealing(item);
-        updateInventoryDisplay();
-        return 3;
-    }
     public void dropItem(String item) {
 
         if (item == null) {

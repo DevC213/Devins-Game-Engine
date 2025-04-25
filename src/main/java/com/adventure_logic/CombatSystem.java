@@ -54,11 +54,9 @@ public class CombatSystem {
             }
         }
     }
-
     public boolean isMonsterOnTile() {
         return monsterOnTile;
     }
-
     public void toggleMonster() {
         this.monsterOnTile = !this.monsterOnTile;
     }

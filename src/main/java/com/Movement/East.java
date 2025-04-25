@@ -2,7 +2,7 @@ package com.Movement;
 
 import com.adventure_logic.Adventure;
 
-public class East extends direction {
+public class East extends Direction {
 
     East(){
 

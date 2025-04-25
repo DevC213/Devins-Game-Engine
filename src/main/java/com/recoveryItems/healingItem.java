@@ -1,4 +1,4 @@
-package com.recovery_items;
+package com.recoveryItems;
 
 public class healingItem {
     final String name;
