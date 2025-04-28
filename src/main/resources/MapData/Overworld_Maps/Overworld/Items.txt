@@ -1,6 +1,0 @@
-2;5;dagger;
-4;7;magic sword;
-2;5;coins;
-7;9;stick;
-13;9;meat;
-11;15;bow;

@@ -1,7 +1,6 @@
 package com.adventure_logic.PlayerLogic;
 
 import com.Armor.Armor;
-import com.Weapons.Sword;
 import com.Weapons.Weapon;
 
 class PlayerEquipment {
@@ -13,7 +12,7 @@ class PlayerEquipment {
     PlayerEquipment(){
         defence = 0;
         extraDamage = 0;
-        weapon = new Sword("Cooper Sword", 5);
+        weapon = new Weapon("Cooper Sword", 5);
         armor = null;
     }
     public int getDefence() {
@@ -21,7 +20,7 @@ class PlayerEquipment {
     }
     public void setArmor(Armor newArmor){
         armor = newArmor;
-        defence = newArmor.getDefence();
+        defence = newArmor.defence();
     }
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
@@ -29,18 +28,15 @@ class PlayerEquipment {
     public void setExtraDamage(int extraDamage) {
         this.extraDamage = extraDamage;
     }
-    public int attack(){return extraDamage + weapon.getDamage();
-    }
-    /**
-     * Sets defence
-     * @param defence item defence
-     */
-    public void setDefence(int defence){
-        this.defence = Math.max(this.defence + (this.defence - defence), 0);
+    public int attack(){return extraDamage + weapon.damage();
     }
     public void Reset(){
         defence = 0;
-        weapon = new Sword("Cooper Sword", 5);
+        weapon = new Weapon("Cooper Sword", 5);
         armor = null;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 }

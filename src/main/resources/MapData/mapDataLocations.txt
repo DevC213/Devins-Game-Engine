@@ -1,0 +1,6 @@
+/MapData/Key.txt
+/MapData/information/Overworld/MapData.txt
+/MapData/information/Underground/MapData.txt
+/MapData/information/Caverns/MapData.txt
+/MapData/information/TheDarkness/MapData.txt
+/MapData/information/TheVoid/MapData.txt

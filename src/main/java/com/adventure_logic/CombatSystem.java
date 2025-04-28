@@ -1,58 +1,32 @@
 package com.adventure_logic;
 
-import com.adventure_logic.MapLogic.MapController;
-import com.adventure_logic.PlayerLogic.PlayerController;
+import com.adventure_logic.PlayerLogic.PlayerDamageListener;
 
 public class CombatSystem {
-    private final MapController mapController;
-    private final PlayerController playerController;
-    private final GuiEventListener guiEventListener;
+    private final PlayerDamageListener playerDamageListener;
     private boolean monsterOnTile = false;
 
-    public CombatSystem(MapController mapController, PlayerController playerController, GuiEventListener guiEventListener) {
-        this.mapController = mapController;
-        this.playerController = playerController;
-        this.guiEventListener = guiEventListener;
+    public CombatSystem(PlayerDamageListener playerDamageListener) {
+        this.playerDamageListener = playerDamageListener;
     }
-    public int attack() {
-        if (!monsterOnTile) {
-            guiEventListener.UIUpdate("No Monster on tile", 0);
-            guiEventListener.clearInput();
-            return 0;
-        }
-        guiEventListener.UIUpdate("What monster?", 0);
-        guiEventListener.clearInput();
-        return 4;
-    }
-    public void attack(String monster) {
-        if (monster == null || monster.isEmpty()) {
-            guiEventListener.UIUpdate("Missed.", 0);
-            monsterAttack();
-            return;
-        }
 
-        mapController.attackMonster(monster, playerController.getAttack(), playerController.getCords());
+    public Messenger attack(Messenger monsterAttack) {
+        String message;
+        Messenger messenger = new Messenger();
+        message = monsterAttack.getMessage();
 
-        for (Double damage : mapController.getMonstersAttacks(playerController.getCords())) {
-            monsterAttack(damage);
+        if(message != null) {
+            messenger.setMessage(message);
         }
-        guiEventListener.clearInput();
+        return messenger;
     }
-    public void monsterAttack(){
-        for (Double damage : mapController.getMonstersAttacks(playerController.getCords())) {
+    public void monstersAttack(Messenger messenger){
+        for (Double damage : messenger.getPayloadD()) {
             monsterAttack(damage);
         }
     }
     private void monsterAttack(Double damage) {
-        guiEventListener.UIUpdate("Monster hits you for: " + damage, 0);
-        playerController.damage(damage);
-        if (playerController.getHealth() <= 0) {
-            if (playerController.getHealing_items() == null) {
-                guiEventListener.GameOver();
-            } else {
-                playerController.EmergencyUse();
-            }
-        }
+        playerDamageListener.damage(damage,0);
     }
     public boolean isMonsterOnTile() {
         return monsterOnTile;

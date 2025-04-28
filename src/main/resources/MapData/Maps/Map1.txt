@@ -1,4 +1,0 @@
-/MapData/Key.txt
-/MapData/Overworld_Maps/Overworld/MapData.txt
-/MapData/Cave_Maps/Underground/MapData.txt
-/MapData/Cave_Maps/Caverns/MapData.txt

@@ -2,33 +2,30 @@ package com.adventure_logic.MapLogic;
 
 import com.Monsters.Monster;
 import com.Monsters.MonsterFactory;
-import com.adventure_logic.GuiEventListener;
+import com.adventure_logic.Messenger;
 
 
 import java.io.InputStream;
 import java.util.*;
 
 class MapMonsterController {
-    /*
-        Todo:
-            Add monster logic
-     */
+
     Map<String, Vector<Monster>> monsterVectorMap;
     Map<String, Vector<Monster>> defaultMonsterVectorMap;
+    Map<String, Vector<String>> spawnChanges;
     MonsterFactory monsterFactory;
-    GuiEventListener guiEventListener;
     int mapSizeX;
     int mapSizeY;
-    MapMonsterController(String data,GuiEventListener guiEventListener, int[] rowsAndColumns) {
+    MapMonsterController(int[] rowsAndColumns) {
         monsterFactory = new MonsterFactory();
         monsterVectorMap = new HashMap<>();
         defaultMonsterVectorMap = new HashMap<>();
-        this.guiEventListener = guiEventListener;
-        processFiles(data);
+        spawnChanges = new HashMap<>();
         this.mapSizeX = rowsAndColumns[0];
         this.mapSizeY = rowsAndColumns[1];
     }
-    private void processFiles(String file){
+    public Messenger processFiles(String file){
+        Messenger messenger = new Messenger();
         InputStream input;
         Scanner reader;
         Map<String,Integer> monsters = new TreeMap<>();
@@ -38,7 +35,7 @@ class MapMonsterController {
             reader = new Scanner(input);
             while (reader.hasNext()) {
                 String[] monsterData =  reader.nextLine().split(";");
-                key = monsterData[0] + "." + monsterData[1];
+                key = keyString(monsterData);
                 monsters.merge(key + monsterData[4], 1, Integer::sum);
                 if(monsterVectorMap.containsKey(key)){
                     monsterVectorMap.get(key).add(monsterFactory.MonsterFac(Integer.parseInt(monsterData[2]),Integer.parseInt(monsterData[3]),monsterData[4], monsters.get(key + monsterData[4])));
@@ -48,20 +45,45 @@ class MapMonsterController {
                 monsterVectorMap.put(key,new Vector<>(m));
             }}
         } catch (Exception e) {
-            guiEventListener.UIUpdate(e + "Error loading monsters for: " + file, 0);
+            messenger.setMessage(e + "Error loading monsters for: " + file);
         }
         for(String j: monsterVectorMap.keySet()){
             Vector<Monster> temp = new Vector<>(monsterVectorMap.get(j));
-            monsterVectorMap.put(j, temp);
+            defaultMonsterVectorMap.put(j, temp);
+        }
+        return messenger;
+    }
+    public Messenger processSpawnChances(String file) {
+        Messenger messenger = new Messenger();
+        InputStream input;
+        Scanner reader;
+        try {
+            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
+            reader = new Scanner(input);
+            while (reader.hasNext()) {
+                Vector<String> monsterData = new Vector<>(List.of(reader.nextLine().split(";")));
+                String monster = monsterData.getFirst();
+                monsterData.removeFirst();
+                spawnChanges.put(monster, monsterData);
+            }
+        } catch (Exception e) {
+            messenger.setMessage(e + "Error loading monsters for: " + file);
+        }
+        return messenger;
+    }
+    public void spawnMonster(int[] location){
+        int number = (int) (Math.random() * 100);
+        int cumulative = 0;
+        for(String j: spawnChanges.keySet()) {
+            cumulative += Integer.parseInt(spawnChanges.get(j).getFirst());
+            if (number < cumulative) {
+                monsterVectorMap.put(keyString(location), new Vector<>(Collections.singletonList(monsterFactory.MonsterFac(Integer.parseInt(spawnChanges.get(j).get(2)), Integer.parseInt(spawnChanges.get(j).get(1)), j, 1))));
+                return;
+            }
         }
     }
-    public void spawnMonster(int[] playerLocation){
-        Vector<Monster> m = new Vector<>();
-        m.add(monsterFactory.MonsterFac(5,5,"Zombie",1));
-        monsterVectorMap.put(playerLocation[0] + "." + playerLocation[1],  new Vector<>(m));
-    }
     public Vector<String> getMonsters(final int[] location){
-        String key = location[0] + "." + location[1];
+        String key = keyString(location);
         Vector<String> rtnStrVec = new Vector<>();
         Vector<Monster> monsters = monsterVectorMap.get(key);
         Map<String,Integer> monstersNum = new HashMap<>();
@@ -79,67 +101,72 @@ class MapMonsterController {
                     rtnStrVec.add(i.getName() + ": Health - " + i.getHealth());
                 }
             }
-            if(monsters.isEmpty()){
-                return null;
-            }
             return rtnStrVec;
         }
         return null;
     }
-    public synchronized void attackMonster(String monster, int attack, final int[] location){
+    public synchronized Messenger attackMonsters(String monster, int attack, final int[] location){
+        Messenger rtnMessage = new Messenger();
         boolean monsterKilled = false;
-        Vector<Monster> monsters = monsterVectorMap.get(location[0] + "." + location[1]);
+        Vector<Monster> monsters = monsterVectorMap.get(keyString(location));
         Map<String,Integer> monstersNum = new HashMap<>();
 
         int index = 0;
         if(monsters == null){
-            guiEventListener.UIUpdate("No monster on tile",0);
-            return;
+            rtnMessage.setMessage("No monster on tile");
+            return rtnMessage;
         }
         for(Monster i: monsters){
             monstersNum.merge(i.getName(),1,Integer::sum);
         }
         if(monstersNum.containsKey(monster) && monstersNum.get(monster) > 1){
-            guiEventListener.UIUpdate("What "+ monster+ "? Enter name with number.",0);
-            return;
+            rtnMessage.setMessage("What "+ monster+ "? Enter name with number.");
+            return rtnMessage;
         }
         for(Monster i: monsters){
             if(i.getName().equalsIgnoreCase(monster) || i.getFullName().equalsIgnoreCase(monster)){
                 i.attack(attack);
                 if (i.getHealth() <= 0) {
                     monsterKilled = true;
-                    index = monsterVectorMap.get(location[0] + "." + location[1]).indexOf(i);
+                    index = monsterVectorMap.get(keyString(location)).indexOf(i);
                 }
             }
         }
 
         if(monsterKilled) {
-                if (monstersNum.get(monsters.get(index).getName()) > 1) {
-                    guiEventListener.UIUpdate(monsters.get(index).getFullName() + " Was killed", 0);
-                } else {
-                    guiEventListener.UIUpdate(monsters.get(index).getName() + " Was killed", 0);
-                }
-            monsterVectorMap.get(location[0] + "." + location[1]).remove(index);
+            if (monstersNum.get(monsters.get(index).getName()) > 1) {
+                rtnMessage.setMessage(monsters.get(index).getFullName() + " Was killed");
+            } else {
+                rtnMessage.setMessage(monsters.get(index).getName() + " Was killed");
+            }
+            monsterVectorMap.get(keyString(location)).remove(index);
         }
+        return rtnMessage;
     }
     public void resetMonsters(){
         monsterVectorMap.clear();
         for(String j: defaultMonsterVectorMap.keySet()){
             Vector<Monster> temp = new Vector<>(defaultMonsterVectorMap.get(j));
-            defaultMonsterVectorMap.put(j, temp);
+            monsterVectorMap.put(j, temp);
         }
     }
-    public Vector<Double> getMonsterAttacks(int[] location) {
-
+    public Messenger getMonsterAttack(int[] location){
+        Messenger rtnMessenger = new Messenger();
         Vector<Double> rtnVec = new Vector<>();
-        if(monsterVectorMap.get(location[0] + "." + location[1]) == null){
-            guiEventListener.UIUpdate("No monster on tile",0);
-            return rtnVec;
+        if(monsterVectorMap.get(keyString(location)) == null){
+            rtnMessenger = new Messenger("No monster on tile");
+            return rtnMessenger;
         }
-        for(Monster i: monsterVectorMap.get(location[0] + "." + location[1])){
+        for(Monster i: monsterVectorMap.get(keyString(location))){
             rtnVec.add(i.getBaseAttack());
         }
-        return rtnVec;
-
+        rtnMessenger.addPayloadD(rtnVec);
+        return rtnMessenger;
+    }
+    private String keyString(int[] location){
+        return location[0] + "." + location[1];
+    }
+    private String keyString(String[] location){
+        return location[0] + "." + location[1];
     }
 }

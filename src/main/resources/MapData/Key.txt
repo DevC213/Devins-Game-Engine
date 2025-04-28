@@ -25,3 +25,8 @@ G;gas;/MapPics/gas.png;yes;1
 t;thorns;/MapPics/thorns.png;yes;1
 p;poison;/MapPics/poisonedWater.png;yes;2
 a;acid;/MapPics/acid.png;no;0
+,;cloud;/MapPics/cloud.png;yes;1
+#;cloud;/MapPics/rainCloud.png;yes;1
+$;cloud;/MapPics/stormCloud.png;yes;1
+H;HealingGrove;/MapPics/healingGrove.png;yes;2
+A;ancientSpring;/MapPics/ancientSpring.png;yes;2

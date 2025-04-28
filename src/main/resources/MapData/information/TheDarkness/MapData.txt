@@ -1,0 +1,3 @@
+/MapData/information/TheDarkness/cave.txt
+/MapData/information/TheDarkness/items.txt
+/MapData/information/TheDarkness/Monsters.txt

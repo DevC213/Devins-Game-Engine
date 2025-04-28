@@ -1,11 +1,14 @@
 package com.adventure_logic.PlayerLogic;
 
-import com.adventure_logic.GuiEventListener;
+import com.Armor.Armor;
+import com.Weapons.Weapon;
+import com.adventure_logic.IGuiEventListener;
 import com.adventure_logic.MapLogic.MapController;
+import com.adventure_logic.Messenger;
 
 import java.util.Vector;
 
-public class PlayerController {
+public class PlayerController implements PlayerDamageListener{
 
     /**
      * Player logic classes
@@ -14,8 +17,7 @@ public class PlayerController {
     PlayerEquipment playerEquipment;
     PlayerHealth playerHealth;
     PlayerInventory playerInventory;
-    private final GuiEventListener guiEventListener;
-    private final MapController mapController;
+    private final IGuiEventListener guiEventListener;
     /**
      * Constructor for player.
      *
@@ -25,13 +27,12 @@ public class PlayerController {
      * @param maxr max row value
      */
     public PlayerController(final int c, final int r, final int maxc, final int maxr,
-                            GuiEventListener guiEventListener, MapController mapController) {
+                            IGuiEventListener guiEventListener, MapController mapController) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
-        this.mapController = mapController;
-        playerMovement = new PlayerMovement(c,r,maxc,maxr, this, this.mapController);
+        playerMovement = new PlayerMovement(c,r,maxc,maxr, this, mapController);
     }
     public Vector<String> InventoryCommands(String[] items, int command){
         switch (command) {
@@ -48,21 +49,11 @@ public class PlayerController {
         }
         return null;
     }
-    public int movement(int movement, int command){
-        switch (command) {
-            case 1 -> {
-                return playerMovement.changeRow(movement);
-            }
-            case 2 -> {
-                return playerMovement.changeColumn(movement);
-            }
-            default -> {
-                return 0;
-            }
-        }
+    public void addToInventory(Messenger messenger) {
+        playerHealth.addHealthItem(messenger.getHealingItem());
     }
-    public boolean contains(String item){
-        return playerInventory.itemExists(item);
+    public int movement(int movement, int command, String currentTile, String newTile){
+        return playerMovement.move(movement,currentTile, newTile, command);
     }
 
     public void useHealing(String item){
@@ -92,8 +83,17 @@ public class PlayerController {
     public void sendMessage(String message){
         guiEventListener.UIUpdate(message,0);
     }
-    public void damage(double damage){
-        guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage*(100.00/(100+playerEquipment.getDefence()))),3);
+    public void damage(double damage) {
+        if (damage > 0) {
+            guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage * (100.00 / (100 + playerEquipment.getDefence()))), 3);
+        } else {
+            if (getHealth() < playerHealth.getSecondaryMaxHealth()) {
+                guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage), 3);
+            } else{
+                guiEventListener.UIUpdate("Temporary Health cant be increased farther",0);
+            }
+        }
+
     }
 
 
@@ -120,7 +120,44 @@ public class PlayerController {
     public int getAttack() {
        return playerEquipment.attack();
     }
+    public Weapon getWeapon(){
+        return playerEquipment.getWeapon();
+    }
+
+    public void equipArmor(Armor armor){
+        playerEquipment.setArmor(armor);
+    }
     public void gameOver(){
         guiEventListener.GameOver();
+    }
+
+    @Override
+    public void damage(double damage, int type) {
+        double finalDamage;
+        if(damage*1.25 - playerEquipment.getDefence() > 1){
+            finalDamage = damage*1.25 - playerEquipment.getDefence();
+        } else{
+            finalDamage = 1.0;
+        }
+        guiEventListener.UIUpdate("Monster hits you for: " + finalDamage, 0);
+        damage(finalDamage);
+        if (getHealth() <= 0) {
+            if (getHealing_items() == null) {
+                guiEventListener.GameOver();
+            } else {
+                EmergencyUse();
+            }
+        }
+    }
+    public void equipWeapon(Weapon weapon) {
+        playerEquipment.setWeapon(weapon);
+    }
+    public double getMaxHealth() {
+        return playerHealth.getMaxHealth();
+    }
+
+    public void increaseMaxHealth(double v) {
+        guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(20),3);;
+        playerHealth.increaseMaxHealth(v);
     }
 }

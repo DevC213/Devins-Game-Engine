@@ -1,6 +1,4 @@
 package com.Armor;
 
-public interface Armor {
-    int getDefence();
-    String getName();
+public record Armor(String name, int defence) {
 }

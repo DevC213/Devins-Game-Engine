@@ -1,5 +1,10 @@
 package com.adventure_logic.MapLogic;
 
+import com.Armor.Armor;
+import com.Weapons.Weapon;
+import com.adventure_logic.Messenger;
+import com.recoveryItems.HealingItem;
+
 import java.io.InputStream;
 import java.util.*;
 
@@ -8,6 +13,12 @@ class MapItemController {
 
     private final Map<String, Vector<String>> itemLocation = new HashMap<>();
     private final Map<String, Vector<String>> dItemLocation = new HashMap<>();
+
+    private final Map<String, HealingItem> healingItems = new HashMap<>();
+    private final Map<String,String> itemList = new HashMap<>();
+    private final Map<String, Weapon> weapons = new HashMap<>();
+    private final Map<String, Armor> armor = new HashMap<>();
+
     public MapItemController(String map){
         processItems(map);
     }
@@ -15,22 +26,18 @@ class MapItemController {
     private void processItems(String map){
         InputStream input;
         Scanner reader;
+        int line = 0;
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(map));
             reader = new Scanner(input);
             while (reader.hasNext()) {
-                String[] cordsAndItems = reader.nextLine().split(";");
-                Vector<String> item = new Vector<>();
-                Collections.addAll(item, cordsAndItems[2]);
-                Integer[] coordinates = {Integer.parseInt(cordsAndItems[0]),
-                        Integer.parseInt(cordsAndItems[1])};
-                if (itemLocation.containsKey(coordinates[0] + "."
-                        + coordinates[1])) {
-                    itemLocation.get(coordinates[0] + "."
-                            + coordinates[1]).add(cordsAndItems[2]);
-                } else {
-                    itemLocation.put(coordinates[0] + "." + coordinates[1], item);
+                switch(line){
+                    case 0 -> processArmor(reader.nextLine());
+                    case 1 -> processHealingItems(reader.nextLine());
+                    case 2 -> processWeapons(reader.nextLine());
+                    default -> {}
                 }
+                line++;
             }
         } catch (Exception _) { }
         for(String j: itemLocation.keySet()){
@@ -38,41 +45,83 @@ class MapItemController {
             dItemLocation.put(j, temp);
         }
     }
-    public Vector<String> getItems(final int[] location){
-        if (itemLocation.containsKey(location[0] + "." + location[1])) {
-            return itemLocation.get(location[0] + "." + location[1]);
-        }
-        return null;
+    private void processWeapons(String map){
+        InputStream input;
+        Scanner reader;
+        try{
+            input = Objects.requireNonNull(getClass().getResourceAsStream(map));
+            reader = new Scanner(input);
+            while (reader.hasNext()) {
+                Vector<String> weaponData = new Vector<>(List.of(reader.nextLine().split(";")));
+                weapons.put(weaponData.get(0)+"."+weaponData.get(1),new Weapon(weaponData.get(2), Integer.parseInt(weaponData.get(3))));
+                itemList.put(weaponData.get(2), "weapon");
+            }
+        } catch (Exception _) { }
     }
-    public String grabItem(final int[] location, final String item) {
-        StringBuilder rtnString = new StringBuilder();
-        if (Objects.equals(item.toLowerCase(Locale.ROOT), "all")) {
-            for (String i: itemLocation.get(location[0] + "." + location[1])) {
-                rtnString.append(i).append(",");
-                itemLocation.remove(location[0] + "." + location[1]);
+    private void processArmor(String map){
+        InputStream input;
+        Scanner reader;
+        try{
+            input = Objects.requireNonNull(getClass().getResourceAsStream(map));
+            reader = new Scanner(input);
+            while (reader.hasNext()) {
+                Vector<String> armorData = new Vector<>(List.of(reader.nextLine().split(";")));
+                armor.put(armorData.get(0)+"."+armorData.get(1), new Armor(armorData.get(2), Integer.parseInt(armorData.get(3))));
+                itemList.put(armorData.get(2), "armor");
             }
-            return rtnString.toString();
-        } else if (itemLocation.get(location[0] + "." + location[1]).contains(item)) {
-            rtnString = new StringBuilder(itemLocation.get(location[0] + "." + location[1])
-                    .get(itemLocation.get(location[0] + "." + location[1])
-                            .indexOf(item)));
-            itemLocation.get(location[0] + "." + location[1]).remove(item);
-            if (itemLocation.get(location[0] + "." + location[1]).isEmpty()) {
-                itemLocation.remove(location[0] + "." + location[1]);
+        } catch (Exception _) { }
+    }
+    private void processHealingItems(String map){
+        InputStream input;
+        Scanner reader;
+        try{
+            input = Objects.requireNonNull(getClass().getResourceAsStream(map));
+            reader = new Scanner(input);
+            while (reader.hasNext()) {
+                Vector<String> healingData = new Vector<>(List.of(reader.nextLine().split(";")));
+                healingItems.put(healingData.get(0)+"."+healingData.get(1),new HealingItem(healingData.get(2), Integer.parseInt(healingData.get(3))));
+                itemList.put(healingData.get(2), "healingItem");
             }
-            return rtnString.toString();
-        } else {
-            return null;
-        }
+        } catch (Exception _) { }
+    }
+    public boolean itemsOnTile(final int[] location){
+        if(healingItems.containsKey(location[0]+"."+location[1])){return true;}
+        else if(weapons.containsKey(location[0]+"."+location[1])){return true;}
+        else return armor.containsKey(location[0] + "." + location[1]);
+    }
 
-    }
-    public void addItem(final int[] location, final String item){
-        if (itemLocation.containsKey(location[0] + "." + location[1])) {
-            itemLocation.get(location[0] + "." + location[1]).add(item);
-        } else {
-            itemLocation.put(location[0] + "." + location[1],
-                    new Vector<>(List.of(item)));
-        }
+    public Messenger grabItems(final int[] location, final String item) {
+        Messenger messenger = new Messenger();
+        return switch (itemList.get(item)) {
+            case "weapon" -> {
+                if (Objects.equals(weapons.get(location[0] + "." + location[1]).name(), item)) {
+                    messenger.setWeapon(weapons.get(location[0] + "." + location[1]));
+                    weapons.remove(location[0] + "." + location[1]);
+                } else {
+                    messenger.setMessage("Invalid item");
+                }
+                yield messenger;
+            }
+            case "armor" -> {
+                if (Objects.equals(armor.get(location[0] + "." + location[1]).name(), item)) {
+                    messenger.setArmor(armor.get(location[0] + "." + location[1]));
+                    armor.remove(location[0] + "." + location[1]);
+                } else {
+                    messenger.setMessage("Invalid item");
+                }
+                yield messenger;
+            }
+            case "healingItem" -> {
+                if (Objects.equals(healingItems.get(location[0] + "." + location[1]).getName(), item)) {
+                    messenger.setHealingItem(healingItems.get(location[0] + "." + location[1]));
+                    healingItems.remove(location[0] + "." + location[1]);
+                } else {
+                    messenger.setMessage("Invalid item");
+                }
+                yield messenger;
+            }
+            default -> null;
+        };
     }
     public void resetMap(){
         itemLocation.clear();
@@ -82,4 +131,23 @@ class MapItemController {
         }
     }
 
+
+    public Weapon weaponsOnTile(final int[] location){
+        if (weapons.containsKey(location[0] + "." + location[1])) {
+            return weapons.get(location[0] + "." + location[1]);
+        }
+        return null;
+    }
+    public Armor armorOnTile(int[] location) {
+        if (armor.containsKey(location[0] + "." + location[1])) {
+            return armor.get(location[0] + "." + location[1]);
+        }
+        return null;
+    }
+    public HealingItem healingItemsOnTile(int[] location) {
+        if (healingItems.containsKey(location[0] + "." + location[1])) {
+            return healingItems.get(location[0] + "." + location[1]);
+        }
+        return null;
+    }
 }

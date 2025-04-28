@@ -1,0 +1,4 @@
+/MapData/information/Overworld/Overworld.txt
+/MapData/information/Overworld/Items.txt
+/MapData/information/Overworld/Monsters.txt
+/MapData/information/Overworld/spawnPercentages.txt

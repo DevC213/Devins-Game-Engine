@@ -7,9 +7,7 @@ class PlayerInventory {
 
     private Vector<String> inventory;
 
-    PlayerInventory(){
-        inventory  = new Vector<>(Arrays.asList("brass", "lantern", "rope"));
-    }
+    PlayerInventory(){ inventory  = new Vector<>(); }
     public Vector<String> viewInventory() {
         if (inventory.isEmpty()) {
             return null;
@@ -18,19 +16,14 @@ class PlayerInventory {
     }
 
     public void addToInventory(final String[] items) {
-        for(String i: items) {
-            inventory.add(i);
-        }
-    }
-    public boolean itemExists(final String items) {
-        return inventory.contains(items);
+        inventory.addAll(Arrays.asList(items));
     }
     public void dropItem(final String item) {
         inventory.remove(item);
     }
 
     public void resetInventory(){
-        inventory  = new Vector<>(Arrays.asList("brass", "lantern", "rope"));
+        inventory  = new Vector<>();
     }
 
 }

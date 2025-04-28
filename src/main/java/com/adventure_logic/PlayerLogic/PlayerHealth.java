@@ -7,11 +7,15 @@ import java.util.Objects;
 import java.util.Vector;
 
 class PlayerHealth {
-    private Vector<healingItem> healingItems;
+    private Vector<HealingItem> healingItems;
     private double health;
+    private double maxHealth;
+    private double secondaryMaxHealth;
     public PlayerHealth(){
         health = 100;
-        healingItems = new Vector<>(Arrays.asList(new healingItem("Bread", 10), new healingItem("Health Pot", 20)));
+        maxHealth = 100;
+        secondaryMaxHealth = 150;
+        healingItems = new Vector<>(Arrays.asList(new HealingItem("Bread", 10), new HealingItem("Health Pot", 20)));
     }
     public double UpdateHealth(double change){
         health += change;
@@ -19,13 +23,10 @@ class PlayerHealth {
     }
     public String useHealthItem(String item){
 
-        for (healingItem i: healingItems) {
+        for (HealingItem i: healingItems) {
             if(Objects.equals(i.getName(), item)){
-                if(health == 100){
-                    return "You're at max health!";
-                }
-                if(i.getHealValue() + health > 100){
-                    health = 100;
+                if(health >= maxHealth){
+                    return "Can't consume Healing Item.";
                 }else {
                     health += i.use();
                 }
@@ -37,9 +38,11 @@ class PlayerHealth {
     }
     public void reset(){
         health = 100;
-        healingItems = new Vector<>(Arrays.asList(new healingItem("Bread", 10), new healingItem("Health Pot", 20)));
+        secondaryMaxHealth = 150;
+        maxHealth = 100;
+        healingItems = new Vector<>(Arrays.asList(new HealingItem("Bread", 10), new HealingItem("Health Pot", 20)));
     }
-    public void addHealthItem(healingItem item){
+    public void addHealthItem(HealingItem item){
         healingItems.add(item);
     }
     public StringBuilder getHealing_items() {
@@ -47,7 +50,7 @@ class PlayerHealth {
         if(healingItems.isEmpty()){
             return null;
         } else{
-            for(healingItem i: healingItems){
+            for(HealingItem i: healingItems){
                 rtnString.append(i.getName()).append("\n");
             }
         }
@@ -57,7 +60,18 @@ class PlayerHealth {
         if(healingItems.isEmpty()){
             return;
         }
-        useHealthItem(healingItems.get(0).getName());
+        useHealthItem(healingItems.getFirst().getName());
 
+    }
+    public void increaseMaxHealth(double increase){
+        maxHealth += increase;
+        secondaryMaxHealth += increase;
+    }
+    public double getSecondaryMaxHealth(){
+        return secondaryMaxHealth;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
     }
 }

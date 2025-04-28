@@ -1,0 +1,3 @@
+/MapData/information/TheVoid/cave.txt
+/MapData/information/TheVoid/items.txt
+/MapData/information/TheVoid/Monsters.txt

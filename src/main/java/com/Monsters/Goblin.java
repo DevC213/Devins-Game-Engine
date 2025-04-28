@@ -5,7 +5,7 @@ public class Goblin implements Monster{
     int health;
     int damage;
     String name;
-    int number = 0;
+    int number;
 
 
     public Goblin(int damage, int health, int number) {

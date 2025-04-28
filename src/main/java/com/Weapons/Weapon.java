@@ -1,6 +1,4 @@
 package com.Weapons;
 
-public interface Weapon {
-    String getName();
-    int getDamage();
+public record Weapon (String name, int damage){
 }

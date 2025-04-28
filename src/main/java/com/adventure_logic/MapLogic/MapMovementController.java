@@ -19,6 +19,8 @@ class MapMovementController {
         damageMap.put("&", 7);
         damageMap.put("G", 5);
         damageMap.put("t", 2);
+        damageMap.put("H", -3);
+        damageMap.put("A", -5);
     }
     public boolean getCanCross(final String terrain, final int command){
         switch (command) {

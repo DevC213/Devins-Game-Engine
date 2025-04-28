@@ -29,7 +29,7 @@
         <TextArea fx:id="inventory" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.rowSpan="4" GridPane.vgrow="SOMETIMES" />
         <TextField fx:id="health" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Health: 100</TextField>
         <TextField fx:id="defence" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Defence: 0</TextField>
-        <TextField fx:id="weapon" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES" />
+        <TextField fx:id="weapon" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES" >Copper Sword: 5</TextField>
     </GridPane>
     <stylesheets>
         <URL value="@style.css" />

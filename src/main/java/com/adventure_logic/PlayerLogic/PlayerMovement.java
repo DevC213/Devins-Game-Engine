@@ -1,4 +1,7 @@
 package com.adventure_logic.PlayerLogic;
+import com.adventure_logic.MapLogic.ICanCross;
+import com.adventure_logic.MapLogic.IDoesDamage;
+import com.adventure_logic.MapLogic.IVisibility;
 import com.adventure_logic.MapLogic.MapController;
 
 class PlayerMovement {
@@ -7,7 +10,10 @@ class PlayerMovement {
     private final int maxC;
     private final int maxR;
     PlayerController playerController;
-    MapController mapController;
+    IDoesDamage doesDamage;
+    ICanCross canCross;
+    IVisibility visibility;
+
 
     PlayerMovement(final int c, final int r, final int maxC, final int maxR,
                    PlayerController playerController, MapController mapController) {
@@ -16,19 +22,27 @@ class PlayerMovement {
         this.maxC = maxC;
         this.maxR = maxR;
         this.playerController = playerController;
-        this.mapController = mapController;
-
+        doesDamage = mapController;
+        canCross = mapController;
+        visibility = mapController;
     }
-    public int changeRow(int movement){
-        if ((row < maxR - 1 || row > 0) && playerController.getHealth() > 0) {
-            if(mapController.getMovement(mapController.getMapValue(column, row+movement),2)){
-                row+= movement;
-            } else if (mapController.damage(mapController.getMapValue(column, row+movement)) != 0) {
-                playerController.damage(mapController.damage(mapController.getMapValue(column, row+movement)));
-                playerController.sendMessage("Ouch!");
-            }
-            if (mapController.damage(mapController.getMapValue(column, row)) != 0) {
-                playerController.damage(mapController.damage(mapController.getMapValue(column, row)));
+    public int move(int movement, String currTile, String newTile, int command) {
+        Boolean withinBoundaries = switch(command) {
+            case 1 -> (column < maxC - 1 || column > 0);
+            case 2 -> (row < maxR - 1 || row > 0);
+            default -> false;
+        };
+        if (withinBoundaries && playerController.getHealth() > 0) {
+            double tileDamageNew = doesDamage.effect(newTile);
+            if (canCross.getMovement(newTile, 2)) {
+                if (command == 1){
+                    row += movement;
+                }
+                else{
+                    column += movement;
+                }
+            } else if (tileDamageNew != 0){
+                playerController.damage(tileDamageNew);
                 playerController.sendMessage("Ouch!");
             }
             if (playerController.getHealth() <= 0) {
@@ -39,32 +53,10 @@ class PlayerMovement {
                 }
             }
         }
-
-        return mapController.getVisibility(mapController.getMapValue(column, row));
-    }
-    public int changeColumn(int movement){
-        if ((column < maxC - 1 || column > 0)&& playerController.getHealth() > 0) {
-            if (mapController.getMovement(mapController.getMapValue(column + movement, row),2)) {
-                column += movement;
-
-            } else if (mapController.damage(mapController.getMapValue(column+movement, row)) != 0){
-                playerController.damage(mapController.damage(mapController.getMapValue(column+movement, row)));
-                playerController.sendMessage("Ouch!");
-            }
-            if (mapController.damage(mapController.getMapValue(column, row)) != 0) {
-                playerController.damage(mapController.damage(mapController.getMapValue(column, row)));
-                playerController.sendMessage("Ouch!");
-            }
-            if (playerController.getHealth() <= 0) {
-                if (playerController.getHealing_items() == null) {
-                    playerController.getHealing_items();
-                    playerController.gameOver();
-                } else {
-                    playerController.EmergencyUse();
-                }
-            }
+        if(visibility.getVisibility(newTile) < visibility.getVisibility(currTile)) {
+            playerController.sendMessage("The air is so thick here...");
         }
-        return mapController.getVisibility(mapController.getMapValue(column, row));
+        return visibility.getVisibility(newTile);
     }
     public int[] getCords() {
         return new int[]{column , row};

@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import java.util.Objects;
 
 
-public class Controller implements GuiEventListener {
+public class Controller implements IGuiEventListener {
 
     public TextField health;
     public TextField defence;
@@ -117,6 +117,26 @@ public class Controller implements GuiEventListener {
             case 3 -> health.setText(rtn);
             case 4 -> defence.setText(rtn);
             case 5 -> weapon.setText(rtn);
+            default -> {}
+        }
+    }
+    @Override
+    public void UIUpdate(Messenger message, int box){
+        //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
+        String rtn = message + "\n";
+        switch (box) {
+            case 0 -> {
+                script.appendText(rtn);
+                script.positionCaret(script.getText().length());
+            }
+            case 1 -> {
+                inventory.clear();
+                inventory.appendText(rtn);
+            }
+            case 2 -> cords.setText(rtn);
+            case 3 -> health.setText(rtn);
+            case 4 -> defence.setText(message.getArmor().name() + ": " + message.getArmor().defence());
+            case 5 -> weapon.setText(message.getWeapon().name()+ ": " + message.getWeapon().damage());
             default -> {}
         }
     }
