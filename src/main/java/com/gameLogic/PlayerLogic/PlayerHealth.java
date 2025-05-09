@@ -71,7 +71,4 @@ class PlayerHealth {
         return secondaryMaxHealth;
     }
 
-    public double getMaxHealth() {
-        return maxHealth;
-    }
 }

@@ -14,10 +14,10 @@
                GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" />
     <TextArea fx:id="script"
               editable="false"
-              text="Welcome to Devin's Text Adventure Game press 'start' to begin:"
+              text="Press 'start' to explore the island."
               GridPane.columnIndex="0" GridPane.columnSpan="5"
               GridPane.rowIndex="0" GridPane.rowSpan="4">
-        Welcome to Devin's Text Adventure Game press 'start game' to begin:</TextArea>
+        Press 'start' to explore the island.</TextArea>
 
     <Button fx:id="start" onAction="#gameStart" text="Start" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" maxWidth="Infinity"
             maxHeight="Infinity"/>

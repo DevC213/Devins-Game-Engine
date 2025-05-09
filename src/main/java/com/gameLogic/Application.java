@@ -4,13 +4,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 public class Application extends javafx.application.Application {
-
 
     Adventure adventure;
     @Override
-    public void start(final Stage stage){
+    public void start(final Stage stage) {
         final int defaultV = 700;
         final int defaultV1 = 500;
         adventure = Adventure.getAdventure();
@@ -20,12 +18,10 @@ public class Application extends javafx.application.Application {
         try {
             scene = new Scene(fxmlLoader.load(), defaultV, defaultV1);
             stage.setResizable(false);
-            stage.setTitle("Adventure Game");
+            stage.setTitle("Island Adventure");
             stage.setScene(scene);
             stage.show();
-            adventure.launchGame();
-
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         assert scene != null;

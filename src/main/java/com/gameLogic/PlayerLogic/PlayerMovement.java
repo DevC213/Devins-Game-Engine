@@ -26,21 +26,20 @@ class PlayerMovement {
         canCross = mapController;
         visibility = mapController;
     }
-    public int move(int movement, String currTile, String newTile, int command) {
-        Boolean withinBoundaries = switch(command) {
-            case 1 -> (column < maxC - 1 || column > 0);
-            case 2 -> (row < maxR - 1 || row > 0);
-            default -> false;
-        };
+    public int move(int deltaX, int deltaY, String currTile, String newTile) {
+        boolean withinBoundaries;
+        if(deltaX != 0){
+            withinBoundaries = (column < maxC  || column > 0);
+        }else if(deltaY != 0){
+            withinBoundaries = (row < maxR || row > 0);
+        } else{
+            withinBoundaries = false;
+        }
         if (withinBoundaries && playerController.getHealth() > 0) {
             double tileDamageNew = doesDamage.effect(newTile);
             if (canCross.getMovement(newTile, 2)) {
-                if (command == 1){
-                    row += movement;
-                }
-                else{
-                    column += movement;
-                }
+                row += deltaY;
+                column += deltaX;
             } else if (tileDamageNew != 0){
                 playerController.damage(tileDamageNew);
                 playerController.sendMessage("PLayer: Ouch!");
@@ -69,8 +68,12 @@ class PlayerMovement {
     public int[] getRCords() {
         return new int[]{column - maxC/2, -(row - maxR/2)};
     }
-    public void resetLocation(){
-        column = 0;
-        row = 0;
+    public void resetLocation(int[] coords) {
+        column = coords[0];
+        row = coords[1];
+    }
+
+    public int checkVisability(String tile){
+        return visibility.getVisibility(tile);
     }
 }

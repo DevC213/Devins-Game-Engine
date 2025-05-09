@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import java.util.Objects;
 
 
-public class Controller implements IGuiEventListener {
+public class Controller implements IGuiEventListener, IGuiCommandGetter {
 
     public TextField health;
     public TextField defence;
@@ -57,7 +57,7 @@ public class Controller implements IGuiEventListener {
                     miniMap.add(img,i,j);
                 }
             }
-            adventure.setController(this);
+            adventure.startGame(this);
             activated = true;
         }
         activateFields();
@@ -83,7 +83,7 @@ public class Controller implements IGuiEventListener {
         script.clear();
         if(victory){
             script.appendText("""
-                    You have managed to free this island and its inhabitants from the Void's avatar.
+                    You have managed to free this island and its inhabitants from the Void's Avatar.
                     Congratulations!
                     
                     Thank you for playing my game. Press start to begin again.""");
@@ -107,7 +107,6 @@ public class Controller implements IGuiEventListener {
     public void clearInput() {
         commandInput.clear();
     }
-
     @Override
     public void UIUpdate(String message, int box){
         //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
@@ -186,8 +185,7 @@ public class Controller implements IGuiEventListener {
     public String getCommand() {
         return commandInput.getText();
     }
-    public void setFocus(){
-        commandInput.requestFocus();
+    public void scroll(){
+        script.positionCaret(0);
     }
-
 }

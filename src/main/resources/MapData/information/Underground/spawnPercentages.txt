@@ -1,0 +1,4 @@
+Zombie;40;10;10;
+Skeleton;40;8;8;
+Goblin;10;5;15;
+Snake;10;5;15;

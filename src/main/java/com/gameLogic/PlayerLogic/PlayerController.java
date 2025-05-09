@@ -53,8 +53,8 @@ public class PlayerController implements PlayerDamageListener{
     public void addToInventory(Messenger messenger) {
         playerHealth.addHealthItem(messenger.getHealingItem());
     }
-    public int movement(int movement, int command, String currentTile, String newTile){
-        return playerMovement.move(movement,currentTile, newTile, command);
+    public int movement(int deltaX, int deltaY, String currentTile, String newTile){
+        return playerMovement.move(deltaX,deltaY,currentTile,newTile);
     }
 
     public void useHealing(String item){
@@ -111,8 +111,8 @@ public class PlayerController implements PlayerDamageListener{
         return playerHealth.getHealing_items();
     }
 
-    public void resetPlayer(){
-        playerMovement.resetLocation();
+    public void resetPlayer(int[] coords) {
+        playerMovement.resetLocation(coords);
         playerHealth.reset();
         playerInventory.resetInventory();
         playerEquipment.Reset();
@@ -156,12 +156,8 @@ public class PlayerController implements PlayerDamageListener{
     public void equipWeapon(Weapon weapon) {
         playerEquipment.setWeapon(weapon);
     }
-    public double getMaxHealth() {
-        return playerHealth.getMaxHealth();
-    }
-
     public void increaseMaxHealth(double v) {
-        guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(20),3);;
+        guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(20),3);
         playerHealth.increaseMaxHealth(v);
     }
     public void toggleGameOver() {

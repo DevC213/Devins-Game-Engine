@@ -112,6 +112,10 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
     }
     public String getImage(final String terrain) {
         return maps.getFirst().getImage(terrain,level);}
+    public String getPlayerImage(int direction){
+        return maps.getFirst().getPlayerImage(direction);
+    }
+
     public boolean getItems(final int[] location) {return items.get(level).itemsOnTile(location);}
     public StringBuilder itemList(final int[] location){
         Weapon weapons = getWeapons(location);
@@ -157,4 +161,28 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
     public int getLevel(){
         return level;
     }
+
+    public int[] generateValidStartPosition() {
+        int[] startingCords = {(int) Math.floor(Math.random() * getCords()[1]), (int) Math.floor(Math.random() * getCords()[0])};
+        while (!validStart(startingCords)) {
+            startingCords = new int[]{(int) Math.floor(Math.random() * getCords()[1]), (int) Math.floor(Math.random() * getCords()[0])};
+        }
+        if (getVisibility(getMapValue(startingCords[0], startingCords[1]) ) != 2){
+            guiEventListener.UIUpdate("Player: The air is thick here",0);
+        }
+        return startingCords;
+    }
+    private boolean validStart(int[] cords){
+
+        if(mapMovementController.isCave(maps.get(level).getMapValue(cords[0],cords[1]))){
+            return false;
+        } else if(mapMovementController.isLadder(maps.get(level).getMapValue(cords[0],cords[1]))) {
+            return false;
+        } else if(isMonsterOnTile(cords)){
+            return false;
+        } else if(effect(maps.get(level).getMapValue(cords[0],cords[1])) != 0) {
+            return false;
+        }
+        return mapMovementController.getCanCross(maps.get(level).getMapValue(cords[0],cords[1]),2);
+    };
 }

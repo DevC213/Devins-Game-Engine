@@ -12,7 +12,7 @@ public class Main {
             System.setOut(out);
             System.setErr(out);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }

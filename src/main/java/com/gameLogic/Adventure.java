@@ -2,7 +2,7 @@ package com.gameLogic;
 
 /* Todo:
        Medium priority:
-            Create more items, and enemies
+            Create more items
             Create bigger maps
         Low Priority:
             Cleanup warnings
@@ -23,17 +23,13 @@ public class Adventure {
         return adventure;
     }
 
-    public void setController(final Controller control) {
-        gameController.setController(control);
+    public void startGame(final Controller control) {
+        gameController = new GameController(control);
     }
 
     //Game progression controls
     public void intro() {
         gameController.intro();
-    }
-    public void launchGame() {
-        gameController = new GameController();
-        gameController.launchGame(new Controller());
     }
     public void resetGame(){
         gameController.resetGame();

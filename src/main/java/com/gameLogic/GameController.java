@@ -3,9 +3,7 @@ package com.gameLogic;
 import com.gameLogic.MapLogic.MapController;
 import com.gameLogic.PlayerLogic.PlayerController;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 
 public class GameController implements IUpdateMinimap, IUpdateGame {
 
@@ -18,20 +16,28 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private CommandProcessor commandProcessor;
     private ScriptController scriptController;
 
-    private final Vector<String> directions = new Vector<>(List.of("LEFT", "RIGHT", "UP", "DOWN"));
+    enum TileStatus {NEUTRAL, HEALING, DAMAGING}
+    private TileStatus tileStatus = TileStatus.NEUTRAL;
+    enum Movement{LEFT, RIGHT, UP, DOWN;
+        public static Movement getmovement(String string){
+            try {
+                return Movement.valueOf(string.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
     private int moves = 0;
     private int deepestLevel = 0;
-    private boolean healingTile = false;
-    private boolean damagingTile = false;;
 
     public GameController() {
     }
-
-    public void setController(Controller controller) {
+    public GameController(Controller controller) {
         scriptController = new ScriptController();
         this.controller = controller;
         this.mapController = new MapController("/MapData/mapDataLocations.txt", this.controller);
-        this.playerController = new PlayerController(0, 0,
+        int[] startingCords = mapController.generateValidStartPosition();
+        this.playerController = new PlayerController(startingCords[0], startingCords[1],
                 mapController.getCords()[1], mapController.getCords()[0], this.controller, mapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
@@ -39,46 +45,49 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         commandProcessor = new CommandProcessor(controller, mapController,
                 playerController, this, this, combatSystem, inventoryManager);
 
-    }//Command processing
+    }
     public void handleInput(String keyPressed) {
         if(playerController.isGameOver()){return;}
         commandProcessor.handleKeyInput(keyPressed);
-        if (directions.contains(keyPressed)) {
+        Movement move = Movement.getmovement(keyPressed);
+        if (move != null) {
             moves++;
             spawnMonster();
             checkForMonsters();
         }
     }
-
-
     public void newGame() {
-        playerController.resetPlayer();
+        int[] startingCords = mapController.generateValidStartPosition();
+        playerController.resetPlayer(startingCords);
         mapController.setLevel(0);
         mapController.resetMap();
-        updateGameInfo();
+        intro();
         uiMapController.setVisibility(2);
+        uiMapController.setDirection(0);
         controller.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
         if(playerController.isGameOver()){playerController.toggleGameOver();}
     }
     public void intro() {
         controller.UIUpdate("""
-                Upon landing on this strange island, you hear a strange voice calling from the caves below.
-                After hearing the voice you feel a chill go down you back, something isn't right!.
+                Upon awaking on this strange island
+                you hear a strange voice calling from the caves below.
+                After hearing the voice you feel a chill go down you back,
+                something isn't right!
                 """, 0);
         renderMinimap();
         controller.UIUpdate("""                                                        
-                Enter Take or Drop to pickup or drop item.
-                Then press enter. Use z to enter cave, and x
-                to climb ladder, an v to attack.
+                Press B, then take to pick-up item.
+                Then enter item name ot pick up item.
+                
+                Use z to enter cave, and x to climb ladder,
+                and press v to attack.
                 
                 Use arrow keys for movement, Inventory is on
                 Side of map.
                 """, 0);
         controller.clearInput();
-    }
-    public void launchGame(Controller controller) {
-        controller.UIUpdate("Welcome to Devin's adventure"
-                + "Game press 'start game' to begin:\n", 0);
+        updateGameInfo();
+        controller.scroll();
     }
     public void resetGame() {
         newGame();
@@ -97,6 +106,18 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         uiMapController.setVisibility(visibility);
     }
     @Override
+    public void setDirection(int deltaX, int deltaY) {
+        if(deltaY > 0){
+            uiMapController.setDirection(0);
+        }else if(deltaY < 0){
+            uiMapController.setDirection(3);
+        } else if(deltaX > 0){
+            uiMapController.setDirection(2);
+        } else{
+            uiMapController.setDirection(1);
+        }
+    }
+    @Override
     public void updateGameInfo() {
         if(playerController.isGameOver()){return;}
         controller.UIUpdate(java.util.Arrays.toString(playerController.getRCords()), 2);
@@ -110,26 +131,22 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         checkTileEffect(effect);
         inventoryManager.updateInventoryDisplay();
         healthIncrease(mapController.getLevel());
-
     }
 
     //checking map
     private void checkTileEffect(double effect) {
         if (effect > 0) {
-            if (!damagingTile) {
+            if (tileStatus != TileStatus.HEALING) {
                 controller.UIUpdate("Player: It hurts walking here.", 0);
-                damagingTile = true;
-                healingTile = false;
+                tileStatus = TileStatus.HEALING;
             }
         } else if (effect < 0) {
-            if (!healingTile) {
+            if (tileStatus != TileStatus.DAMAGING) {
                 controller.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
-                healingTile = true;
-                damagingTile = false;
+                tileStatus = TileStatus.DAMAGING;
             }
         } else {
-            healingTile = false;
-            damagingTile = false;
+            tileStatus = TileStatus.NEUTRAL;
         }
         if (effect != 0) {
             playerController.damage(effect);
@@ -177,7 +194,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             deepestLevel = level;
             String script = scriptController.script(level);
             if(script != null) {
-                controller.UIUpdate(scriptController.script(level), 0);
+                controller.UIUpdate(script, 0);
             }
         }
     }

@@ -5,5 +5,4 @@ public interface IGuiEventListener {
     void UIUpdate(Messenger messenger, int box);
     void GameOver(boolean victory);
     void clearInput();
-
 }
