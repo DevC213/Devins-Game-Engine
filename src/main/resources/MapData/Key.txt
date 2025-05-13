@@ -2,7 +2,7 @@
 M;mountain;/MapPics/mountain.png;yes;2
 f;forest;/MapPics/forest.png;yes;2
 ~;water;water.png;yes;2
-*;goal;/MapPics/treasure.png;yes;2
+GOAL;goal;/MapPics/treasure.png;yes;2
 -;out;/MapPics/out.png;no;2
 l;lava;/MapPics/lava.png;no;0
 =;deep Water;/MapPics/deepWater.png;no;2
@@ -10,9 +10,9 @@ b;beach;/MapPics/beach.png;yes;2
 1;person;/MapPics/player.png;yes;2
 c;cave;cave.png;yes;2
 r;rocks;stone.png;yes;2
-s;bigRocks;/MapPics/bigRocks.png;no;2
+s;bigRocks;bigRocks.png;no;2
 j;chest;/MapPics/chest.png;yes;2
-g;gravel;/MapPics/gravel.png;yes;2
+g;smallRocks;smallRocks.png;yes;2
 e;ladder;ladder.png;yes;2
 d;desert;/MapPics/desert.png;yes;2
 ?;unknown;/MapPics/unknown.png;yes;2
@@ -33,3 +33,7 @@ A;ancientSpring;/MapPics/ancientSpring.png;yes;2
 F;voidFlux;/MapPics/voidFlux.png;yes;2
 V;void;/MapPics/void.png;yes;0
 q;savannah;/MapPics/savanna.png;yes;2
+|;minecartTrack;/MapPics/minecartTrack.png;yes;2
+{semi};cloud;/MapPics/stormCloud.png;yes;1
+<;undergroundStream;/MapPics/undergroundStream.png;yes;2
+>;undergroundSpring;/MapPics/undergroundSpring.png;yes;2

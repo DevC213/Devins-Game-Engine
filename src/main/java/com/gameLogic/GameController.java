@@ -53,7 +53,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         if (move != null) {
             moves++;
             spawnMonster();
-            checkForMonsters();
         }
     }
     public void newGame() {
@@ -124,7 +123,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         checkForItems();
         checkForMonsters();
         String image = mapController.getMapValue(playerController.getCoords()[0], playerController.getCoords()[1]);
-        if(Objects.equals(image, "*")) {
+        if(Objects.equals(image, "GOAL")) {
             Victory();
         }
         double effect = tileEffect(playerController.getCoords());
@@ -136,14 +135,14 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     //checking map
     private void checkTileEffect(double effect) {
         if (effect > 0) {
-            if (tileStatus != TileStatus.HEALING) {
+            if (tileStatus != TileStatus.DAMAGING) {
                 controller.UIUpdate("Player: It hurts walking here.", 0);
-                tileStatus = TileStatus.HEALING;
+                tileStatus = TileStatus.DAMAGING;
             }
         } else if (effect < 0) {
-            if (tileStatus != TileStatus.DAMAGING) {
+            if (tileStatus != TileStatus.HEALING) {
                 controller.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
-                tileStatus = TileStatus.DAMAGING;
+                tileStatus = TileStatus.HEALING;
             }
         } else {
             tileStatus = TileStatus.NEUTRAL;

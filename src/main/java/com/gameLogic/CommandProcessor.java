@@ -75,6 +75,7 @@ public class CommandProcessor{
             return;
         }
         handleAction(keyPressed);
+        controller.clearInput();
     }
 
     private void handleAction(String keyPressed){
@@ -84,7 +85,6 @@ public class CommandProcessor{
         } else if (Objects.equals(keyPressed, "ENTER")) {
             handleTextCommand(commandGetter.getCommand());
         }
-        controller.clearInput();
         updateGame.updateGameInfo();
     }
 
@@ -103,7 +103,6 @@ public class CommandProcessor{
         if (mapController.getMonsters(playerController.getCoords()) == null) {
             controller.UIUpdate("No monster on tile", 0);
             commandState = CommandState.NONE;
-            controller.clearInput();
             return;
         }
         controller.UIUpdate("Which monster?", 0);
