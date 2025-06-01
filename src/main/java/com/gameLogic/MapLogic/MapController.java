@@ -101,6 +101,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
     public int getVisibility(final String terrain){
         return mapMovementController.getVisibility(terrain);
     }
+
     public boolean isLadder(final String terrain){
         return mapMovementController.isLadder(terrain);
     }

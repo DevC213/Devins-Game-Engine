@@ -8,9 +8,7 @@ import java.util.Vector;
 
 public class Messenger {
     private String message;
-    private Vector<String> payloadString;
     private Vector<Double> payloadDouble;
-    private boolean gameOver = false;
     private Weapon weapon;
     private Armor armor;
     private HealingItem healingItem;
@@ -22,9 +20,6 @@ public class Messenger {
     public Messenger(String message) {
         this.message = message;
     }
-    public void addPayloadS(Vector<String> payload){
-        this.payloadString = payload;
-    }
     public void addPayloadD(Vector<Double> payload){
         payloadDouble = payload;
     }
@@ -34,19 +29,9 @@ public class Messenger {
     public String getMessage() {
         return message;
     }
-    public Vector<String> getPayloadS() {
-        return payloadString;
-    }
     public Vector<Double> getPayloadD() {
         return payloadDouble;
     }
-    public void gameOver() {
-        gameOver = true;
-    }
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
     public Armor getArmor() {
         return armor;
     }

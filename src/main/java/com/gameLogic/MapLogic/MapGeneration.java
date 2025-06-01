@@ -11,12 +11,8 @@ class MapGeneration {
     private Vector<Vector<String>> MapData;
     private final Map<Integer,String> multiFileMap = new HashMap<>();
     private final Vector<String> multiFileTiles = new Vector<>(List.of(
-            "e",
-            "r",
-            "c",
-            "~",
-            "s",
-            "g"
+            "e", "r", "c",
+            "~", "s","g"
     ));
     private final Map<Integer,String> playerTiles = new HashMap<>();
 

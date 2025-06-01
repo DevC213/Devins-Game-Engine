@@ -74,16 +74,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
                 something isn't right!
                 """, 0);
         renderMinimap();
-        controller.UIUpdate("""                                                        
-                Press B, then take to pick-up item.
-                Then enter item name ot pick up item.
-                
-                Use z to enter cave, and x to climb ladder,
-                and press v to attack.
-                
-                Use arrow keys for movement, Inventory is on
-                Side of map.
-                """, 0);
         controller.clearInput();
         updateGameInfo();
         controller.scroll();
