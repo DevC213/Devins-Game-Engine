@@ -131,7 +131,6 @@ public class CommandProcessor{
         }
         return true;
     }
-
     private void handleTextCommand(String command) {
         if (commandState == CommandState.NONE) {
             handleInventoryCommands(command);
@@ -177,6 +176,7 @@ public class CommandProcessor{
                 String message = combatSystem.attack(mapController.attackMonsters(command,
                         playerController.getAttack(), playerController.getCoords())).getMessage();
                 if (message != null) {
+                    playerController.monsterKilled();
                     controller.UIUpdate(message, 0);
                 }
                 combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getCoords()));

@@ -180,6 +180,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         if (level > deepestLevel) {
             controller.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
             playerController.increaseMaxHealth(25 * level);
+            playerController.increaseLevel();
             deepestLevel = level;
             String script = scriptController.script(level);
             if(script != null) {

@@ -124,10 +124,16 @@ class MapGeneration {
     private void checkLengths(Vector<Vector<String>> vec){
         int expectedLength = vec.getFirst().size();
         for(int i = 1; i < vec.size(); i++){
-            if(vec.get(i).size() != expectedLength){
-                throw new Error("Lengths do not match. " + "Row: " + i + " is not the same. Needs: " + (expectedLength - vec.get(i).size())
-                        + " More tiles in map file.");
+            if(vec.get(i).size() < expectedLength){
+                while(vec.get(i).size() < expectedLength){
+                    vec.get(i).add(vec.get(i).getLast());
+                }
+            }else{
+                while(vec.get(i).size() > expectedLength){
+                    vec.get(i).removeLast();
+                };
             }
+
         }
     }
     public String getImage(final String terrain, int level) {

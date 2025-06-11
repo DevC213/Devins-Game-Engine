@@ -17,6 +17,10 @@ public class PlayerController implements PlayerDamageListener{
     PlayerEquipment playerEquipment;
     PlayerHealth playerHealth;
     PlayerInventory playerInventory;
+    double monstersKilled = 0;
+    int playerLevel = 1;
+    int mapLevel = 0;
+    double levelUp = 5;
     private final IGuiEventListener guiEventListener;
     boolean gameOver = false;
     /**
@@ -160,11 +164,25 @@ public class PlayerController implements PlayerDamageListener{
         guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(20),3);
         playerHealth.increaseMaxHealth(v);
     }
+
     public void toggleGameOver() {
         gameOver = !gameOver;
     }
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public void monsterKilled(){
+        monstersKilled = monstersKilled + (1 + Math.floor(1.5 * mapLevel));
+        if(monstersKilled >= levelUp){
+            increaseMaxHealth((playerHealth.getSecondaryMaxHealth() * 0.1));
+            guiEventListener.UIUpdate("You gain more confidence, and can withstand more",0);
+            playerLevel++;
+            levelUp*=1.5;
+        }
+    }
+    public void increaseLevel(){
+        mapLevel++;
     }
 }

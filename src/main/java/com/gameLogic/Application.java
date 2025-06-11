@@ -45,20 +45,20 @@ public class Application extends javafx.application.Application {
         alert.setHeaderText("How to Play: ");
         alert.setContentText(
                 """
-                Press B then enter item name ot pick up item.
+                Press B then enter item name to pick up item.
                 Press C then enter name of healing item to use.
-                Press V to attack then monster name.
+                Press V to attack, and then enter monster name.
                
                 Press enter after item or monster name.
                 
-                If multiple monsters of same name enter name + number,
-                ex: Zombie #2, or Goblin #4
+                If multiple monsters of the same name are on tile:
+                Enter name + number, ex: Zombie #2, or Goblin #4.
                 
                 Use Z to enter cave, and X to climb ladder.
                 Use arrow keys for movement.
                 
                 Player information is on the side of map.
-                Max health increases each level.
+                Max health increases each level you descend.
      
                 Press F1 to view again.
                 """
