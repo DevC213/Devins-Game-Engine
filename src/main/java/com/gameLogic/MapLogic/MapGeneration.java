@@ -1,5 +1,6 @@
 package com.gameLogic.MapLogic;
 
+import com.gameLogic.Coordinates;
 import com.gameLogic.TileKey;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -9,7 +10,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.*;
 
-class MapGeneration {
+public class MapGeneration {
 
     private final static Map<String, TileKey> tileKey= new HashMap<>();
     private int columns;
@@ -146,7 +147,7 @@ class MapGeneration {
     public String getPlayerImage(int direction){
         return playerTiles.get(direction);
     }
-    public int[] getColumnsAndRows(){return new int[]{rows,columns}; }
+    public Coordinates getColumnsAndRows(){return new Coordinates(columns,rows);}
     public String getMapValue(final int c, final int r) {
         if (c < 0 || r < 0 || c >= columns|| r >= rows) {
             return "-";

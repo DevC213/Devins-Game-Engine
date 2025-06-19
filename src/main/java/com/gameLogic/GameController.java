@@ -36,9 +36,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         scriptController = new ScriptController();
         this.controller = controller;
         this.mapController = new MapController("/MapData/mapDataLocations.txt", this.controller);
-        int[] startingCords = mapController.generateValidStartPosition();
-        this.playerController = new PlayerController(startingCords[0], startingCords[1],
-                mapController.getCoordinates()[1], mapController.getCoordinates()[0], this.controller, mapController);
+        Coordinates startingCords = mapController.generateValidStartPosition();
+        this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller, mapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
         uiMapController = new UIMapController();
@@ -56,7 +55,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
     public void newGame() {
-        int[] startingCords = mapController.generateValidStartPosition();
+        Coordinates startingCords = mapController.generateValidStartPosition();
         playerController.resetPlayer(startingCords);
         mapController.setLevel(0);
         mapController.resetMap();
@@ -81,7 +80,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public void resetGame() {
         newGame();
         controller.UIUpdate("Health: " + playerController.getHealth(), 3);
-        String cordOrigins = "[" + (-mapController.getCoordinates()[1] / 2) + (-mapController.getCoordinates()[0] / 2) + "]";
+        String cordOrigins = "[" + (-mapController.getCoordinates().x() / 2) + (-mapController.getCoordinates().y() / 2) + "]";
         controller.UIUpdate(cordOrigins, 2);
     }
 
@@ -109,10 +108,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     @Override
     public void updateGameInfo() {
         if(playerController.isGameOver()){return;}
-        controller.UIUpdate(java.util.Arrays.toString(playerController.getRCords()), 2);
+        controller.UIUpdate("(" + playerController.getRCords().x() + "," + playerController.getRCords().y() + ")", 2);
         checkForItems();
         checkForMonsters();
-        String image = mapController.getMapValue(playerController.getCoords()[0], playerController.getCoords()[1]);
+        String image = mapController.getMapValue(playerController.getCoords());
         if(Objects.equals(image, "GOAL")) {
             Victory();
         }
@@ -173,8 +172,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
 
-    public double tileEffect(int[] location) {
-        return mapController.effect(mapController.getMapValue(location[0], location[1]));
+    public double tileEffect(Coordinates location) {
+        return mapController.getHealthDelta(mapController.getMapValue(location));
     }
     public void healthIncrease(int level) {
         if (level > deepestLevel) {

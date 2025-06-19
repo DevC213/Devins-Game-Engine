@@ -2,6 +2,7 @@ package com.gameLogic.MapLogic;
 
 import com.Armor.Armor;
 import com.Weapons.Weapon;
+import com.gameLogic.Coordinates;
 import com.gameLogic.Messenger;
 import com.recoveryItems.HealingItem;
 
@@ -13,17 +14,15 @@ class MapItemController {
 
 
     private final Map<String,String> itemList = new HashMap<>();
-    private final Map<Point2D, HealingItem> healingItemsP = new HashMap<>();
-    private final Map<Point2D, Weapon> weaponsP = new HashMap<>();
-    private final Map<Point2D, Armor> armorP = new HashMap<>();
+    private final Map<Point2D, HealingItem> healingItems = new HashMap<>();
+    private final Map<Point2D, Weapon> weapons = new HashMap<>();
+    private final Map<Point2D, Armor> armor = new HashMap<>();
     private final String itemFile;
-    private final int[] mapSize;
-
     Point2D point2D = new Point2D.Double();
-
-    public MapItemController(String map, int[] mapSize){
+    Point2D maxCords = new Point2D.Double();
+    public MapItemController(String map, Coordinates coordinates){
         itemFile = map;
-        this.mapSize = mapSize;
+        maxCords.setLocation(coordinates.x(),coordinates.y());
         processItems(itemFile);
     }
 
@@ -58,7 +57,7 @@ class MapItemController {
                 Vector<String> weaponData = new Vector<>(List.of(reader.nextLine().split(";")));
                 point2D.setLocation(Double.parseDouble(weaponData.get(0)),Double.parseDouble(weaponData.get(1)));
                 //weapons.put(weaponData.get(0)+"."+weaponData.get(1),new Weapon(weaponData.get(2), Integer.parseInt(weaponData.get(3))));
-                weaponsP.put(point2D,new Weapon(weaponData.get(2), Integer.parseInt(weaponData.get(3))));
+                weapons.put(point2D,new Weapon(weaponData.get(2), Integer.parseInt(weaponData.get(3))));
                 itemList.put(weaponData.get(2), "weapon");
             }
         } catch (Exception _) { }
@@ -73,7 +72,7 @@ class MapItemController {
                 point2D = new Point2D.Double();
                 Vector<String> armorData = new Vector<>(List.of(reader.nextLine().split(";")));
                 point2D.setLocation(Double.parseDouble(armorData.get(0)),Double.parseDouble(armorData.get(1)));
-                armorP.put(point2D,new Armor(armorData.get(2), Integer.parseInt(armorData.get(3))));
+                armor.put(point2D,new Armor(armorData.get(2), Integer.parseInt(armorData.get(3))));
                 itemList.put(armorData.get(2), "armor");
             }
         } catch (Exception _) { }
@@ -89,48 +88,48 @@ class MapItemController {
                 Vector<String> healingData = new Vector<>(List.of(reader.nextLine().split(";")));
 
                 if(healingData.size() == 2){
-                    point2D.setLocation(Math.floor(Math.random()*mapSize[0]),Math.floor(Math.random()*mapSize[1]));
+                    point2D.setLocation(Math.floor(Math.random()* maxCords.getX()),Math.floor(Math.random()*maxCords.getY()));
                 } else {
                     point2D.setLocation(Double.parseDouble(healingData.get(0)),Double.parseDouble(healingData.get(1)));
                 }
-                healingItemsP.put(point2D,new HealingItem(healingData.get(healingData.size()/2), Integer.parseInt(healingData.get(1+healingData.size()/2))));
+                healingItems.put(point2D,new HealingItem(healingData.get(healingData.size()/2), Integer.parseInt(healingData.get(1+healingData.size()/2))));
                 itemList.put(healingData.get(2), "healingItem");
             }
         } catch (Exception _) { }
     }
-    public boolean itemsOnTile(final int[] location){
-        point2D = new Point2D.Double(location[0],location[1]);
-        if(healingItemsP.containsKey(point2D)){return true;}
-        else if(weaponsP.containsKey(point2D)){return true;}
-        else return armorP.containsKey(point2D);
+    public boolean itemsOnTile(Coordinates location){
+        point2D = new Point2D.Double(location.x(),location.y());
+        if(healingItems.containsKey(point2D)){return true;}
+        else if(weapons.containsKey(point2D)){return true;}
+        else return armor.containsKey(point2D);
     }
 
-    public Messenger grabItems(final int[] location, final String item) {
+    public Messenger grabItems(Coordinates location, final String item) {
         Messenger messenger = new Messenger();
-        point2D = new Point2D.Double(location[0],location[1]);
+        point2D = new Point2D.Double(location.x(),location.y());
         return switch (itemList.get(item)) {
             case "weapon" -> {
-                if (Objects.equals(weaponsP.get(point2D).name(), item)) {
-                    messenger.setWeapon(weaponsP.get(point2D));
-                    weaponsP.remove(point2D);
+                if (Objects.equals(weapons.get(point2D).name(), item)) {
+                    messenger.setWeapon(weapons.get(point2D));
+                    weapons.remove(point2D);
                 } else {
                     messenger.setMessage("Invalid item");
                 }
                 yield messenger;
             }
             case "armor" -> {
-                if (Objects.equals(armorP.get(point2D).name(), item)) {
-                    messenger.setArmor(armorP.get(point2D));
-                    armorP.remove(point2D);
+                if (Objects.equals(armor.get(point2D).name(), item)) {
+                    messenger.setArmor(armor.get(point2D));
+                    armor.remove(point2D);
                 } else {
                     messenger.setMessage("Invalid item");
                 }
                 yield messenger;
             }
             case "healingItem" -> {
-                if (Objects.equals(healingItemsP.get(point2D).getName(), item)) {
-                    messenger.setHealingItem(healingItemsP.get(point2D));
-                    healingItemsP.remove(point2D);
+                if (Objects.equals(healingItems.get(point2D).getName(), item)) {
+                    messenger.setHealingItem(healingItems.get(point2D));
+                    healingItems.remove(point2D);
                 } else {
                     messenger.setMessage("Invalid item");
                 }
@@ -140,31 +139,31 @@ class MapItemController {
         };
     }
     public void resetMap(){
-        healingItemsP.clear();
-        weaponsP.clear();
-        armorP.clear();
+        healingItems.clear();
+        weapons.clear();
+        armor.clear();
         processItems(itemFile);
     }
 
 
-    public Weapon weaponsOnTile(final int[] location){
-        point2D = new Point2D.Double(location[0],location[1]);
-        if (weaponsP.containsKey(point2D)) {
-            return weaponsP.get(point2D);
+    public Weapon weaponsOnTile(Coordinates location){
+        point2D = new Point2D.Double(location.x(),location.y());
+        if (weapons.containsKey(point2D)) {
+            return weapons.get(point2D);
         }
         return null;
     }
-    public Armor armorOnTile(int[] location) {
-        point2D = new Point2D.Double(location[0],location[1]);
-        if (armorP.containsKey(point2D)) {
-            return armorP.get(point2D);
+    public Armor armorOnTile(Coordinates location) {
+        point2D = new Point2D.Double(location.x(),location.y());
+        if (armor.containsKey(point2D)) {
+            return armor.get(point2D);
         }
         return null;
     }
-    public HealingItem healingItemsOnTile(int[] location) {
-        point2D = new Point2D.Double(location[0],location[1]);
-        if (healingItemsP.containsKey(point2D)) {
-            return healingItemsP.get(point2D);
+    public HealingItem healingItemsOnTile(Coordinates location) {
+        point2D = new Point2D.Double(location.x(),location.y());
+        if (healingItems.containsKey(point2D)) {
+            return healingItems.get(point2D);
         }
         return null;
     }

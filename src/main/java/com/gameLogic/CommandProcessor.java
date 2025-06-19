@@ -31,8 +31,8 @@ public class CommandProcessor{
             "C", this::healing,
             "V", this::attack,
             "B", this::grabItem,
-            "X", () -> traverseLevels(1),
-            "Z", () -> traverseLevels(-1)
+            "X", () -> traverseLevels(-1),
+            "Z", () -> traverseLevels(1)
     );
     private boolean escape = false;
     IGuiEventListener controller;
@@ -89,7 +89,7 @@ public class CommandProcessor{
     private void grabItem() {
         commandState = CommandState.TAKE;
         controller.clearInput();
-        if (!mapController.getItems(playerController.getCoords())) {
+        if (!mapController.itemsOnTile(playerController.getCoords())) {
             controller.UIUpdate("No items on tile", 0);
             commandState = CommandState.NONE;
             return;
@@ -185,7 +185,7 @@ public class CommandProcessor{
     private void moveOnLevel(Movement movement) {
         int deltaX;
         int deltaY;
-        int[] playerCoords = playerController.getCoords();
+        Coordinates playerCoords = playerController.getCoords();
         switch (movement) {
             case LEFT -> {
                 deltaX = -1;
@@ -206,20 +206,17 @@ public class CommandProcessor{
             default -> { return;}
         }
         updateMinimap.setVisibility(playerController.movement(deltaX, deltaY,
-                mapController.getMapValue(playerCoords[0], playerCoords[1]),
-                mapController.getMapValue(playerCoords[0] + deltaX, playerCoords[1] + deltaY)));
+                mapController.getMapValue(playerCoords),
+                mapController.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
         updateMinimap.setDirection(deltaX, deltaY);
         updateMinimap.renderMinimap();
     }
     public void traverseLevels(int dir) {
-        if (mapController.getMovement(mapController.getMapValue(playerController.getCoords()[0],
-                playerController.getCoords()[1]))) {
-            if (dir < 0 && mapController.isCave(mapController.getMapValue(playerController.getCoords()[0],
-                    playerController.getCoords()[1]))) {
+        if (mapController.isWalkable(mapController.getMapValue(playerController.getCoords()))) {
+            if (dir > 0 && mapController.isCave(mapController.getMapValue(playerController.getCoords()))) {
                 mapController.changeLevel(dir);
                 updateMinimap.renderMinimap();
-            } else if (dir > 0 && mapController.isLadder(mapController.getMapValue(playerController.getCoords()[0],
-                    playerController.getCoords()[1]))) {
+            } else if (dir < 0 && mapController.isLadder(mapController.getMapValue(playerController.getCoords()))) {
                 mapController.changeLevel(dir);
                 updateMinimap.renderMinimap();
             } else {

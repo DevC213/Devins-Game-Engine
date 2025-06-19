@@ -2,20 +2,19 @@ package com.gameLogic.MapLogic;
 
 import com.Armor.Armor;
 import com.Weapons.Weapon;
-import com.gameLogic.IGuiEventListener;
-import com.gameLogic.Messenger;
-import com.gameLogic.TileKey;
+import com.gameLogic.*;
 import com.recoveryItems.HealingItem;
 
 import java.io.InputStream;
 import java.util.*;
 
-public class MapController implements ICanCross, IDoesDamage, IVisibility {
+public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IImage, IAccessItems, IMonsters {
 
-    private final Vector<MapGeneration> maps = new Vector<>();
-    private final Vector<MapItemController> items = new Vector<>();
-    private final Vector<MapMonsterController> monsters = new Vector<>();
+    private final  List<MapGeneration> maps = new ArrayList<>();
+    private final  List<MapItemController> items = new ArrayList<>();
+    private final  List<MapMonsterController> monsters = new ArrayList<>();
     private final IGuiEventListener guiEventListener;
+    private final ValidStart validStart;
     private int level = 0;
     private final Random random = new Random();
 
@@ -25,6 +24,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
         InputStream input;
         int fileLine = 0;
         this.guiEventListener = guiEventListener;
+        validStart = new ValidStart(this,this,this,this);
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
             Scanner reader = new Scanner(input);
@@ -42,28 +42,15 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
             this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
             maps.add(new MapGeneration());
         }
-
     }
     private Map<String, TileKey> getMapTileKey() {
         return MapGeneration.getTileKey();
 
     }
-    public int[] generateValidStartPosition() {
+    public Coordinates generateValidStartPosition() {
         Map<String, TileKey> tileKey = getMapTileKey();
-        int[] startingCords = {(int) Math.floor(Math.random() * getCoordinates()[1]), (int) Math.floor(Math.random() * getCoordinates()[0])};
-        String tile = getMapValue(startingCords[0], startingCords[1]);
-        TileKey key = tileKey.get(tile);
-        int attempts = 0;
-        while (isCave(tile) || isLadder(tile) || isMonsterOnTile(startingCords) || key.healthDelta() != 0 || !key.walkable()) {
-            if(attempts > 8000){
-                throw new RuntimeException("Error finding valid starting position, check overworld map");
-            }
-            startingCords = new int[]{(int) Math.floor(Math.random() * getCoordinates()[1]), (int) Math.floor(Math.random() * getCoordinates()[0])};
-            tile = getMapValue(startingCords[0], startingCords[1]);
-            key = tileKey.get(tile);
-            attempts++;
-        }
-        if (getVisibility(getMapValue(startingCords[0], startingCords[1])) != 2) {
+        Coordinates startingCords = validStart.validStartingCoordinents(tileKey);
+        if (getVisibility(getMapValue(startingCords)) != 2) {
             guiEventListener.UIUpdate("Player: The air is thick here", 0);
         }
         return startingCords;
@@ -79,7 +66,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
                 case 0 -> maps.add(new MapGeneration(file));
                 case 1 -> items.add(new MapItemController(file, maps.get(level).getColumnsAndRows()));
                 case 2 -> {
-                    monsters.add(new MapMonsterController(maps.get(level).getColumnsAndRows(), file));
+                    monsters.add(new MapMonsterController(file));
                     Messenger messenger = monsters.get(level).processFiles(file);
                     if (messenger.getMessage() != null) {
                         guiEventListener.UIUpdate(messenger.getMessage(), 0);
@@ -101,8 +88,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
 
     //IMapState
     public void changeLevel(int levelDelta) {
-        if ((levelDelta == 1 && level > 0) || (levelDelta == -1 && level < maps.size() - 1)) {
-            level -= levelDelta; /* this logic is intentional */
+        if ((levelDelta == -1 && level > 0) || (levelDelta == 1 && level < maps.size() - 1)) {
+            level += levelDelta;
         }
     }
     public void setLevel(int level) {
@@ -117,19 +104,19 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
             monsters.get(i).resetMonsters();
         }
     }
-    public String getMapValue(final int c, final int r) {
-        return maps.get(level).getMapValue(c, r);
+    public String getMapValue(Coordinates coordinates) {
+        return maps.get(level).getMapValue(coordinates.x(), coordinates.y());
     }
 
     //IDoesDamage
     @Override
-    public int effect(final String terrain) {
+    public int getHealthDelta(final String terrain) {
         return getMapTileKey().get(terrain).healthDelta();
     }
-    public Messenger attackMonsters(String monster, int attack, final int[] location) {
+    public Messenger attackMonsters(String monster, int attack, Coordinates location) {
         return monsters.get(level).attackMonsters(monster, attack, location);
     }
-    public Messenger getMonstersAttack(final int[] location) {
+    public Messenger getMonstersAttack(Coordinates location) {
         return monsters.get(level).getMonsterAttack(location);
     }
 
@@ -141,7 +128,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
 
     //ICanCross
     @Override
-    public boolean getMovement(final String terrain) {
+    public boolean isWalkable(final String terrain) {
         return getMapTileKey().get(terrain).walkable();
     }
     @Override
@@ -162,10 +149,10 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
     }
 
     //IAccessItems
-    public boolean getItems(final int[] location) {
+    public boolean itemsOnTile(Coordinates location) {
         return items.get(level).itemsOnTile(location);
     }
-    public StringBuilder itemList(final int[] location) {
+    public StringBuilder itemList(Coordinates location) {
         Weapon weapons = getWeapons(location);
         Armor armor = getArmor(location);
         HealingItem healingItems = getHealing(location);
@@ -181,37 +168,37 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility {
         }
         return str;
     }
-    public Weapon getWeapons(final int[] location) {
+    public Weapon getWeapons(Coordinates location) {
         return items.get(level).weaponsOnTile(location);
     }
-    public int[] getCoordinates() {
+    public Coordinates getCoordinates() {
         return maps.get(level).getColumnsAndRows();
     }
-    public Messenger grabItem(final int[] location, final String item) {
+    public Messenger grabItem(Coordinates location, final String item) {
         return items.get(level).grabItems(location, item);
     }
-    public Armor getArmor(final int[] location) {
+    public Armor getArmor(Coordinates location) {
         return items.get(level).armorOnTile(location);
     }
-    public HealingItem getHealing(int[] location) {
+    public HealingItem getHealing(Coordinates location) {
         return items.get(level).healingItemsOnTile(location);
     }
 
     //IMonsters
-    public Messenger spawnMonsters(int[] location, int moves) {
+    public Messenger spawnMonsters(Coordinates location, int moves) {
         Messenger messenger = new Messenger();
         int RANDOM_RANGE = 20;
-        int SPAWN_THRESHOLD = Integer.MAX_VALUE - 1;
+        int SPAWN_THRESHOLD = Integer.MAX_VALUE - 1; /* <-- This huge value is so I can test everything else without monsters spawning. Will be more resonable once I want to test with spawning */
         if (random.nextInt(RANDOM_RANGE) > 15 && moves >= SPAWN_THRESHOLD) {
             monsters.get(level).spawnMonster(location);
             messenger.setMessage("Monster Spawned");
         }
         return messenger;
     }
-    public Vector<String> getMonsters(final int[] location) {
+    public  List<String> getMonsters(Coordinates location) {
         return monsters.get(level).getMonsters(location);
     }
-    public boolean isMonsterOnTile(int[] location) {
+    public boolean isMonsterOnTile(Coordinates location) {
         return (monsters.get(level).getMonsters(location) != null);
     }
 }

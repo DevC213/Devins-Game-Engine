@@ -2,6 +2,7 @@ package com.gameLogic.MapLogic;
 
 import com.Monsters.Monster;
 import com.Monsters.MonsterFactory;
+import com.gameLogic.Coordinates;
 import com.gameLogic.Messenger;
 
 
@@ -10,19 +11,15 @@ import java.util.*;
 
 class MapMonsterController {
 
-    Map<String, Vector<Monster>> monsterVectorMap;
-    Map<String, Vector<String>> spawnChanges;
+    Map<String, List<Monster>> monsterVectorMap;
+    Map<String, List<String>> spawnChanges;
     MonsterFactory monsterFactory;
     private final String monsterLocations;
-    int mapSizeX;
-    int mapSizeY;
-    MapMonsterController(int[] rowsAndColumns, String fileLocation) {
+    MapMonsterController(String fileLocation) {
         this.monsterLocations = fileLocation;
         monsterFactory = new MonsterFactory();
         monsterVectorMap = new HashMap<>();
         spawnChanges = new HashMap<>();
-        this.mapSizeX = rowsAndColumns[0];
-        this.mapSizeY = rowsAndColumns[1];
     }
     public Messenger processFiles(String file){
         Messenger messenger = new Messenger();
@@ -67,21 +64,21 @@ class MapMonsterController {
         }
         return messenger;
     }
-    public void spawnMonster(int[] location){
+    public void spawnMonster(Coordinates location){
         int number = (int) (Math.random() * 100);
         int cumulative = 0;
         for(String j: spawnChanges.keySet()) {
             cumulative += Integer.parseInt(spawnChanges.get(j).getFirst());
             if (number < cumulative) {
-                monsterVectorMap.put(keyString(location), new Vector<>(Collections.singletonList(monsterFactory.MonsterFac(Integer.parseInt(spawnChanges.get(j).get(2)), Integer.parseInt(spawnChanges.get(j).get(1)), j, 1))));
+                monsterVectorMap.put(keyString(location), new ArrayList<>(Collections.singletonList(monsterFactory.MonsterFac(Integer.parseInt(spawnChanges.get(j).get(2)), Integer.parseInt(spawnChanges.get(j).get(1)), j, 1))));
                 return;
             }
         }
     }
-    public Vector<String> getMonsters(final int[] location){
+    public List<String> getMonsters(Coordinates location){
         String key = keyString(location);
-        Vector<String> rtnStrVec = new Vector<>();
-        Vector<Monster> monsters = monsterVectorMap.get(key);
+        List<String> rtnStrVec = new ArrayList<>();
+        List<Monster> monsters = monsterVectorMap.get(key);
         Map<String,Integer> monstersNum = new HashMap<>();
         if(monsters == null){
             return null;
@@ -101,10 +98,10 @@ class MapMonsterController {
         }
         return null;
     }
-    public synchronized Messenger attackMonsters(String monster, int attack, final int[] location){
+    public synchronized Messenger attackMonsters(String monster, int attack, Coordinates location){
         Messenger rtnMessage = new Messenger();
         boolean monsterKilled = false;
-        Vector<Monster> monsters = monsterVectorMap.get(keyString(location));
+        List<Monster> monsters = monsterVectorMap.get(keyString(location));
         Map<String,Integer> monstersNum = new HashMap<>();
 
         int index = 0;
@@ -143,7 +140,7 @@ class MapMonsterController {
         monsterVectorMap.clear();
         processFiles(monsterLocations);
     }
-    public Messenger getMonsterAttack(int[] location){
+    public Messenger getMonsterAttack(Coordinates location){
         Messenger rtnMessenger = new Messenger();
         Vector<Double> rtnVec = new Vector<>();
         if(monsterVectorMap.get(keyString(location)) == null){
@@ -156,8 +153,9 @@ class MapMonsterController {
         rtnMessenger.addPayloadD(rtnVec);
         return rtnMessenger;
     }
-    private String keyString(int[] location){
-        return location[0] + "." + location[1];
+
+    private String keyString(Coordinates location){
+        return location.x() + "." + location.y();
     }
     private String keyString(String[] location){
         return location[0] + "." + location[1];

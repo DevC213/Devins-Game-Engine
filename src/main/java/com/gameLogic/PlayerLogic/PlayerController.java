@@ -2,6 +2,7 @@ package com.gameLogic.PlayerLogic;
 
 import com.Armor.Armor;
 import com.Weapons.Weapon;
+import com.gameLogic.Coordinates;
 import com.gameLogic.IGuiEventListener;
 import com.gameLogic.MapLogic.MapController;
 import com.gameLogic.Messenger;
@@ -23,21 +24,14 @@ public class PlayerController implements PlayerDamageListener{
     double levelUp = 5;
     private final IGuiEventListener guiEventListener;
     boolean gameOver = false;
-    /**
-     * Constructor for player.
-     *
-     * @param c    starting column
-     * @param r    starting row
-     * @param maxc max column value
-     * @param maxr max row value
-     */
-    public PlayerController(final int c, final int r, final int maxc, final int maxr,
+
+    public PlayerController(Coordinates playerLocation, Coordinates maxCoordinates,
                             IGuiEventListener guiEventListener, MapController mapController) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
-        playerMovement = new PlayerMovement(c,r,maxc,maxr, this, mapController);
+        playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this, mapController);
     }
     public Vector<String> InventoryCommands(String[] items, int command){
         switch (command) {
@@ -102,10 +96,10 @@ public class PlayerController implements PlayerDamageListener{
     }
 
 
-    public int[] getCoords() {
+    public Coordinates getCoords() {
         return playerMovement.getCords();
     }
-    public int[] getRCords() {
+    public Coordinates getRCords() {
         return playerMovement.getRCords();
     }
     public double getHealth() {
@@ -115,7 +109,7 @@ public class PlayerController implements PlayerDamageListener{
         return playerHealth.getHealing_items();
     }
 
-    public void resetPlayer(int[] coords) {
+    public void resetPlayer(Coordinates coords) {
         playerMovement.resetLocation(coords);
         playerHealth.reset();
         playerInventory.resetInventory();
