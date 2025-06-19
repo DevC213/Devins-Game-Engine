@@ -38,7 +38,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         this.mapController = new MapController("/MapData/mapDataLocations.txt", this.controller);
         int[] startingCords = mapController.generateValidStartPosition();
         this.playerController = new PlayerController(startingCords[0], startingCords[1],
-                mapController.getCords()[1], mapController.getCords()[0], this.controller, mapController);
+                mapController.getCoordinates()[1], mapController.getCoordinates()[0], this.controller, mapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
         uiMapController = new UIMapController();
@@ -81,7 +81,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public void resetGame() {
         newGame();
         controller.UIUpdate("Health: " + playerController.getHealth(), 3);
-        String cordOrigins = "[" + (-mapController.getCords()[1] / 2) + (-mapController.getCords()[0] / 2) + "]";
+        String cordOrigins = "[" + (-mapController.getCoordinates()[1] / 2) + (-mapController.getCoordinates()[0] / 2) + "]";
         controller.UIUpdate(cordOrigins, 2);
     }
 
@@ -124,12 +124,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
     //checking map
     private void checkTileEffect(double effect) {
-        if (effect > 0) {
+        if (effect < 0) {
             if (tileStatus != TileStatus.DAMAGING) {
                 controller.UIUpdate("Player: It hurts walking here.", 0);
                 tileStatus = TileStatus.DAMAGING;
             }
-        } else if (effect < 0) {
+        } else if (effect > 0) {
             if (tileStatus != TileStatus.HEALING) {
                 controller.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
                 tileStatus = TileStatus.HEALING;
@@ -138,7 +138,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             tileStatus = TileStatus.NEUTRAL;
         }
         if (effect != 0) {
-            playerController.damage(effect);
+            playerController.changeHealth(effect);
         }
     }
     private void checkForItems() {

@@ -1,11 +1,17 @@
 package com.gameLogic.MapLogic;
 
+import com.gameLogic.TileKey;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.*;
 
 class MapGeneration {
 
-    private final static Vector<Vector<String>> key = new Vector<>();
+    private final static Map<String, TileKey> tileKey= new HashMap<>();
     private int columns;
     private int rows;
     private Vector<Vector<String>> MapData;
@@ -22,7 +28,6 @@ class MapGeneration {
     public MapGeneration(final String mapName) {
         processMap(mapName);
     }
-
     private void initialIzeMultiFileMap(){
         multiFileMap.put(0,"/MapPics/overworldTiles/");
         multiFileMap.put(1,"/MapPics/undergroundTiles/");
@@ -37,23 +42,16 @@ class MapGeneration {
         playerTiles.put(3,"/MapPics/playerImages/up.png");
     }
     public static void processKey(InputStream keyFile){
-        Scanner reader = new Scanner(keyFile);
-        Vector<String> temp = new Vector<>();
-        while (reader.hasNext()) {
-            String line = reader.nextLine();
-            temp.addAll(Arrays.asList(line.split(";")));
-            String tile = temp.getFirst();
-            if(tile.startsWith("{") && tile.endsWith("}")){
-                if(tile.contains("semi")){
-                    temp.set(0,";");
-                }
-            }
-            key.add(new Vector<>(temp));
-            temp.clear();
+        Gson gson = new Gson();
+        InputStreamReader reader = new InputStreamReader(keyFile);
+        Type listType = new TypeToken<List<TileKey>>() {}.getType();
+        List<TileKey> keyList = gson.fromJson(reader, listType);
+        for(TileKey tileKey : keyList){
+            MapGeneration.tileKey.put(tileKey.tileId(),tileKey);
         }
     }
-    public static Vector<Vector<String>> getKey() {
-        return key;
+    public static Map<String, TileKey> getTileKey() {
+        return tileKey;
     }
     private void defaultMap() {
         Vector<Vector<String>> temp = new Vector<>();
@@ -137,13 +135,11 @@ class MapGeneration {
         }
     }
     public String getImage(final String terrain, int level) {
-        for (Vector<String> j: MapGeneration.key) {
-            if (j.contains(terrain)) {
-                if(multiFileTiles.contains(terrain)) {
-                    return multiFileMap.get(level) + j.get(2);
-                }
-                return j.get(2);
+        if(MapGeneration.tileKey.containsKey(terrain)){
+            if (multiFileTiles.contains(terrain)){
+                return multiFileMap.get(level) + MapGeneration.tileKey.get(terrain).fileLocation();
             }
+            return MapGeneration.tileKey.get(terrain).fileLocation();
         }
         return null;
     }

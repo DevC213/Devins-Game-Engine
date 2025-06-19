@@ -5,6 +5,7 @@ module com.example.adventuregui {
     requires javafx.swing;
     requires java.desktop;
     requires javafx.media;
+    requires com.google.gson;
 
     exports com.gameLogic;
     exports com.Monsters;

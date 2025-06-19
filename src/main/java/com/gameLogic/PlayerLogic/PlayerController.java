@@ -88,13 +88,13 @@ public class PlayerController implements PlayerDamageListener{
     public void sendMessage(String message){
         guiEventListener.UIUpdate(message,0);
     }
-    public void damage(double damage) {
-        if (damage > 0) {
-            guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage * (100.00 / (100 + playerEquipment.getDefence()))), 3);
+    public void changeHealth(double healthDelta) {
+        if (healthDelta < 0) {
+            guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(healthDelta * (100.00 / (100 + playerEquipment.getDefence()))), 3);
              damage(0,0);
         } else {
             if (getHealth() < playerHealth.getSecondaryMaxHealth()) {
-                guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(-damage), 3);
+                guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(healthDelta), 3);
             } else{
                 guiEventListener.UIUpdate("Temporary Health cant be increased farther",0);
             }
@@ -147,7 +147,7 @@ public class PlayerController implements PlayerDamageListener{
                 finalDamage = 1.0;
             }
             guiEventListener.UIUpdate("Monster hits you for: " + finalDamage, 0);
-            damage(finalDamage);
+            changeHealth(-finalDamage);
         }
         if (getHealth() <= 0) {
             if (getHealing_items() == null) {

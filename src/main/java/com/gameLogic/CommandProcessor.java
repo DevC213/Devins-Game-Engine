@@ -15,8 +15,6 @@ public class CommandProcessor{
         HEAL,  // 3 - Using health item
         ATTACK, // 4 - Attacking
         HATTACK, //5 - Using health item during fight
-        PAUSE //6 Pause clearing of input for take
-
     }
     private enum Movement {
         LEFT, RIGHT, UP, DOWN;
@@ -132,9 +130,6 @@ public class CommandProcessor{
         return true;
     }
     private void handleTextCommand(String command) {
-        if (commandState == CommandState.NONE) {
-            handleInventoryCommands(command);
-        } else {
             executePendingAction(command);
             if (commandState == CommandState.HATTACK) {
                 commandState = CommandState.ATTACK;
@@ -144,59 +139,46 @@ public class CommandProcessor{
                 }
                 commandState = CommandState.NONE;
             }
-        }
         controller.clearInput();
     }
     private void executePendingAction(String command) {
         switch (commandState) {
-            case TAKE -> {
-                Messenger messenger = mapController.grabItem(playerController.getCoords(), command);
-                switch (messenger.getItemType()) {
-                    case 0:
-                        controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
-                        controller.UIUpdate(messenger, 5);
-                        playerController.equipWeapon(messenger.getWeapon());
-                        break;
-                    case 1:
-                        controller.UIUpdate("Grabbed armor: " + messenger.getArmor().name(), 0);
-                        controller.UIUpdate(messenger, 4);
-                        playerController.equipArmor(messenger.getArmor());
-                        break;
-                    case 2:
-                        controller.UIUpdate("Grabbed healing item: " + messenger.getHealingItem().getName(), 0);
-                        playerController.addToInventory(messenger);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unexpected value: " + messenger.getItemType());
-                }
-                commandState = CommandState.NONE;
-            }
+            case TAKE -> takeItem(command);
             case HEAL -> inventoryManager.useHealthItem(command);
-            case ATTACK -> {
-                String message = combatSystem.attack(mapController.attackMonsters(command,
-                        playerController.getAttack(), playerController.getCoords())).getMessage();
-                if (message != null) {
-                    playerController.monsterKilled();
-                    controller.UIUpdate(message, 0);
-                }
-                combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getCoords()));
-            }
-            case PAUSE -> handleInventoryCommands(command);
+            case ATTACK -> attackMonster(command);
             default -> controller.UIUpdate("Unexpected command state", 0);
         }
     }
-    private void handleInventoryCommands(String command) {
-        if (command.equalsIgnoreCase("take")) {
-            if (!mapController.getItems(playerController.getCoords())) {
-                controller.UIUpdate("No items on tile", 0);
-                commandState = CommandState.NONE;
-                return;
-            }
-            controller.UIUpdate("Which item?", 0);
-            commandState = CommandState.TAKE;
-        } else {
-            controller.UIUpdate("Invalid command", 0);
+    private void attackMonster(String command) {
+        String message = combatSystem.attack(mapController.attackMonsters(command,
+                playerController.getAttack(), playerController.getCoords())).getMessage();
+        if (message != null) {
+            playerController.monsterKilled();
+            controller.UIUpdate(message, 0);
         }
+        combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getCoords()));
+    }
+    private void takeItem(String command) {
+        Messenger messenger = mapController.grabItem(playerController.getCoords(), command);
+        switch (messenger.getItemType()) {
+            case 0:
+                controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
+                controller.UIUpdate(messenger, 5);
+                playerController.equipWeapon(messenger.getWeapon());
+                break;
+            case 1:
+                controller.UIUpdate("Grabbed armor: " + messenger.getArmor().name(), 0);
+                controller.UIUpdate(messenger, 4);
+                playerController.equipArmor(messenger.getArmor());
+                break;
+            case 2:
+                controller.UIUpdate("Grabbed healing item: " + messenger.getHealingItem().getName(), 0);
+                playerController.addToInventory(messenger);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + messenger.getItemType());
+        }
+        commandState = CommandState.NONE;
     }
 
     //Command Processing for movement
@@ -231,14 +213,14 @@ public class CommandProcessor{
     }
     public void traverseLevels(int dir) {
         if (mapController.getMovement(mapController.getMapValue(playerController.getCoords()[0],
-                playerController.getCoords()[1]), 1)) {
+                playerController.getCoords()[1]))) {
             if (dir < 0 && mapController.isCave(mapController.getMapValue(playerController.getCoords()[0],
                     playerController.getCoords()[1]))) {
-                mapController.change_level(dir);
+                mapController.changeLevel(dir);
                 updateMinimap.renderMinimap();
             } else if (dir > 0 && mapController.isLadder(mapController.getMapValue(playerController.getCoords()[0],
                     playerController.getCoords()[1]))) {
-                mapController.change_level(dir);
+                mapController.changeLevel(dir);
                 updateMinimap.renderMinimap();
             } else {
                 controller.UIUpdate("Can only go up on a ladder or down on a cave", 0);

@@ -1,13 +1,5 @@
 package com.gameLogic;
 
-/* Todo:
-       Medium priority:
-            Create more items
-            Create bigger maps
-        Low Priority:
-            Cleanup warnings
-*/
-
 public class Adventure {
 
     private static Adventure adventure = getAdventure();

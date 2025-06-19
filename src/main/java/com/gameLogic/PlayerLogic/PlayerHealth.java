@@ -51,7 +51,7 @@ class PlayerHealth {
             return null;
         } else{
             for(HealingItem i: healingItems){
-                rtnString.append(i.getName()).append("\n");
+                rtnString.append(i.getName()).append(" — ").append(i.getHealValue()).append("\n");
             }
         }
         return rtnString;

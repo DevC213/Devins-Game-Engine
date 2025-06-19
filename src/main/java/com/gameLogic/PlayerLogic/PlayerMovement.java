@@ -37,14 +37,14 @@ class PlayerMovement {
         }
         if (withinBoundaries && playerController.getHealth() > 0) {
             double tileDamageNew = doesDamage.effect(newTile);
-            if (canCross.getMovement(newTile, 2)) {
+            if (canCross.getMovement(newTile)) {
                 row += deltaY;
                 column += deltaX;
             } else if (tileDamageNew != 0){
-                playerController.damage(tileDamageNew);
+                playerController.changeHealth(tileDamageNew);
                 playerController.sendMessage("PLayer: Ouch!");
             }
-            if (playerController.getHealth() <= 0) {
+            while(playerController.getHealth() <= 0) {
                 if (playerController.getHealing_items() == null) {
                     playerController.gameOver();
                     return -1;

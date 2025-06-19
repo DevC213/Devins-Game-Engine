@@ -1,4 +1,4 @@
-/MapData/Key.txt
+/MapData/Key.json
 /MapData/information/Overworld/MapData.txt
 /MapData/information/Underground/MapData.txt
 /MapData/information/Caverns/MapData.txt
