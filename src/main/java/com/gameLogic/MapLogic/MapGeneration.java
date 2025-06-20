@@ -15,7 +15,7 @@ public class MapGeneration {
     private final static Map<String, TileKey> tileKey= new HashMap<>();
     private Coordinates maxCoords;
     private Vector<Vector<String>> MapData;
-    private final Map<Integer,String> multiFileMap = new HashMap<>();
+    private final Map<String,String> multiFileMap = new HashMap<>();
     private final Vector<String> multiFileTiles = new Vector<>(List.of(
             "e", "r", "c",
             "~", "s","g"
@@ -29,11 +29,11 @@ public class MapGeneration {
         processMap(mapName);
     }
     private void initialIzeMultiFileMap(){
-        multiFileMap.put(0,"/MapPics/overworldTiles/");
-        multiFileMap.put(1,"/MapPics/undergroundTiles/");
-        multiFileMap.put(2,"/MapPics/cavernTiles/");
-        multiFileMap.put(3,"/MapPics/darknessTiles/");
-        multiFileMap.put(4,"/MapPics/voidTiles/");
+        multiFileMap.put("Overworld","/MapPics/overworldTiles/");
+        multiFileMap.put("Underground","/MapPics/undergroundTiles/");
+        multiFileMap.put("Caverns","/MapPics/cavernTiles/");
+        multiFileMap.put("TheDarkness","/MapPics/darknessTiles/");
+        multiFileMap.put("TheVoid","/MapPics/voidTiles/");
     }
     private void initializePlayerTiles(){
         playerTiles.put(0,"/MapPics/playerImages/down.png");
@@ -131,10 +131,10 @@ public class MapGeneration {
 
         }
     }
-    public String getImage(final String terrain, int level) {
+    public String getImage(final String terrain, String levelName) {
         if(MapGeneration.tileKey.containsKey(terrain)){
             if (multiFileTiles.contains(terrain)){
-                return multiFileMap.get(level) + MapGeneration.tileKey.get(terrain).fileLocation();
+                return multiFileMap.get(levelName) + MapGeneration.tileKey.get(terrain).fileLocation();
             }
             return MapGeneration.tileKey.get(terrain).fileLocation();
         }

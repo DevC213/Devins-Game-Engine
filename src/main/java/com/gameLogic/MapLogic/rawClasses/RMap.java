@@ -1,0 +1,4 @@
+package com.gameLogic.MapLogic.rawClasses;
+
+public record RMap (int level, String theme, String file) {
+}

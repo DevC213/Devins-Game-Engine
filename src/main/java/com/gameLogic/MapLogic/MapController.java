@@ -1,8 +1,11 @@
 package com.gameLogic.MapLogic;
 
 import com.Armor.Armor;
+import com.Monsters.Monster;
 import com.Weapons.Weapon;
 import com.gameLogic.*;
+import com.gameLogic.MapLogic.rawClasses.RMap;
+import com.gameLogic.MapLogic.rawClasses.RMonster;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recoveryItems.RecoveryItem;
@@ -20,6 +23,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     private final MapData mapData;
     private final IGuiEventListener guiEventListener;
     private final ValidStart validStart;
+    private static final String KEY_FILE_PATH = "/MapData/Key.json";
     private int level = 0;
     private final Random random = new Random();
 
@@ -29,28 +33,40 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         this.guiEventListener = guiEventListener;
         validStart = new ValidStart(this, this, this, this);
         mapData = new MapData();
-        int levelBeingProcessed = 0;
+        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(KEY_FILE_PATH)));
         try {
-            Map<String, String> levelMap = getStringMap(filePath);
-            for (Map.Entry<String, String> entry : levelMap.entrySet()) {
-                String levelName = entry.getKey();
-                String fileLocation = entry.getValue();
-                switch (levelName) {
-                    case "Key":
-                        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(fileLocation.trim())));
-                        break;
-                    case "Overworld":
-                    case "Underground":
-                    case "Caverns":
-                    case "TheDarkness":
-                    case "TheVoid":
-                        mapData.processMap(levelBeingProcessed, getStringMap(fileLocation));
-                        levelBeingProcessed++;
-                        break;
-                    default:
-                        System.out.println("Unknown level type: " + levelName);
-                }
+
+            Gson gson = new Gson();
+            InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
+            InputStreamReader reader = new InputStreamReader(input);
+            Type listType = new TypeToken<List<RMap>>() {}.getType();
+            List<RMap> tempMapList = gson.fromJson(reader, listType);
+            for(RMap rMap : tempMapList) {
+                mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme());
             }
+
+
+
+//            Map<String, String[]> levelMap = getStringMap(filePath);
+//            for (Map.Entry<String, String[]> entry : levelMap.entrySet()) {
+//                String levelName = entry.getKey();
+//                String fileLocation = entry.getValue();
+//                switch (levelName) {
+//                    case "Key":
+//                        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(fileLocation.trim())));
+//                        break;
+//                    case "Overworld":
+//                    case "Underground":
+//                    case "Caverns":
+//                    case "TheDarkness":
+//                    case "TheVoid":
+//                        mapData.processMap(levelBeingProcessed, getStringMap(fileLocation),levelName);
+//                        levelBeingProcessed++;
+//                        break;
+//                    default:
+//                        System.out.println("Unknown level type: " + levelName);
+//                }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
@@ -135,7 +151,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
     //IImage
     public String getImage(final String terrain) {
-        return mapData.getLevel(level).map().getImage(terrain, level);
+        return mapData.getLevel(level).map().getImage(terrain, mapData.getLevel(level).theme());
     }
     public String getPlayerImage(int direction) {
         return mapData.getLevel(level).map().getPlayerImage(direction);

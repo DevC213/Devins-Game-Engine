@@ -1,8 +1,27 @@
-{
-  "Key": "/MapData/Key.json",
-  "Overworld": "/MapData/information/Overworld/MapData.json",
-  "Underground": "/MapData/information/Underground/MapData.json",
-  "Caverns": "/MapData/information/Caverns/MapData.json",
-  "TheDarkness": "/MapData/information/TheDarkness/MapData.json",
-  "TheVoid": "/MapData/information/TheVoid/MapData.json"
-}
+[
+  {
+    "level": 1,
+    "theme": "Overworld",
+    "file": "/MapData/information/Overworld/MapData.json"
+  },
+  {
+    "level": 2,
+    "theme": "Underground",
+    "file": "/MapData/information/Underground/MapData.json"
+  },
+  {
+    "level": 3,
+    "theme": "Caverns",
+    "file": "/MapData/information/Caverns/MapData.json"
+  },
+  {
+    "level": 4,
+    "theme": "TheDarkness",
+    "file": "/MapData/information/TheDarkness/MapData.json"
+  },
+  {
+    "level": 5,
+    "theme": "TheVoid",
+    "file": "/MapData/information/TheVoid/MapData.json"
+  }
+]

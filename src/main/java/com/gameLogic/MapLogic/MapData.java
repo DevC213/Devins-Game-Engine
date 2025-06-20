@@ -10,7 +10,7 @@ public class MapData {
     MapData(){
         levelDataList = new ArrayList<>();
     }
-    public void processMap(int level, Map<String, String> levelMap){
+    public void processMap(int level, Map<String, String> levelMap, String theme) {
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;
         MapMonsterController mapMonsterController = null;
@@ -40,10 +40,10 @@ public class MapData {
         if(mapItemController == null ||  mapMonsterController == null) {
             throw new IllegalStateException("Incomplete MapData for level: " + level);
         }
-        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController));
+        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,theme));
     }
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,"Default"));
     }
 
     public LevelData getLevel(int level){
