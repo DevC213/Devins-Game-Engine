@@ -1,5 +1,5 @@
 {
-    "armor": "/MapData/information/Underground/armor.txt",
-    "recoveryItems": "/MapData/information/Underground/recoveryItems.txt",
-    "weapons": "/MapData/information/Underground/weapons.txt"
+    "armor": "/MapData/information/Underground/armor.json",
+    "recoveryItems": "/MapData/information/Underground/recoveryItems.json",
+    "weapons": "/MapData/information/Underground/weapons.json"
 }

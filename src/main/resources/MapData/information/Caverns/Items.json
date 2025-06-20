@@ -1,5 +1,5 @@
 {
-    "armor": "/MapData/information/Caverns/armor.txt",
-    "recoveryItems": "/MapData/information/Caverns/recoveryItems.txt",
-    "weapons": "/MapData/information/Caverns/weapons.txt"
+    "armor": "/MapData/information/Caverns/armor.json",
+    "recoveryItems": "/MapData/information/Caverns/recoveryItems.json",
+    "weapons": "/MapData/information/Caverns/weapons.json"
 }

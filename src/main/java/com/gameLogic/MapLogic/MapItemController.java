@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 class MapItemController {
@@ -39,8 +38,8 @@ class MapItemController {
         InputStream input;
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(map));
-            InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(isr);
+            InputStreamReader streamReader = new InputStreamReader(input);
+            BufferedReader reader = new BufferedReader(streamReader);
             Gson gson = new Gson();
             Type mapType = new TypeToken<Map<String, String>>() {}.getType();
             Map<String, String> levelMap = gson.fromJson(reader, mapType);

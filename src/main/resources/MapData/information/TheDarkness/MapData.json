@@ -1,6 +1,6 @@
 {
   "Map":"/MapData/information/TheDarkness/cave.txt",
-  "Items":"/MapData/information/TheDarkness/Items.txt",
-  "Monsters":"/MapData/information/TheDarkness/Monsters.txt",
-  "SpawnTable":"/MapData/information/TheDarkness/spawnPercentages.txt"
+  "Items":"/MapData/information/TheDarkness/Items.json",
+  "Monsters":"/MapData/information/TheDarkness/Monsters.json",
+  "SpawnTable":"/MapData/information/TheDarkness/spawnTable.json"
 }

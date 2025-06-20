@@ -1,3 +1,0 @@
-/MapData/information/Caverns/armor.txt
-/MapData/information/Caverns/recoveryItems.txt
-/MapData/information/Caverns/weapons.txt

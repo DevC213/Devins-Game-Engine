@@ -16,9 +16,8 @@ import java.util.*;
 
 public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IImage, IAccessItems, IMonsters {
 
-    private final  List<MapGeneration> maps = new ArrayList<>();
-    private final  List<MapItemController> items = new ArrayList<>();
-    private final  List<MapMonsterController> monsters = new ArrayList<>();
+
+    private final MapData mapData;
     private final IGuiEventListener guiEventListener;
     private final ValidStart validStart;
     private int level = 0;
@@ -27,17 +26,12 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     //Constructors/Map Generation:
     public MapController(final String filePath, final IGuiEventListener guiEventListener) {
 
-        InputStream input;
         this.guiEventListener = guiEventListener;
         validStart = new ValidStart(this, this, this, this);
+        mapData = new MapData();
+        int levelBeingProcessed = 0;
         try {
-            input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
-            InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(isr);
-            Gson gson = new Gson();
-            Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-            Map<String, String> levelMap = gson.fromJson(reader, mapType);
-
+            Map<String, String> levelMap = getStringMap(filePath);
             for (Map.Entry<String, String> entry : levelMap.entrySet()) {
                 String levelName = entry.getKey();
                 String fileLocation = entry.getValue();
@@ -50,15 +44,17 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
                     case "Caverns":
                     case "TheDarkness":
                     case "TheVoid":
-                        processMaps(fileLocation);
+                        mapData.processMap(levelBeingProcessed, getStringMap(fileLocation));
+                        levelBeingProcessed++;
                         break;
                     default:
                         System.out.println("Unknown level type: " + levelName);
                 }
             }
-        } catch (Exception _) {
+        } catch (Exception e) {
+            e.printStackTrace();
             this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
-            maps.add(new MapGeneration());
+            mapData.defaultMap(new MapGeneration());
         }
 
     }
@@ -74,42 +70,19 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         }
         return startingCords;
     }
-    private void processMaps(String filePath) {
+
+    private Map<String, String> getStringMap(String filePath) {
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
         InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(isr);
         Gson gson = new Gson();
         Type mapType = new TypeToken<Map<String, String>>() {}.getType();
-        Map<String, String> levelMap = gson.fromJson(reader, mapType);
-        for(Map.Entry<String, String> entry : levelMap.entrySet()) {
-            String file = entry.getKey();
-            String path = entry.getValue();
-
-            switch (file) {
-                case "Map" -> maps.add(new MapGeneration(path));
-                case "Items" -> items.add(new MapItemController(path, maps.get(level).getColumnsAndRows()));
-                case "Monsters" -> {
-                    monsters.add(new MapMonsterController(path));
-                    Messenger messenger = monsters.get(level).processFiles(path);
-                    if (messenger.getMessage() != null) {
-                        guiEventListener.UIUpdate(messenger.getMessage(), 0);
-                    }
-                }
-                case "SpawnTable" -> {
-                    Messenger messenger = monsters.get(level).processSpawnChances(path);
-                    if (messenger.getMessage() != null) {
-                        guiEventListener.UIUpdate(messenger.getMessage(), 0);
-                    }
-                }
-                default -> throw new RuntimeException("Unknown file found: " + path);
-            }
-
-        }
+        return gson.fromJson(reader, mapType);
     }
 
     //IMapState
     public void changeLevel(int levelDelta) {
-        if ((levelDelta == -1 && level > 0) || (levelDelta == 1 && level < maps.size() - 1)) {
+        if ((levelDelta == -1 && level > 0) || (levelDelta == 1 && level < mapData.getTotalLevels())) {
             level += levelDelta;
         }
     }
@@ -120,13 +93,12 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         return level;
     }
     public void resetMap() {
-        for (int i = 0; i < maps.size(); i++) {
-            items.get(i).resetMap();
-            monsters.get(i).resetMonsters();
+        for (int i = 0; i < mapData.getTotalLevels(); i++) {
+            mapData.getLevel(i).resetGame();
         }
     }
     public String getMapValue(Coordinates coordinates) {
-        return maps.get(level).getMapValue(coordinates.x(), coordinates.y());
+        return mapData.getLevel(level).map().getMapValue(coordinates.x(), coordinates.y());
     }
 
     //IDoesDamage
@@ -135,10 +107,10 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         return getMapTileKey().get(terrain).healthDelta();
     }
     public Messenger attackMonsters(String monster, int attack, Coordinates location) {
-        return monsters.get(level).attackMonsters(monster, attack, location);
+        return mapData.getLevel(level).monster().attackMonsters(monster, attack, location);
     }
     public Messenger getMonstersAttack(Coordinates location) {
-        return monsters.get(level).getMonsterAttack(location);
+        return mapData.getLevel(level).monster().getMonsterAttack(location);
     }
 
     //IVisibility
@@ -163,15 +135,15 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
     //IImage
     public String getImage(final String terrain) {
-        return maps.get(level).getImage(terrain, level);
+        return mapData.getLevel(level).map().getImage(terrain, level);
     }
     public String getPlayerImage(int direction) {
-        return maps.get(level).getPlayerImage(direction);
+        return mapData.getLevel(level).map().getPlayerImage(direction);
     }
 
     //IAccessItems
     public boolean itemsOnTile(Coordinates location) {
-        return items.get(level).itemsOnTile(location);
+        return mapData.getLevel(level).item().itemsOnTile(location);
     }
     public StringBuilder itemList(Coordinates location) {
         Weapon weapons = getWeapons(location);
@@ -190,19 +162,19 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         return str;
     }
     public Weapon getWeapons(Coordinates location) {
-        return items.get(level).weaponsOnTile(location);
+        return mapData.getLevel(level).item().weaponsOnTile(location);
     }
     public Coordinates getCoordinates() {
-        return maps.get(level).getColumnsAndRows();
+        return mapData.getLevel(level).map().getColumnsAndRows();
     }
     public Messenger grabItem(Coordinates location, final String item) {
-        return items.get(level).grabItems(location, item);
+        return mapData.getLevel(level).item().grabItems(location, item);
     }
     public Armor getArmor(Coordinates location) {
-        return items.get(level).armorOnTile(location);
+        return mapData.getLevel(level).item().armorOnTile(location);
     }
     public RecoveryItem getHealing(Coordinates location) {
-        return items.get(level).healingItemsOnTile(location);
+        return mapData.getLevel(level).item().healingItemsOnTile(location);
     }
 
     //IMonsters
@@ -211,16 +183,16 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         int RANDOM_RANGE = 20;
         int SPAWN_THRESHOLD = Integer.MAX_VALUE - 1; /* <-- This huge value is so I can test everything else without monsters spawning. Will be more resonable once I want to test with spawning */
         if (random.nextInt(RANDOM_RANGE) > 15 && moves >= SPAWN_THRESHOLD) {
-            monsters.get(level).spawnMonster(location);
+            mapData.getLevel(level).monster().spawnMonster(location);
             messenger.setMessage("Monster Spawned");
         }
         return messenger;
     }
     public  List<String> getMonsters(Coordinates location) {
-        return monsters.get(level).getMonsters(location);
+        return mapData.getLevel(level).monster().getMonsters(location);
     }
     public boolean isMonsterOnTile(Coordinates location) {
-        return (monsters.get(level).getMonsters(location) != null);
+        return (mapData.getLevel(level).monster().getMonsters(location) != null);
     }
 }
 

@@ -1,3 +1,0 @@
-/MapData/information/TheVoid/armor.txt
-/MapData/information/TheVoid/recoveryItems.txt
-/MapData/information/TheVoid/weapons.txt

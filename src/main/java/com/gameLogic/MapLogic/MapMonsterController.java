@@ -55,19 +55,6 @@ class MapMonsterController {
         for(SpawnTable spawnTable : tempTable) {
             spawnChanges.put(spawnTable.name(), spawnTable);
         }
-        //Scanner reader;
-//        try {
-//            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
-//            reader = new Scanner(input);
-//            while (reader.hasNext()) {
-//                Vector<String> monsterData = new Vector<>(List.of(reader.nextLine().split(";")));
-//                String monster = monsterData.getFirst();
-//                monsterData.removeFirst();
-//                spawnChanges.put(monster, monsterData);
-//            }
-//        } catch (Exception e) {
-//            messenger.setMessage(e + "Error loading monsters for: " + file);
-//        }
         return messenger;
     }
     public void spawnMonster(Coordinates location){

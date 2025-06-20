@@ -1,2 +1,0 @@
-1;5;Stone Sword;10
-5;5;Iron Sword;20

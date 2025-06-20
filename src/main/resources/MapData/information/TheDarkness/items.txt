@@ -1,3 +1,0 @@
-/MapData/information/TheDarkness/armor.txt
-/MapData/information/TheDarkness/recoveryItems.txt
-/MapData/information/TheDarkness/weapons.txt

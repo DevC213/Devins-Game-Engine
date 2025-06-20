@@ -1,5 +1,5 @@
 {
-    "armor": "/MapData/information/TheDarkness/armor.txt",
-    "recoveryItems": "/MapData/information/TheDarkness/recoveryItems.txt",
-    "weapons": "/MapData/information/TheDarkness/weapons.txt"
+    "armor": "/MapData/information/TheDarkness/armor.json",
+    "recoveryItems": "/MapData/information/TheDarkness/recoveryItems.json",
+    "weapons": "/MapData/information/TheDarkness/weapons.json"
 }

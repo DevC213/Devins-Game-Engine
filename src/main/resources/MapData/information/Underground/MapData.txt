@@ -1,3 +1,0 @@
-/MapData/information/Underground/cave.txt
-/MapData/information/Underground/items.txt
-/MapData/information/Underground/Monsters.txt

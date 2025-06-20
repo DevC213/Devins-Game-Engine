@@ -1,5 +1,5 @@
 
-module com.example.adventuregui {
+module com.example.adventure {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.swing;

@@ -1,0 +1,12 @@
+[
+  {
+    "position": [1, 5],
+    "name": "Wooden Sword",
+    "damage": 10
+  },
+  {
+    "position": [5, 5],
+    "name": "Polished Wooden Sword",
+    "damage": 20
+  }
+]
