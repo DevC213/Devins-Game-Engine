@@ -1,14 +1,16 @@
 package com.gameLogic.PlayerLogic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 class PlayerInventory {
 
-    private Vector<String> inventory;
+    private List<String> inventory;
 
-    PlayerInventory(){ inventory  = new Vector<>(); }
-    public Vector<String> viewInventory() {
+    PlayerInventory(){ inventory  = new ArrayList<>(); }
+    public List<String> viewInventory() {
         if (inventory.isEmpty()) {
             return null;
         }
@@ -18,12 +20,9 @@ class PlayerInventory {
     public void addToInventory(final String[] items) {
         inventory.addAll(Arrays.asList(items));
     }
-    public void dropItem(final String item) {
-        inventory.remove(item);
-    }
 
     public void resetInventory(){
-        inventory  = new Vector<>();
+        inventory  = new ArrayList<>();
     }
 
 }

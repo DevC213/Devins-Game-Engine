@@ -37,12 +37,13 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         this.controller = controller;
         this.mapController = new MapController("/MapData/mapDataLocations.json", this.controller);
         Coordinates startingCords = mapController.generateValidStartPosition();
-        this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller, mapController);
+        this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller,
+                                mapController, mapController, mapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
         uiMapController = new UIMapController();
-        commandProcessor = new CommandProcessor(controller, mapController,
-                playerController, this, this, combatSystem, inventoryManager);
+        commandProcessor = new CommandProcessor(controller, playerController, this, this, combatSystem, inventoryManager,
+                mapController,mapController,mapController,mapController,mapController);
 
     }
     public void handleInput(String keyPressed) {
@@ -108,14 +109,14 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     @Override
     public void updateGameInfo() {
         if(playerController.isGameOver()){return;}
-        controller.UIUpdate("(" + playerController.getRCords().x() + "," + playerController.getRCords().y() + ")", 2);
+        controller.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
         checkForItems();
         checkForMonsters();
-        String image = mapController.getMapValue(playerController.getCoords());
+        String image = mapController.getMapValue(playerController.getMapCoordinates());
         if(Objects.equals(image, "GOAL")) {
             Victory();
         }
-        double effect = tileEffect(playerController.getCoords());
+        double effect = tileEffect(playerController.getMapCoordinates());
         checkTileEffect(effect);
         inventoryManager.updateInventoryDisplay();
         healthIncrease(mapController.getLevel());
@@ -141,16 +142,16 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
     private void checkForItems() {
-        String string = mapController.itemList(playerController.getCoords()).toString();
+        String string = mapController.itemList(playerController.getMapCoordinates()).toString();
         if (!string.isEmpty()) {
             controller.UIUpdate("Items at location: \n" + string, 0);
         }
     }
     private void checkForMonsters() {
-        boolean monsterFound = mapController.isMonsterOnTile(playerController.getCoords());
+        boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
         if (monsterFound) {
             controller.UIUpdate("Monsters at location: " +
-                    mapController.getMonsters(playerController.getCoords()), 0);
+                    mapController.getMonsters(playerController.getMapCoordinates()), 0);
             if (!combatSystem.isMonsterOnTile()) {
                 combatSystem.toggleMonster();
             }
@@ -165,7 +166,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
     private void spawnMonster() {
-        Messenger messenger = mapController.spawnMonsters(playerController.getCoords(), moves);
+        Messenger messenger = mapController.spawnMonsters(playerController.getMapCoordinates(), moves);
         if (messenger != null && messenger.getMessage() != null) {
             controller.UIUpdate(messenger.getMessage(), 0);
             moves = 0;

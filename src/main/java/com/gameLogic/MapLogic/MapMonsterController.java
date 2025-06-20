@@ -27,9 +27,9 @@ class MapMonsterController {
         monsterFactory = new MonsterFactory();
         monsterVectorMap = new HashMap<>();
         spawnChanges = new HashMap<>();
+        processFiles(fileLocation);
     }
-    public Messenger processFiles(String file){
-       Messenger messenger = new Messenger();
+    public void processFiles(String file){
         Gson gson = new Gson();
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(file));
         InputStreamReader reader = new InputStreamReader(input);
@@ -43,10 +43,8 @@ class MapMonsterController {
             }
             monsterVectorMap.put(coordinates, tempList);
         }
-        return messenger;
     }
-    public Messenger processSpawnChances(String file) {
-        Messenger messenger = new Messenger();
+    public void processSpawnChances(String file) {
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(file));;
         Gson gson = new Gson();
         InputStreamReader reader = new InputStreamReader(input);
@@ -55,7 +53,6 @@ class MapMonsterController {
         for(SpawnTable spawnTable : tempTable) {
             spawnChanges.put(spawnTable.name(), spawnTable);
         }
-        return messenger;
     }
     public void spawnMonster(Coordinates location){
         int number = (int) (Math.random() * 100);

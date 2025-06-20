@@ -4,10 +4,12 @@ import com.Armor.Armor;
 import com.Weapons.Weapon;
 import com.gameLogic.Coordinates;
 import com.gameLogic.IGuiEventListener;
-import com.gameLogic.MapLogic.MapController;
+import com.gameLogic.MapLogic.ICanCross;
+import com.gameLogic.MapLogic.IDoesDamage;
+import com.gameLogic.MapLogic.IVisibility;
 import com.gameLogic.Messenger;
 
-import java.util.Vector;
+import java.util.List;
 
 public class PlayerController implements PlayerDamageListener{
 
@@ -20,39 +22,27 @@ public class PlayerController implements PlayerDamageListener{
     PlayerInventory playerInventory;
     double monstersKilled = 0;
     int playerLevel = 1;
-    int mapLevel = 0;
+    int level = 0;
     double levelUp = 5;
     private final IGuiEventListener guiEventListener;
     boolean gameOver = false;
 
     public PlayerController(Coordinates playerLocation, Coordinates maxCoordinates,
-                            IGuiEventListener guiEventListener, MapController mapController) {
+                            IGuiEventListener guiEventListener, IVisibility visibility, IDoesDamage doesDamage, ICanCross canCross) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
-        playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this, mapController);
+        playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this, visibility, doesDamage, canCross);
     }
-    public Vector<String> InventoryCommands(String[] items, int command){
-        switch (command) {
-            case 1, 2 -> {
-                playerInventory.addToInventory(items);
-                return null;
-            }
-            case 3 -> {
-                return playerInventory.viewInventory();
-            }
-            case 4 -> playerInventory.dropItem(String.join("",items));
-            default -> {
-            }
-        }
-        return null;
+    public List<String> viewInventory(){
+        return playerInventory.viewInventory();
     }
     public void addToInventory(Messenger messenger) {
         playerHealth.addHealthItem(messenger.getHealingItem());
     }
-    public int movement(int deltaX, int deltaY, String currentTile, String newTile){
-        return playerMovement.move(deltaX,deltaY,currentTile,newTile);
+    public int movement(Coordinates delta, String currentTile, String newTile){
+        return playerMovement.move(delta,currentTile,newTile);
     }
 
     public void useHealing(String item){
@@ -68,13 +58,13 @@ public class PlayerController implements PlayerDamageListener{
         playerHealth.EmergencyUse();
         guiEventListener.UIUpdate("Out of Health, using healing item.", 0);
         StringBuilder sendString = new StringBuilder();
-        if (InventoryCommands(null,3) != null){
-            for (String i : InventoryCommands(null,3)) {
+        if (viewInventory() != null){
+            for (String i : viewInventory()) {
                 sendString.append(i).append("\n");
             }
         }
-        if(!(getHealing_items() == null)){
-            sendString.append(getHealing_items());
+        if(!(getHealingItems() == null)){
+            sendString.append(getHealingItems());
         }
         guiEventListener.UIUpdate(sendString.toString(),1);
         guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(0),3);
@@ -85,7 +75,6 @@ public class PlayerController implements PlayerDamageListener{
     public void changeHealth(double healthDelta) {
         if (healthDelta < 0) {
             guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(healthDelta * (100.00 / (100 + playerEquipment.getDefence()))), 3);
-             damage(0,0);
         } else {
             if (getHealth() < playerHealth.getSecondaryMaxHealth()) {
                 guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(healthDelta), 3);
@@ -96,17 +85,17 @@ public class PlayerController implements PlayerDamageListener{
     }
 
 
-    public Coordinates getCoords() {
-        return playerMovement.getCords();
+    public Coordinates getMapCoordinates() {
+        return playerMovement.getMapCoordinates();
     }
-    public Coordinates getRCords() {
-        return playerMovement.getRCords();
+    public Coordinates getDisplayCoordinates() {
+        return playerMovement.getDisplayCoordinates();
     }
     public double getHealth() {
         return playerHealth.UpdateHealth(0);
     }
-    public StringBuilder getHealing_items() {
-        return playerHealth.getHealing_items();
+    public StringBuilder getHealingItems() {
+        return playerHealth.getHealingItems();
     }
 
     public void resetPlayer(Coordinates coords) {
@@ -132,20 +121,19 @@ public class PlayerController implements PlayerDamageListener{
     }
 
     @Override
-    public void damage(double damage, int type) {
+    public void damage(double damage) {
         double finalDamage;
-        if(type == 1) {
-            if (damage * 1.25 - playerEquipment.getDefence() > 1) {
-                finalDamage = damage * 1.25 - playerEquipment.getDefence();
-            } else {
-                finalDamage = 1.0;
-            }
-            guiEventListener.UIUpdate("Monster hits you for: " + finalDamage, 0);
-            changeHealth(-finalDamage);
+        if (damage * 1.25 - playerEquipment.getDefence() > 1) {
+            finalDamage = damage * 1.25 - playerEquipment.getDefence();
+        } else {
+            finalDamage = 1.0;
         }
+        guiEventListener.UIUpdate("Monster hits you for: " + finalDamage, 0);
+        changeHealth(-finalDamage);
+
         if (getHealth() <= 0) {
-            if (getHealing_items() == null) {
-               gameOver();
+            if (getHealingItems() == null) {
+                gameOver();
             } else {
                 EmergencyUse();
             }
@@ -167,8 +155,8 @@ public class PlayerController implements PlayerDamageListener{
         return gameOver;
     }
 
-    public void monsterKilled(){
-        monstersKilled = monstersKilled + (1 + Math.floor(1.5 * mapLevel));
+    public void monsterKilled(){ //<- this is my XP system
+        monstersKilled = monstersKilled + (1 + Math.floor(1.5 * level));
         if(monstersKilled >= levelUp){
             increaseMaxHealth((playerHealth.getSecondaryMaxHealth() * 0.1));
             guiEventListener.UIUpdate("You gain more confidence, and can withstand more",0);
@@ -177,6 +165,6 @@ public class PlayerController implements PlayerDamageListener{
         }
     }
     public void increaseLevel(){
-        mapLevel++;
+        level++;
     }
 }

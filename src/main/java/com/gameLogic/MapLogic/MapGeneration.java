@@ -13,8 +13,7 @@ import java.util.*;
 public class MapGeneration {
 
     private final static Map<String, TileKey> tileKey= new HashMap<>();
-    private int columns;
-    private int rows;
+    private Coordinates maxCoords;
     private Vector<Vector<String>> MapData;
     private final Map<Integer,String> multiFileMap = new HashMap<>();
     private final Vector<String> multiFileTiles = new Vector<>(List.of(
@@ -57,12 +56,10 @@ public class MapGeneration {
     private void defaultMap() {
         Vector<Vector<String>> temp = new Vector<>();
 
-
         final int defaultColumns = 10;
         final int defaultRows = 10;
 
-        columns = defaultColumns;
-        rows = defaultRows;
+        maxCoords = new Coordinates(defaultColumns, defaultRows);
 
         for (int i = 0; i < defaultRows; i++) {
             Vector<String> tempRow = new Vector<>();
@@ -90,8 +87,7 @@ public class MapGeneration {
                 }
 
                 checkLengths(mapTemp);
-                rows = mapTemp.size();
-                columns = mapTemp.getFirst().size();
+                maxCoords = new Coordinates(mapTemp.getFirst().size(), mapTemp.size());
         }catch(Exception e){
             defaultMap();
             return;
@@ -147,11 +143,15 @@ public class MapGeneration {
     public String getPlayerImage(int direction){
         return playerTiles.get(direction);
     }
-    public Coordinates getColumnsAndRows(){return new Coordinates(columns,rows);}
-    public String getMapValue(final int c, final int r) {
-        if (c < 0 || r < 0 || c >= columns|| r >= rows) {
+    public Coordinates getColumnsAndRows(){return maxCoords;}
+    public String getMapValue(Coordinates coordinates) {
+        if (coordinates.x() < 0 ||
+                coordinates.y() < 0 ||
+                coordinates.x() >= maxCoords.x() ||
+                coordinates.y() >= maxCoords.y())
+        {
             return "-";
         }
-        return MapData.get(r).get(c);
+        return MapData.get(coordinates.y()).get(coordinates.x());
     }
 }

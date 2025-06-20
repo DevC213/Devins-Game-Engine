@@ -34,8 +34,8 @@ public class UIMapController {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(new Coordinates(playerController.getCoords().x()
-                            + SQUARE_CHANGE[j],playerController.getCoords().y() + SQUARE_CHANGE[k]))));
+                    controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(new Coordinates(playerController.getMapCoordinates().x()
+                            + SQUARE_CHANGE[j],playerController.getMapCoordinates().y() + SQUARE_CHANGE[k]))));
                 }
             }
         }
@@ -48,7 +48,7 @@ public class UIMapController {
         int imageHeight;
         Graphics merger;
 
-        String valAtPlayer = mapController.getMapValue(plays.getCoords());
+        String valAtPlayer = mapController.getMapValue(plays.getMapCoordinates());
 
         player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getPlayerImage(direction))));
         tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(mapController.getImage(valAtPlayer))));

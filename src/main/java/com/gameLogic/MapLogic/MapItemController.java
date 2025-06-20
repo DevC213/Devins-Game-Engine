@@ -146,7 +146,6 @@ class MapItemController {
         processItems(itemFile);
     }
 
-
     public Weapon weaponsOnTile(Coordinates location){
         point2D = new Point2D.Double(location.x(),location.y());
         if (weapons.containsKey(point2D)) {

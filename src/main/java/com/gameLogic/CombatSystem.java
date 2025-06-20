@@ -26,7 +26,7 @@ public class CombatSystem {
         }
     }
     private void monsterAttack(Double damage) {
-        playerDamageListener.damage(damage, 1);
+        playerDamageListener.damage(damage);
     }
     public boolean isMonsterOnTile() {
         return monsterOnTile;

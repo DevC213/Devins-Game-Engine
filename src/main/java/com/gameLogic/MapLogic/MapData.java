@@ -10,9 +10,6 @@ public class MapData {
     MapData(){
         levelDataList = new ArrayList<>();
     }
-    public void defaultMap(MapGeneration map){
-        levelDataList.add(new LevelData(map,null,null));
-    }
     public void processMap(int level, Map<String, String> levelMap){
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;
@@ -45,6 +42,10 @@ public class MapData {
         }
         levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController));
     }
+    public void defaultLevel(){
+        levelDataList.add(new LevelData(new MapGeneration(),null,null));
+    }
+
     public LevelData getLevel(int level){
         return levelDataList.get(level);
     }

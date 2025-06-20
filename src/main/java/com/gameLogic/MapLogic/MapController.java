@@ -54,7 +54,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         } catch (Exception e) {
             e.printStackTrace();
             this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
-            mapData.defaultMap(new MapGeneration());
+            mapData.defaultLevel();
         }
 
     }
@@ -98,7 +98,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         }
     }
     public String getMapValue(Coordinates coordinates) {
-        return mapData.getLevel(level).map().getMapValue(coordinates.x(), coordinates.y());
+        return mapData.getLevel(level).map().getMapValue(coordinates);
     }
 
     //IDoesDamage

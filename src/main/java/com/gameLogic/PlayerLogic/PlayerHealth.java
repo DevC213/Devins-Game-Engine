@@ -45,7 +45,7 @@ class PlayerHealth {
     public void addHealthItem(RecoveryItem item){
         recoveryItems.add(item);
     }
-    public StringBuilder getHealing_items() {
+    public StringBuilder getHealingItems() {
         StringBuilder rtnString = new StringBuilder();
         if(recoveryItems.isEmpty()){
             return null;

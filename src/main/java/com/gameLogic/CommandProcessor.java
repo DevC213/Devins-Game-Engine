@@ -1,6 +1,7 @@
 package com.gameLogic;
 
-import com.gameLogic.MapLogic.MapController;
+import com.gameLogic.MapLogic.ICanCross;
+import com.gameLogic.MapLogic.IDoesDamage;
 import com.gameLogic.PlayerLogic.PlayerController;
 
 import java.util.Map;
@@ -37,24 +38,31 @@ public class CommandProcessor{
     private boolean escape = false;
     IGuiEventListener controller;
     IGuiCommandGetter commandGetter;
-    MapController mapController;
     PlayerController playerController;
     IUpdateMinimap updateMinimap;
     IUpdateGame updateGame;
     CombatSystem combatSystem;
     InventoryManager inventoryManager;
-
-
-    public CommandProcessor(Controller controller, MapController mapController, PlayerController playerController
-            , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager) {
+    ICanCross canCross;
+    IMapState  mapState;
+    IMonsters  monsters;
+    IDoesDamage doesDamage;
+    IAccessItems accessItems;
+    public CommandProcessor(Controller controller, PlayerController playerController
+            , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
+                            IMonsters  monsters, ICanCross canCross, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
         this.controller = controller;
-        this.mapController = mapController;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
         this.combatSystem = combatSystem;
         this.inventoryManager = inventoryManager;
         this.updateGame = updateGame;
         this.commandGetter = controller;
+        this.canCross = canCross;
+        this.mapState = mapState;
+        this.monsters = monsters;
+        this.doesDamage = doesDamage;
+        this.accessItems = accessItems;
     }
 
     public void handleKeyInput(String keyPressed) {
@@ -89,7 +97,7 @@ public class CommandProcessor{
     private void grabItem() {
         commandState = CommandState.TAKE;
         controller.clearInput();
-        if (!mapController.itemsOnTile(playerController.getCoords())) {
+        if (!accessItems.itemsOnTile(playerController.getMapCoordinates())) {
             controller.UIUpdate("No items on tile", 0);
             commandState = CommandState.NONE;
             return;
@@ -98,7 +106,7 @@ public class CommandProcessor{
     }
 
     private void attack() {
-        if (mapController.getMonsters(playerController.getCoords()) == null) {
+        if (monsters.getMonsters(playerController.getMapCoordinates()) == null) {
             controller.UIUpdate("No monster on tile", 0);
             commandState = CommandState.NONE;
             return;
@@ -124,7 +132,7 @@ public class CommandProcessor{
             commandState = CommandState.NONE;
         } else {
             controller.UIUpdate("Failed Escape!", 0);
-            combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getCoords()));
+            combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
             return false;
         }
         return true;
@@ -150,16 +158,16 @@ public class CommandProcessor{
         }
     }
     private void attackMonster(String command) {
-        String message = combatSystem.attack(mapController.attackMonsters(command,
-                playerController.getAttack(), playerController.getCoords())).getMessage();
+        String message = combatSystem.attack(doesDamage.attackMonsters(command,
+                playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
         if (message != null) {
             playerController.monsterKilled();
             controller.UIUpdate(message, 0);
         }
-        combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getCoords()));
+        combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
     }
     private void takeItem(String command) {
-        Messenger messenger = mapController.grabItem(playerController.getCoords(), command);
+        Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
         switch (messenger.getItemType()) {
             case 0:
                 controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
@@ -185,7 +193,7 @@ public class CommandProcessor{
     private void moveOnLevel(Movement movement) {
         int deltaX;
         int deltaY;
-        Coordinates playerCoords = playerController.getCoords();
+        Coordinates playerCoords = playerController.getMapCoordinates();
         switch (movement) {
             case LEFT -> {
                 deltaX = -1;
@@ -205,19 +213,19 @@ public class CommandProcessor{
             }
             default -> { return;}
         }
-        updateMinimap.setVisibility(playerController.movement(deltaX, deltaY,
-                mapController.getMapValue(playerCoords),
-                mapController.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
+        updateMinimap.setVisibility(playerController.movement(new Coordinates(deltaX, deltaY),
+                mapState.getMapValue(playerCoords),
+                mapState.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
         updateMinimap.setDirection(deltaX, deltaY);
         updateMinimap.renderMinimap();
     }
     public void traverseLevels(int dir) {
-        if (mapController.isWalkable(mapController.getMapValue(playerController.getCoords()))) {
-            if (dir > 0 && mapController.isCave(mapController.getMapValue(playerController.getCoords()))) {
-                mapController.changeLevel(dir);
+        if (canCross.isWalkable(mapState.getMapValue(playerController.getMapCoordinates()))) {
+            if (dir > 0 && canCross.isCave(mapState.getMapValue(playerController.getMapCoordinates()))) {
+                mapState.changeLevel(dir);
                 updateMinimap.renderMinimap();
-            } else if (dir < 0 && mapController.isLadder(mapController.getMapValue(playerController.getCoords()))) {
-                mapController.changeLevel(dir);
+            } else if (dir < 0 && canCross.isLadder(mapState.getMapValue(playerController.getMapCoordinates()))) {
+                mapState.changeLevel(dir);
                 updateMinimap.renderMinimap();
             } else {
                 controller.UIUpdate("Can only go up on a ladder or down on a cave", 0);

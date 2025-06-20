@@ -20,13 +20,13 @@ public class InventoryManager {
     }
     public void updateInventoryDisplay() {
         StringBuilder sendString = new StringBuilder();
-        if (playerController.InventoryCommands(null, 3) != null) {
-            for (String i : playerController.InventoryCommands(null, 3)) {
+        if (playerController.viewInventory() != null) {
+            for (String i : playerController.viewInventory()) {
                 sendString.append(i).append("\n");
             }
         }
-        if (!(playerController.getHealing_items() == null)) {
-            sendString.append(playerController.getHealing_items());
+        if (!(playerController.getHealingItems() == null)) {
+            sendString.append(playerController.getHealingItems());
         }
         guiEventListener.UIUpdate(sendString.toString(), 1);
     }
