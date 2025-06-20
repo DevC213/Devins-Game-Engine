@@ -51,6 +51,14 @@ class PlayerMovement {
                 }
             }
         }
+        while(playerController.getHealth() <= 0) {
+            if (playerController.getHealingItems() == null) {
+                playerController.gameOver();
+                return -1;
+            } else {
+                playerController.EmergencyUse();
+            }
+        }
         if(visibility.getVisibility(newTile) < visibility.getVisibility(currTile)) {
             if (visibility.getVisibility(newTile) == 0) {
                 playerController.sendMessage("Player: I cant see!!");

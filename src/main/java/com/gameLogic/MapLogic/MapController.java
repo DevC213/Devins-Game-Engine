@@ -35,7 +35,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         mapData = new MapData();
         MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(KEY_FILE_PATH)));
         try {
-
             Gson gson = new Gson();
             InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
             InputStreamReader reader = new InputStreamReader(input);
@@ -44,32 +43,9 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
             for(RMap rMap : tempMapList) {
                 mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme());
             }
-
-
-
-//            Map<String, String[]> levelMap = getStringMap(filePath);
-//            for (Map.Entry<String, String[]> entry : levelMap.entrySet()) {
-//                String levelName = entry.getKey();
-//                String fileLocation = entry.getValue();
-//                switch (levelName) {
-//                    case "Key":
-//                        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(fileLocation.trim())));
-//                        break;
-//                    case "Overworld":
-//                    case "Underground":
-//                    case "Caverns":
-//                    case "TheDarkness":
-//                    case "TheVoid":
-//                        mapData.processMap(levelBeingProcessed, getStringMap(fileLocation),levelName);
-//                        levelBeingProcessed++;
-//                        break;
-//                    default:
-//                        System.out.println("Unknown level type: " + levelName);
-//                }
-//            }
         } catch (Exception e) {
-            e.printStackTrace();
-            this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
+            guiEventListener.UIUpdate(e.getMessage(),0);
+            this.guiEventListener.UIUpdate("Loading default map", 0);
             mapData.defaultLevel();
         }
 
@@ -80,11 +56,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     }
     public Coordinates generateValidStartPosition() {
         Map<String, TileKey> tileKey = getMapTileKey();
-        Coordinates startingCords = validStart.validStartingCoordinents(tileKey);
-        if (getVisibility(getMapValue(startingCords)) != 2) {
-            guiEventListener.UIUpdate("Player: The air is thick here", 0);
-        }
-        return startingCords;
+
+        return validStart.validStartingCoordinents(tileKey);
     }
 
     private Map<String, String> getStringMap(String filePath) {

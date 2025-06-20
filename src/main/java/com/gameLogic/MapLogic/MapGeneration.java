@@ -14,12 +14,8 @@ public class MapGeneration {
 
     private final static Map<String, TileKey> tileKey= new HashMap<>();
     private Coordinates maxCoords;
-    private Vector<Vector<String>> MapData;
+    private List<List<String>> MapData;
     private final Map<String,String> multiFileMap = new HashMap<>();
-    private final Vector<String> multiFileTiles = new Vector<>(List.of(
-            "e", "r", "c",
-            "~", "s","g"
-    ));
     private final Map<Integer,String> playerTiles = new HashMap<>();
 
     public MapGeneration() {
@@ -54,7 +50,7 @@ public class MapGeneration {
         return tileKey;
     }
     private void defaultMap() {
-        Vector<Vector<String>> temp = new Vector<>();
+        List<List<String>> temp = new ArrayList<>();
 
         final int defaultColumns = 10;
         final int defaultRows = 10;
@@ -62,7 +58,7 @@ public class MapGeneration {
         maxCoords = new Coordinates(defaultColumns, defaultRows);
 
         for (int i = 0; i < defaultRows; i++) {
-            Vector<String> tempRow = new Vector<>();
+            List<String> tempRow = new ArrayList<>();
             for (int j = 0; j < defaultColumns; j++) {
                 tempRow.add(".");
             }
@@ -73,14 +69,14 @@ public class MapGeneration {
     private void processMap(String map_file) {
         InputStream input;
         Scanner reader;
-        Vector<Vector<String>> mapTemp = new Vector<>();
+        List<List<String>> mapTemp = new ArrayList<>();
         initialIzeMultiFileMap();
         initializePlayerTiles();
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(map_file));
             reader = new Scanner(input);
             while (reader.hasNext()) {
-                    Vector<String> tempRow;
+                    List<String> tempRow;
                     String mapLine = reader.nextLine();
                     tempRow = lineParser(mapLine);
                     mapTemp.add(tempRow);
@@ -95,7 +91,7 @@ public class MapGeneration {
 
         MapData = mapTemp;
     }
-    private Vector<String> lineParser(String line) {
+    private List<String> lineParser(String line) {
         Vector<String> temp = new Vector<>();
         int i = 0;
         while(i < line.length()){
@@ -116,7 +112,7 @@ public class MapGeneration {
         }
         return temp;
     }
-    private void checkLengths(Vector<Vector<String>> vec){
+    private void checkLengths(List<List<String>> vec){
         int expectedLength = vec.getFirst().size();
         for(int i = 1; i < vec.size(); i++){
             if(vec.get(i).size() < expectedLength){
@@ -126,19 +122,16 @@ public class MapGeneration {
             }else{
                 while(vec.get(i).size() > expectedLength){
                     vec.get(i).removeLast();
-                };
+                }
             }
 
         }
     }
     public String getImage(final String terrain, String levelName) {
-        if(MapGeneration.tileKey.containsKey(terrain)){
-            if (multiFileTiles.contains(terrain)){
-                return multiFileMap.get(levelName) + MapGeneration.tileKey.get(terrain).fileLocation();
-            }
-            return MapGeneration.tileKey.get(terrain).fileLocation();
+        if (tileKey.get(terrain).multiFile()) {
+            return multiFileMap.get(levelName) + MapGeneration.tileKey.get(terrain).fileLocation();
         }
-        return null;
+        return MapGeneration.tileKey.get(terrain).fileLocation();
     }
     public String getPlayerImage(int direction){
         return playerTiles.get(direction);

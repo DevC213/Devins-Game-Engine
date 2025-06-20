@@ -44,7 +44,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         uiMapController = new UIMapController();
         commandProcessor = new CommandProcessor(controller, playerController, this, this, combatSystem, inventoryManager,
                 mapController,mapController,mapController,mapController,mapController);
-
+        uiMapController.setVisibility(mapController.getVisibility(mapController.getMapValue(playerController.getMapCoordinates())));
+        if (mapController.getVisibility(mapController.getMapValue(startingCords)) != 2) {
+            controller.UIUpdate("Player: The air is thick here", 0);
+        }
     }
     public void handleInput(String keyPressed) {
         if(playerController.isGameOver()){return;}
@@ -61,10 +64,13 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         mapController.setLevel(0);
         mapController.resetMap();
         intro();
-        uiMapController.setVisibility(2);
+        uiMapController.setVisibility(mapController.getVisibility(mapController.getMapValue(playerController.getMapCoordinates())));
         uiMapController.setDirection(0);
         controller.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
         if(playerController.isGameOver()){playerController.toggleGameOver();}
+        if (mapController.getVisibility(mapController.getMapValue(startingCords)) != 2) {
+            controller.UIUpdate("Player: The air is thick here", 0);
+        }
     }
     public void intro() {
         controller.UIUpdate("""
