@@ -2,7 +2,7 @@ package com.gameLogic;
 
 import com.Armor.Armor;
 import com.Weapons.Weapon;
-import com.recoveryItems.HealingItem;
+import com.recoveryItems.RecoveryItem;
 
 public interface IAccessItems {
     public boolean itemsOnTile(Coordinates location);
@@ -11,5 +11,5 @@ public interface IAccessItems {
     public Coordinates getCoordinates();
     public Messenger grabItem(Coordinates location, final String item);
     public Armor getArmor(Coordinates location);
-    public HealingItem getHealing(Coordinates location);
+    public RecoveryItem getHealing(Coordinates location);
 }

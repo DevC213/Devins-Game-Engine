@@ -3,9 +3,15 @@ package com.gameLogic.MapLogic;
 import com.Armor.Armor;
 import com.Weapons.Weapon;
 import com.gameLogic.*;
-import com.recoveryItems.HealingItem;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.recoveryItems.RecoveryItem;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IImage, IAccessItems, IMonsters {
@@ -22,26 +28,39 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public MapController(final String filePath, final IGuiEventListener guiEventListener) {
 
         InputStream input;
-        int fileLine = 0;
         this.guiEventListener = guiEventListener;
-        validStart = new ValidStart(this,this,this,this);
+        validStart = new ValidStart(this, this, this, this);
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
-            Scanner reader = new Scanner(input);
-            while (reader.hasNext()) {
-                String line = reader.nextLine();
-                if (fileLine == 0) {
-                    MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(line.trim())));
-                } else {
-                    processMaps(line);
+            InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(isr);
+            Gson gson = new Gson();
+            Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+            Map<String, String> levelMap = gson.fromJson(reader, mapType);
+
+            for (Map.Entry<String, String> entry : levelMap.entrySet()) {
+                String levelName = entry.getKey();
+                String fileLocation = entry.getValue();
+                switch (levelName) {
+                    case "Key":
+                        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(fileLocation.trim())));
+                        break;
+                    case "Overworld":
+                    case "Underground":
+                    case "Caverns":
+                    case "TheDarkness":
+                    case "TheVoid":
+                        processMaps(fileLocation);
+                        break;
+                    default:
+                        System.out.println("Unknown level type: " + levelName);
                 }
-                fileLine++;
             }
-            reader.close();
-        } catch (Exception e) {
+        } catch (Exception _) {
             this.guiEventListener.UIUpdate("Error Reading Map info, loading default map", 0);
             maps.add(new MapGeneration());
         }
+
     }
     private Map<String, TileKey> getMapTileKey() {
         return MapGeneration.getTileKey();
@@ -56,34 +75,36 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         return startingCords;
     }
     private void processMaps(String filePath) {
-        int fileLine = 0;
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
-        Scanner reader = new Scanner(input);
-        String file;
-        while (reader.hasNext()) {
-            file = reader.nextLine();
-            switch (fileLine) {
-                case 0 -> maps.add(new MapGeneration(file));
-                case 1 -> items.add(new MapItemController(file, maps.get(level).getColumnsAndRows()));
-                case 2 -> {
-                    monsters.add(new MapMonsterController(file));
-                    Messenger messenger = monsters.get(level).processFiles(file);
+        InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(isr);
+        Gson gson = new Gson();
+        Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+        Map<String, String> levelMap = gson.fromJson(reader, mapType);
+        for(Map.Entry<String, String> entry : levelMap.entrySet()) {
+            String file = entry.getKey();
+            String path = entry.getValue();
+
+            switch (file) {
+                case "Map" -> maps.add(new MapGeneration(path));
+                case "Items" -> items.add(new MapItemController(path, maps.get(level).getColumnsAndRows()));
+                case "Monsters" -> {
+                    monsters.add(new MapMonsterController(path));
+                    Messenger messenger = monsters.get(level).processFiles(path);
                     if (messenger.getMessage() != null) {
                         guiEventListener.UIUpdate(messenger.getMessage(), 0);
                     }
                 }
-                case 3 -> {
-                    Messenger messenger = monsters.get(level).processSpawnChances(file);
+                case "SpawnTable" -> {
+                    Messenger messenger = monsters.get(level).processSpawnChances(path);
                     if (messenger.getMessage() != null) {
                         guiEventListener.UIUpdate(messenger.getMessage(), 0);
                     }
                 }
+                default -> throw new RuntimeException("Unknown file found: " + path);
             }
 
-            fileLine++;
-
         }
-        reader.close();
     }
 
     //IMapState
@@ -155,7 +176,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public StringBuilder itemList(Coordinates location) {
         Weapon weapons = getWeapons(location);
         Armor armor = getArmor(location);
-        HealingItem healingItems = getHealing(location);
+        RecoveryItem recoveryItems = getHealing(location);
         StringBuilder str = new StringBuilder();
         if (weapons != null) {
             str.append(weapons.name());
@@ -163,8 +184,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         if (armor != null) {
             str.append(armor.name());
         }
-        if (healingItems != null) {
-            str.append(healingItems.getName());
+        if (recoveryItems != null) {
+            str.append(recoveryItems.getName());
         }
         return str;
     }
@@ -180,7 +201,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public Armor getArmor(Coordinates location) {
         return items.get(level).armorOnTile(location);
     }
-    public HealingItem getHealing(Coordinates location) {
+    public RecoveryItem getHealing(Coordinates location) {
         return items.get(level).healingItemsOnTile(location);
     }
 

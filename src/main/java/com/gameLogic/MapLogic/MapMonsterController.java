@@ -3,16 +3,23 @@ package com.gameLogic.MapLogic;
 import com.Monsters.Monster;
 import com.Monsters.MonsterFactory;
 import com.gameLogic.Coordinates;
+import com.gameLogic.MapLogic.rawClasses.RMonster;
 import com.gameLogic.Messenger;
+import com.gameLogic.SpawnTable;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.*;
 
 class MapMonsterController {
 
-    Map<String, List<Monster>> monsterVectorMap;
-    Map<String, List<String>> spawnChanges;
+    Map<Coordinates, List<Monster>> monsterVectorMap;
+    Map<String, SpawnTable> spawnChanges;
     MonsterFactory monsterFactory;
     private final String monsterLocations;
     MapMonsterController(String fileLocation) {
@@ -22,63 +29,61 @@ class MapMonsterController {
         spawnChanges = new HashMap<>();
     }
     public Messenger processFiles(String file){
-        Messenger messenger = new Messenger();
-        InputStream input;
-        Scanner reader;
-        Map<String,Integer> monsters = new TreeMap<>();
-        String key;
-        try {
-            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
-            reader = new Scanner(input);
-            while (reader.hasNext()) {
-                String[] monsterData =  reader.nextLine().split(";");
-                key = keyString(monsterData);
-                monsters.merge(key + monsterData[4], 1, Integer::sum);
-                if(monsterVectorMap.containsKey(key)){
-                    monsterVectorMap.get(key).add(monsterFactory.MonsterFac(Integer.parseInt(monsterData[2]),Integer.parseInt(monsterData[3]),monsterData[4], monsters.get(key + monsterData[4])));
-                } else {
-                Vector<Monster> m = new Vector<>();
-                m.add(monsterFactory.MonsterFac(Integer.parseInt(monsterData[2]),Integer.parseInt(monsterData[3]),monsterData[4],monsters.get(key + monsterData[4])));
-                monsterVectorMap.put(key,new Vector<>(m));
-            }}
-        } catch (Exception e) {
-            messenger.setMessage(e + "Error loading monsters for: " + file);
+       Messenger messenger = new Messenger();
+        Gson gson = new Gson();
+        InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(file));
+        InputStreamReader reader = new InputStreamReader(input);
+        Type listType = new TypeToken<List<RMonster>>() {}.getType();
+        List<RMonster> tempMonsterList = gson.fromJson(reader, listType);
+        for(RMonster rMonster : tempMonsterList) {
+            Coordinates coordinates = new Coordinates(rMonster.position()[0], rMonster.position()[1]);
+            List<Monster> tempList = new ArrayList<>();
+            for (int i = 0; i < rMonster.quantity(); i++) {
+                tempList.add(monsterFactory.MonsterFac(rMonster.damage(), rMonster.health(), rMonster.name(), i + 1));
+            }
+            monsterVectorMap.put(coordinates, tempList);
         }
         return messenger;
     }
     public Messenger processSpawnChances(String file) {
         Messenger messenger = new Messenger();
-        InputStream input;
-        Scanner reader;
-        try {
-            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
-            reader = new Scanner(input);
-            while (reader.hasNext()) {
-                Vector<String> monsterData = new Vector<>(List.of(reader.nextLine().split(";")));
-                String monster = monsterData.getFirst();
-                monsterData.removeFirst();
-                spawnChanges.put(monster, monsterData);
-            }
-        } catch (Exception e) {
-            messenger.setMessage(e + "Error loading monsters for: " + file);
+        InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(file));;
+        Gson gson = new Gson();
+        InputStreamReader reader = new InputStreamReader(input);
+        Type listType = new TypeToken<List<SpawnTable>>() {}.getType();
+        List<SpawnTable> tempTable = gson.fromJson(reader, listType);
+        for(SpawnTable spawnTable : tempTable) {
+            spawnChanges.put(spawnTable.name(), spawnTable);
         }
+        //Scanner reader;
+//        try {
+//            input = Objects.requireNonNull(getClass().getResourceAsStream(file));
+//            reader = new Scanner(input);
+//            while (reader.hasNext()) {
+//                Vector<String> monsterData = new Vector<>(List.of(reader.nextLine().split(";")));
+//                String monster = monsterData.getFirst();
+//                monsterData.removeFirst();
+//                spawnChanges.put(monster, monsterData);
+//            }
+//        } catch (Exception e) {
+//            messenger.setMessage(e + "Error loading monsters for: " + file);
+//        }
         return messenger;
     }
     public void spawnMonster(Coordinates location){
         int number = (int) (Math.random() * 100);
         int cumulative = 0;
         for(String j: spawnChanges.keySet()) {
-            cumulative += Integer.parseInt(spawnChanges.get(j).getFirst());
+            cumulative += spawnChanges.get(j).weight();
             if (number < cumulative) {
-                monsterVectorMap.put(keyString(location), new ArrayList<>(Collections.singletonList(monsterFactory.MonsterFac(Integer.parseInt(spawnChanges.get(j).get(2)), Integer.parseInt(spawnChanges.get(j).get(1)), j, 1))));
+                monsterVectorMap.put(location, new ArrayList<>(Collections.singletonList(monsterFactory.MonsterFac(spawnChanges.get(j).damage(), spawnChanges.get(j).hp(), j, 1))));
                 return;
             }
         }
     }
     public List<String> getMonsters(Coordinates location){
-        String key = keyString(location);
         List<String> rtnStrVec = new ArrayList<>();
-        List<Monster> monsters = monsterVectorMap.get(key);
+        List<Monster> monsters = monsterVectorMap.get(location);
         Map<String,Integer> monstersNum = new HashMap<>();
         if(monsters == null){
             return null;
@@ -101,7 +106,7 @@ class MapMonsterController {
     public synchronized Messenger attackMonsters(String monster, int attack, Coordinates location){
         Messenger rtnMessage = new Messenger();
         boolean monsterKilled = false;
-        List<Monster> monsters = monsterVectorMap.get(keyString(location));
+        List<Monster> monsters = monsterVectorMap.get(location);
         Map<String,Integer> monstersNum = new HashMap<>();
 
         int index = 0;
@@ -121,7 +126,7 @@ class MapMonsterController {
                 i.attack(attack);
                 if (i.getHealth() <= 0) {
                     monsterKilled = true;
-                    index = monsterVectorMap.get(keyString(location)).indexOf(i);
+                    index = monsterVectorMap.get(location).indexOf(i);
                 }
             }
         }
@@ -132,7 +137,7 @@ class MapMonsterController {
             } else {
                 rtnMessage.setMessage(monsters.get(index).getName() + " Was killed");
             }
-            monsterVectorMap.get(keyString(location)).remove(index);
+            monsterVectorMap.get(location).remove(index);
         }
         return rtnMessage;
     }
@@ -143,21 +148,14 @@ class MapMonsterController {
     public Messenger getMonsterAttack(Coordinates location){
         Messenger rtnMessenger = new Messenger();
         Vector<Double> rtnVec = new Vector<>();
-        if(monsterVectorMap.get(keyString(location)) == null){
+        if(monsterVectorMap.get(location) == null){
             rtnMessenger = new Messenger("No monster on tile");
             return rtnMessenger;
         }
-        for(Monster i: monsterVectorMap.get(keyString(location))){
+        for(Monster i: monsterVectorMap.get(location)){
             rtnVec.add(i.getBaseAttack());
         }
         rtnMessenger.addPayloadD(rtnVec);
         return rtnMessenger;
-    }
-
-    private String keyString(Coordinates location){
-        return location.x() + "." + location.y();
-    }
-    private String keyString(String[] location){
-        return location[0] + "." + location[1];
     }
 }

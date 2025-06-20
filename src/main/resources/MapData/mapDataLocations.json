@@ -1,0 +1,8 @@
+{
+  "Key": "/MapData/Key.json",
+  "Overworld": "/MapData/information/Overworld/MapData.json",
+  "Underground": "/MapData/information/Underground/MapData.txt",
+  "Caverns": "/MapData/information/Caverns/MapData.txt",
+  "TheDarkness": "/MapData/information/TheDarkness/MapData.txt",
+  "TheVoid": "/MapData/information/TheVoid/MapData.txt"
+}

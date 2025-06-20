@@ -1,3 +1,0 @@
-/MapData/information/Overworld/armor.txt
-/MapData/information/Overworld/recoveryItems.txt
-/MapData/information/Overworld/weapons.txt

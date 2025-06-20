@@ -1,10 +1,10 @@
 package com.recoveryItems;
 
-public class HealingItem {
+public class RecoveryItem {
     final String name;
     final int healing;
 
-    public HealingItem(String name, int healing) {
+    public RecoveryItem(String name, int healing) {
         this.name = name;
         this.healing = healing;
     }

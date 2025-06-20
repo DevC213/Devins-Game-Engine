@@ -1,0 +1,6 @@
+{
+  "Map":"/MapData/information/Overworld/Overworld.txt",
+  "Items":"/MapData/information/Overworld/Items.json",
+  "Monsters":"/MapData/information/Overworld/Monsters.json",
+  "SpawnTable":"/MapData/information/Overworld/spawnTable.json"
+}

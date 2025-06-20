@@ -1,0 +1,5 @@
+{
+    "armor": "/MapData/information/Overworld/armor.json",
+    "recoveryItems": "/MapData/information/Overworld/recoveryItems.json",
+    "weapons": "/MapData/information/Overworld/weapons.json"
+}

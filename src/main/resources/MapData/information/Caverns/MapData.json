@@ -1,0 +1,6 @@
+{
+  "Map":"/MapData/information/Caverns/cave.txt",
+  "Items":"/MapData/information/Caverns/Items.txt",
+  "Monsters":"/MapData/information/Caverns/Monsters.txt",
+  "SpawnTable":"/MapData/information/Caverns/spawnPercentages.txt"
+}

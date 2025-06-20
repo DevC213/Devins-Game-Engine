@@ -6,6 +6,8 @@ module com.example.adventuregui {
     requires java.desktop;
     requires javafx.media;
     requires com.google.gson;
+    requires com.fasterxml.jackson.annotation;
+    requires com.fasterxml.jackson.databind;
 
     exports com.gameLogic;
     exports com.Monsters;
@@ -24,4 +26,5 @@ module com.example.adventuregui {
     opens com.gameLogic.MapLogic to javafx.fxml;
     exports com.Monsters.overworld;
     opens com.Monsters.overworld to javafx.fxml;
+    opens com.gameLogic.MapLogic.rawClasses to com.google.gson;
 }

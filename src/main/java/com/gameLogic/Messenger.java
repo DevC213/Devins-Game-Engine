@@ -2,7 +2,7 @@ package com.gameLogic;
 
 import com.Armor.Armor;
 import com.Weapons.Weapon;
-import com.recoveryItems.HealingItem;
+import com.recoveryItems.RecoveryItem;
 
 import java.util.Vector;
 
@@ -11,7 +11,7 @@ public class Messenger {
     private Vector<Double> payloadDouble;
     private Weapon weapon;
     private Armor armor;
-    private HealingItem healingItem;
+    private RecoveryItem recoveryItem;
     private int itemType = -1;
     public enum MessageType {
         INFO, WARNING, ERROR, EVENT
@@ -39,12 +39,12 @@ public class Messenger {
         itemType = 1;
         this.armor = armor;
     }
-    public HealingItem getHealingItem() {
-        return healingItem;
+    public RecoveryItem getHealingItem() {
+        return recoveryItem;
     }
-    public void setHealingItem(HealingItem healingItem) {
+    public void setHealingItem(RecoveryItem recoveryItem) {
         itemType = 2;
-        this.healingItem = healingItem;
+        this.recoveryItem = recoveryItem;
     }
     public Weapon getWeapon(){
         return weapon;

@@ -1,6 +1,0 @@
-1;0;1;1;Zombie
-1;0;1;1;Zombie
-1;0;1;1;Zombie
-1;0;1;1;Zombie
-5;2;10;10;Skeleton
-
