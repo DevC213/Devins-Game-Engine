@@ -18,6 +18,7 @@ public class MapGeneration {
     private final Map<String,String> multiFileMap = new HashMap<>();
     private final Map<Integer,String> playerTiles = new HashMap<>();
 
+
     public MapGeneration() {
         defaultMap();
     }

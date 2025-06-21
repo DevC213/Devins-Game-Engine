@@ -7,21 +7,21 @@
   {
     "level": 2,
     "theme": "Underground",
-    "file": "/MapData/information/Underground/MapData.json"
+    "file": "/MapData/information/levelTwo/MapData.json"
   },
   {
     "level": 3,
     "theme": "Caverns",
-    "file": "/MapData/information/Caverns/MapData.json"
+    "file": "/MapData/information/levelThree/MapData.json"
   },
   {
     "level": 4,
     "theme": "TheDarkness",
-    "file": "/MapData/information/TheDarkness/MapData.json"
+    "file": "/MapData/information/levelFour/MapData.json"
   },
   {
     "level": 5,
     "theme": "TheVoid",
-    "file": "/MapData/information/TheVoid/MapData.json"
+    "file": "/MapData/information/levelFive/MapData.json"
   }
 ]

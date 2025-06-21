@@ -1,0 +1,5 @@
+{
+    "armor": "/MapData/information/levelFive/armor.json",
+    "recoveryItems": "/MapData/information/levelFive/recoveryItems.json",
+    "weapons": "/MapData/information/levelFive/weapons.json"
+}

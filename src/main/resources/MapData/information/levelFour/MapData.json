@@ -1,0 +1,6 @@
+{
+  "Map":"/MapData/information/levelFour/levelMap.txt",
+  "Items":"/MapData/information/levelFour/Items.json",
+  "Monsters":"/MapData/information/levelFour/Monsters.json",
+  "SpawnTable":"/MapData/information/levelFour/spawnTable.json"
+}

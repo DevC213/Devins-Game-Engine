@@ -1,11 +1,9 @@
 package com.gameLogic.MapLogic;
 
 import com.Armor.Armor;
-import com.Monsters.Monster;
 import com.Weapons.Weapon;
 import com.gameLogic.*;
 import com.gameLogic.MapLogic.rawClasses.RMap;
-import com.gameLogic.MapLogic.rawClasses.RMonster;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recoveryItems.RecoveryItem;
@@ -21,7 +19,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
 
     private final MapData mapData;
-    private final IGuiEventListener guiEventListener;
     private final ValidStart validStart;
     private static final String KEY_FILE_PATH = "/MapData/Key.json";
     private int level = 0;
@@ -30,7 +27,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     //Constructors/Map Generation:
     public MapController(final String filePath, final IGuiEventListener guiEventListener) {
 
-        this.guiEventListener = guiEventListener;
         validStart = new ValidStart(this, this, this, this);
         mapData = new MapData();
         MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(KEY_FILE_PATH)));
@@ -45,7 +41,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
             }
         } catch (Exception e) {
             guiEventListener.UIUpdate(e.getMessage(),0);
-            this.guiEventListener.UIUpdate("Loading default map", 0);
             mapData.defaultLevel();
         }
 
@@ -55,9 +50,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
     }
     public Coordinates generateValidStartPosition() {
-        Map<String, TileKey> tileKey = getMapTileKey();
-
-        return validStart.validStartingCoordinents(tileKey);
+        return validStart.validStartingCoordinents(getMapTileKey());
     }
 
     private Map<String, String> getStringMap(String filePath) {
