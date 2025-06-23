@@ -192,6 +192,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     }
     public void healthIncrease(int level) {
         if (level > deepestLevel) {
+            String sound = mapController.getSound();
+            String voice = mapController.getVoice();
             controller.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
             playerController.increaseMaxHealth(25 * level);
             playerController.increaseLevel();
@@ -199,6 +201,14 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             String script = scriptController.script(level);
             if(script != null) {
                 controller.UIUpdate(script, 0);
+            } else {
+                if(sound != null) {
+                    scriptController.playSound(sound);
+                }
+                if(voice != null) {
+                    scriptController.playSound(voice);
+                }
+
             }
         }
     }

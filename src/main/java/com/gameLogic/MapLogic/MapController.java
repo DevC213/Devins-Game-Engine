@@ -37,7 +37,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
             Type listType = new TypeToken<List<RMap>>() {}.getType();
             List<RMap> tempMapList = gson.fromJson(reader, listType);
             for(RMap rMap : tempMapList) {
-                mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme());
+                mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme(),  rMap.voice(), rMap.sound());
             }
         } catch (Exception e) {
             guiEventListener.UIUpdate(e.getMessage(),0);
@@ -169,5 +169,13 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public String getTheme(){
         return mapData.getLevel(level).theme();
     }
+    public String getVoice(){
+        return mapData.getLevel(level).voice();
+    }
+    public String getSound(){
+        return mapData.getLevel(level).sound();
+    }
+
+
 }
 

@@ -7,21 +7,27 @@
   {
     "level": 2,
     "theme": "Underground",
-    "file": "/MapData/information/levelTwo/MapData.json"
+    "file": "/MapData/information/levelTwo/MapData.json",
+    "voice": "/Sound/undergroundVoice.wav"
   },
   {
     "level": 3,
     "theme": "Caverns",
-    "file": "/MapData/information/levelThree/MapData.json"
+    "file": "/MapData/information/levelThree/MapData.json",
+    "voice": "/Sound/cavernVoice.wav"
   },
   {
     "level": 4,
     "theme": "TheDarkness",
-    "file": "/MapData/information/levelFour/MapData.json"
+    "file": "/MapData/information/levelFour/MapData.json",
+    "voice": "/Sound/theDarknessVoice.wav",
+    "sound": "/Sound/darkness.wav"
   },
   {
     "level": 5,
     "theme": "TheVoid",
-    "file": "/MapData/information/levelFive/MapData.json"
+    "file": "/MapData/information/levelFive/MapData.json",
+    "voice": "/Sound/theVoidVoice.wav",
+    "sound": "/Sound/theVoid.wav"
   }
 ]
