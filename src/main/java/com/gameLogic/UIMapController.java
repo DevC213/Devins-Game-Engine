@@ -106,7 +106,7 @@ public class UIMapController {
     public void setDirection(String direction) {
         this.direction = direction;
     }
-    public void processPlayerSkins(String filePath){
+    public void processCharacters(String filePath){
         try {
             Gson gson = new Gson();
             InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
@@ -114,7 +114,7 @@ public class UIMapController {
             Type listType = new TypeToken<java.util.List<Character>>() {}.getType();
             List<Character> tempSkinList = gson.fromJson(reader, listType);
             for(Character character : tempSkinList) {
-                characterMap.put(character.skinID(), character);
+                characterMap.put(character.name(), character);
             }
         } catch (Exception e) {
             throw  new RuntimeException("Error processing player's skins file");

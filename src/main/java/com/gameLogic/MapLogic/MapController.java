@@ -20,7 +20,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
     private final MapData mapData;
     private final ValidStart validStart;
-    private static final String KEY_FILE_PATH = "/MapData/key.json";
+    private static final String KEY_FILE_PATH = "/key.json";
     private int level = 0;
     private final Random random = new Random();
 

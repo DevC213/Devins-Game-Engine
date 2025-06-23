@@ -39,9 +39,9 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public GameController(Controller controller) {
         scriptController = new ScriptController();
         this.controller = controller;
-        uiMapController = new UIMapController("/MapData/key.json");
-        this.mapController = new MapController("/MapData/mapDataLocations.json", this.controller);
-        uiMapController.processPlayerSkins("/MapData/skinFilePaths.json");
+        uiMapController = new UIMapController("/key.json");
+        this.mapController = new MapController("/levelData.json", this.controller);
+        uiMapController.processCharacters("/characters.json");
         Coordinates startingCords = mapController.generateValidStartPosition();
         this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller,
                                 mapController, mapController, mapController);

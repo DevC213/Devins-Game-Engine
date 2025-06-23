@@ -2,6 +2,6 @@ package com.gameLogic.PlayerLogic;
 
 import java.util.Map;
 
-public record Character(String skinID,Map<String, String> directions, int startingHP){
+public record Character(String name, Map<String, String> directions, int startingHP){
 
 }

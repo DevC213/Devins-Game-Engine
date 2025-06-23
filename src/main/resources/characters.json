@@ -1,6 +1,6 @@
 [
   {
-    "skinID": "MaleOne",
+    "name": "MaleOne",
     "directions": {
       "down": "/PlayerImages/maleOne/down.png",
       "left": "/PlayerImages/maleOne/left.png",
@@ -10,7 +10,7 @@
     "startingHP": 100
   },
   {
-    "skinID": "FemaleOne",
+    "name": "FemaleOne",
     "directions": {
       "down": "/PlayerImages/femaleOne/playerDown.png",
       "left": "/PlayerImages/femaleOne/playerLeft.png",
