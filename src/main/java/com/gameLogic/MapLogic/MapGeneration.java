@@ -15,9 +15,6 @@ public class MapGeneration {
     private final static Map<String, TileKey> tileKey= new HashMap<>();
     private Coordinates maxCoords;
     private List<List<String>> MapData;
-    private final Map<String,String> multiFileMap = new HashMap<>();
-    private final Map<Integer,String> playerTiles = new HashMap<>();
-
 
     public MapGeneration() {
         defaultMap();
@@ -25,19 +22,7 @@ public class MapGeneration {
     public MapGeneration(final String mapName) {
         processMap(mapName);
     }
-    private void initialIzeMultiFileMap(){
-        multiFileMap.put("Overworld","/MapPics/overworldTiles/");
-        multiFileMap.put("Underground","/MapPics/undergroundTiles/");
-        multiFileMap.put("Caverns","/MapPics/cavernTiles/");
-        multiFileMap.put("TheDarkness","/MapPics/darknessTiles/");
-        multiFileMap.put("TheVoid","/MapPics/voidTiles/");
-    }
-    private void initializePlayerTiles(){
-        playerTiles.put(0,"/MapPics/playerImages/down.png");
-        playerTiles.put(1,"/MapPics/playerImages/left.png");
-        playerTiles.put(2,"/MapPics/playerImages/right.png");
-        playerTiles.put(3,"/MapPics/playerImages/up.png");
-    }
+
     public static void processKey(InputStream keyFile){
         Gson gson = new Gson();
         InputStreamReader reader = new InputStreamReader(keyFile);
@@ -71,8 +56,6 @@ public class MapGeneration {
         InputStream input;
         Scanner reader;
         List<List<String>> mapTemp = new ArrayList<>();
-        initialIzeMultiFileMap();
-        initializePlayerTiles();
         try {
             input = Objects.requireNonNull(getClass().getResourceAsStream(map_file));
             reader = new Scanner(input);
@@ -127,15 +110,6 @@ public class MapGeneration {
             }
 
         }
-    }
-    public String getImage(final String terrain, String levelName) {
-        if (tileKey.get(terrain).multiFile()) {
-            return multiFileMap.get(levelName) + MapGeneration.tileKey.get(terrain).fileLocation();
-        }
-        return MapGeneration.tileKey.get(terrain).fileLocation();
-    }
-    public String getPlayerImage(int direction){
-        return playerTiles.get(direction);
     }
     public Coordinates getColumnsAndRows(){return maxCoords;}
     public String getMapValue(Coordinates coordinates) {

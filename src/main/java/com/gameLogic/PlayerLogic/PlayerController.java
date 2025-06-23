@@ -167,4 +167,9 @@ public class PlayerController implements PlayerDamageListener{
     public void increaseLevel(){
         level++;
     }
+
+    public void setHealth(int playerHealth) {
+        this.playerHealth.setHealth(playerHealth);
+        guiEventListener.UIUpdate("Health: " + this.playerHealth.getHealth(), 3);
+    }
 }

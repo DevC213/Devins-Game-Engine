@@ -1,0 +1,22 @@
+[
+  {
+    "skinID": "MaleOne",
+    "directions": {
+      "down": "/PlayerImages/maleOne/down.png",
+      "left": "/PlayerImages/maleOne/left.png",
+      "right": "/PlayerImages/maleOne/right.png",
+      "up": "/PlayerImages/maleOne/up.png"
+    },
+    "startingHP": 100
+  },
+  {
+    "skinID": "FemaleOne",
+    "directions": {
+      "down": "/PlayerImages/femaleOne/playerDown.png",
+      "left": "/PlayerImages/femaleOne/playerLeft.png",
+      "right": "/PlayerImages/femaleOne/playerRight.png",
+      "up": "/PlayerImages/femaleOne/playerUp.png"
+    },
+    "startingHP": 90
+  }
+]

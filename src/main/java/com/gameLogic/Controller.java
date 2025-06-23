@@ -3,15 +3,16 @@ package com.gameLogic;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+
 import java.util.Objects;
 
-
-public class Controller implements IGuiEventListener, IGuiCommandGetter {
+public class Controller implements IGuiEventListener, IGuiCommandGetter{
 
     public TextField health;
     public TextField defence;
@@ -20,7 +21,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     public GridPane miniMap;
     private static final int SIZE = 5;
     public TextField money;
-
+    public ComboBox<String> characterSelection;
     @FXML
     private TextField commandInput;
     @FXML
@@ -58,10 +59,17 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
                     miniMap.add(img,i,j);
                 }
             }
+
             adventure.startGame(this);
             activated = true;
         }
+        String character = characterSelection.getValue();
+        if(character == null){
+            character = "Male";
+        }
         activateFields();
+        adventure.setCharacterID(character);
+        adventure.setHealth();
         script.clear();
         adventure.intro();
         start.setVisible(false);
@@ -69,6 +77,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     }
     @FXML
     private void activateFields(){
+        characterSelection.setVisible(false);
         inventory.setVisible(true);
         health.setVisible(true);
         defence.setVisible(true);
@@ -94,6 +103,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
         }
         if (!gameOver) {
             start.setVisible(true);
+            characterSelection.setVisible(true);
             inventory.setVisible(false);
             health.setVisible(false);
             defence.setVisible(false);
@@ -192,7 +202,4 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
         script.positionCaret(0);
     }
 
-    public int getMapSize(){
-        return SIZE;
-    }
 }

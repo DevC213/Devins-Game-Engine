@@ -16,6 +16,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private CommandProcessor commandProcessor;
     private ScriptController scriptController;
 
+    public void setHealth() {
+        playerController.setHealth(uiMapController.getPlayerHealth());
+    }
+
     enum TileStatus {NEUTRAL, HEALING, DAMAGING}
     private TileStatus tileStatus = TileStatus.NEUTRAL;
     enum Movement{LEFT, RIGHT, UP, DOWN;
@@ -35,19 +39,23 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public GameController(Controller controller) {
         scriptController = new ScriptController();
         this.controller = controller;
+        uiMapController = new UIMapController("/MapData/key.json");
         this.mapController = new MapController("/MapData/mapDataLocations.json", this.controller);
+        uiMapController.processPlayerSkins("/MapData/skinFilePaths.json");
         Coordinates startingCords = mapController.generateValidStartPosition();
         this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller,
                                 mapController, mapController, mapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
-        uiMapController = new UIMapController();
         commandProcessor = new CommandProcessor(controller, playerController, this, this, combatSystem, inventoryManager,
                 mapController,mapController,mapController,mapController,mapController);
         uiMapController.setVisibility(mapController.getVisibility(mapController.getMapValue(playerController.getMapCoordinates())));
         if (mapController.getVisibility(mapController.getMapValue(startingCords)) != 2) {
             controller.UIUpdate("Player: The air is thick here", 0);
         }
+    }
+    public void setCharacter(String character) {
+        uiMapController.setCharacterID(character);
     }
     public void handleInput(String keyPressed) {
         if(playerController.isGameOver()){return;}
@@ -65,7 +73,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         mapController.resetMap();
         intro();
         uiMapController.setVisibility(mapController.getVisibility(mapController.getMapValue(playerController.getMapCoordinates())));
-        uiMapController.setDirection(0);
+        uiMapController.setDirection("down");
         controller.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
         if(playerController.isGameOver()){playerController.toggleGameOver();}
         if (mapController.getVisibility(mapController.getMapValue(startingCords)) != 2) {
@@ -103,13 +111,13 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     @Override
     public void setDirection(int deltaX, int deltaY) {
         if(deltaY > 0){
-            uiMapController.setDirection(0);
+            uiMapController.setDirection("down");
         }else if(deltaY < 0){
-            uiMapController.setDirection(3);
+            uiMapController.setDirection("up");
         } else if(deltaX > 0){
-            uiMapController.setDirection(2);
+            uiMapController.setDirection("right");
         } else{
-            uiMapController.setDirection(1);
+            uiMapController.setDirection("left");
         }
     }
     @Override

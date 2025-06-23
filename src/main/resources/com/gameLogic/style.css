@@ -23,9 +23,20 @@
 }
 
 .button:hover {
-    -fx-background-color: #666;
+    -fx-background-color: #5F5F5F;
+
 }
 
 .label {
     -fx-text-fill: #cccccc;
+}
+#characterSelection{
+    -fx-background-color: #5F5F5F;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+#characterSelection .list-cell{
+    -fx-background-color: #5F5F5F;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
 }

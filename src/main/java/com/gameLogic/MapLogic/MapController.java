@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IImage, IAccessItems, IMonsters {
+public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IAccessItems, IMonsters {
 
 
     private final MapData mapData;
@@ -82,7 +82,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public String getMapValue(Coordinates coordinates) {
         return mapData.getLevel(level).map().getMapValue(coordinates);
     }
-
     //IDoesDamage
     @Override
     public int getHealthDelta(final String terrain) {
@@ -94,7 +93,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public Messenger getMonstersAttack(Coordinates location) {
         return mapData.getLevel(level).monster().getMonsterAttack(location);
     }
-
     //IVisibility
     @Override
     public int getVisibility(final String terrain) {
@@ -113,14 +111,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     @Override
     public boolean isCave(final String terrain) {
         return getMapTileKey().get(terrain).name().equals("cave");
-    }
-
-    //IImage
-    public String getImage(final String terrain) {
-        return mapData.getLevel(level).map().getImage(terrain, mapData.getLevel(level).theme());
-    }
-    public String getPlayerImage(int direction) {
-        return mapData.getLevel(level).map().getPlayerImage(direction);
     }
 
     //IAccessItems
@@ -176,6 +166,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public boolean isMonsterOnTile(Coordinates location) {
         return (mapData.getLevel(level).monster().getMonsters(location) != null);
     }
-
+    public String getTheme(){
+        return mapData.getLevel(level).theme();
+    }
 }
 

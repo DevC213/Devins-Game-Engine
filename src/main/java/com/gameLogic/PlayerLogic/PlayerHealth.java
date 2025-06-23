@@ -12,9 +12,6 @@ class PlayerHealth {
     private double maxHealth;
     private double secondaryMaxHealth;
     public PlayerHealth(){
-        health = 100;
-        maxHealth = 100;
-        secondaryMaxHealth = 150;
         recoveryItems = new Vector<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
     }
     public double UpdateHealth(double change){
@@ -70,5 +67,14 @@ class PlayerHealth {
     public double getSecondaryMaxHealth(){
         return secondaryMaxHealth;
     }
+    public void setHealth(int health){
+        this.health = health;
+        maxHealth = this.health;
+        secondaryMaxHealth = health*1.5;
+    }
 
+
+    public double getHealth() {
+        return this.health;
+    }
 }

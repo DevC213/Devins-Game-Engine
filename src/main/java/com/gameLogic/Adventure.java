@@ -18,7 +18,9 @@ public class Adventure {
     public void startGame(final Controller control) {
         gameController = new GameController(control);
     }
-
+    public void setCharacterID(String characterID) {
+        gameController.setCharacter(characterID);
+    }
     //Game progression controls
     public void intro() {
         gameController.intro();
@@ -31,4 +33,8 @@ public class Adventure {
     public void commandProcessor(final String direction) {
         gameController.handleInput(direction);
    }
+
+    public void setHealth() {
+        gameController.setHealth();
+    }
 }
