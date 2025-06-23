@@ -20,7 +20,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
 
     private final MapData mapData;
     private final ValidStart validStart;
-    private static final String KEY_FILE_PATH = "/MapData/Key.json";
+    private static final String KEY_FILE_PATH = "/MapData/key.json";
     private int level = 0;
     private final Random random = new Random();
 
@@ -176,5 +176,6 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public boolean isMonsterOnTile(Coordinates location) {
         return (mapData.getLevel(level).monster().getMonsters(location) != null);
     }
+
 }
 

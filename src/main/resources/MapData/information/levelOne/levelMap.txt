@@ -1,10 +1,10 @@
 ~~~~bbbbMMMMMMMMMfffffff.......................bb~~~~~~~=======~bbbddddMMMM,,,####$$$$$$$$$$$$$
 ~~~bbbbMMMMMMMMMMMfffffff.......................bb~~~~~~~=====~bbbddddMMMM,,,######$$$$$$$$$###
 ~~bbbMMMMMMMMMMllMMMfffffff......................bb~~~~~~~===~bbbddddMMMMM,,###################
-~~~bMMMMMMMMMMllllMMffffffffff....................bb~~~~~~~=~bbbddddMMMMMM,,,#######,,,,,,,,,,,
-~~~bbMMMMMMMMMMllMMMfffffffffff....................bb~~~~~~~bbbddddMMMMMMMM,,,,,,,,,,,,,,,,,,,,
+~~~bMMMMMMMMMMllllMMffffffffff......//ph2//.............bb~~~~~~~=~bbbddddMMMMMM,,,#######,,,,,,,,,,,
+~~~bbMMMMMMMMMMllMMMfffffffffff........//ph1//.....//ph1//.....bb~~~~~~~bbbddddMMMMMMMM,,,,,,,,,,,,,,,,,,,,
 ~~~bbfMMMMMMMMMMMMffffbbbbbfffff....................bbbbbbbbbbddddMMMMMMMMMM,,,,,,,,,,,,,,,,,,,
-~~~bfffcMMMMMMMMMMffbb~~~~~bbffff..........................dddddddMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+~~~bfffcMMMMMMMMMMffbb~~~~~bbffff..........//ph2//..............dddddddMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 ~~~bbfffffffffffffbb~~~~~~~~~~ffffffff.....................ddddddMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 =~~~bbbbfffffffffbb~~~~====~~~~fffffffffff.................dddddMMMMMMMMMMAAMMMMMMMMMMMMMMMMMMM
 ==~~~~~bbfffffffbb~~~~=======~~~ffffffffffff..............ddddddMMMMMMMMMAAAAMMMMMMMMMMMMMMMqqq

@@ -26,7 +26,8 @@
     <GridPane GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="5">
         <TextField fx:id="cords" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES"
                    GridPane.rowIndex="1" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES"/>
-        <TextArea fx:id="inventory" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.rowSpan="4" GridPane.vgrow="SOMETIMES" />
+        <TextArea fx:id="inventory" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.rowSpan="3" GridPane.vgrow="SOMETIMES" />
+        <TextField fx:id="money" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="5" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Money: 100</TextField>
         <TextField fx:id="health" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Health: 100</TextField>
         <TextField fx:id="defence" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES">Defence: 0</TextField>
         <TextField fx:id="weapon" editable="false" visible="false" GridPane.columnIndex="0" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.rowSpan="1" GridPane.vgrow="SOMETIMES" >Copper Sword: 5</TextField>

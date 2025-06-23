@@ -19,6 +19,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     public GridPane mainGrid;
     public GridPane miniMap;
     private static final int SIZE = 5;
+    public TextField money;
 
     @FXML
     private TextField commandInput;
@@ -76,6 +77,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
         commandInput.setEditable(true);
         weapon.setVisible(true);
         miniMap.setVisible(true);
+        money.setVisible(true);
         Platform.runLater(() -> script.setScrollTop(0));
     }
     @FXML @Override
@@ -100,6 +102,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             commandInput.setEditable(false);
             weapon.setVisible(false);
             miniMap.setVisible(false);
+            money.setVisible(false);
             gameOver = true;
         }
     }
@@ -187,5 +190,9 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     }
     public void scroll(){
         script.positionCaret(0);
+    }
+
+    public int getMapSize(){
+        return SIZE;
     }
 }

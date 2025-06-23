@@ -15,7 +15,7 @@ public class Application extends javafx.application.Application {
         final int defaultV1 = 500;
         adventure = Adventure.getAdventure();
         FXMLLoader fxmlLoader = new FXMLLoader(Application
-                .class.getResource("layout.fxml"));
+                .class.getResource("mainGame.fxml"));
         Scene scene = null;
         try {
             scene = new Scene(fxmlLoader.load(), defaultV, defaultV1);
@@ -24,6 +24,7 @@ public class Application extends javafx.application.Application {
             stage.setScene(scene);
             stage.show();
             showInstructions();
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

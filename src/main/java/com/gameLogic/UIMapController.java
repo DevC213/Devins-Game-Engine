@@ -14,7 +14,6 @@ import java.util.Objects;
 public class UIMapController {
 
     private int visibility = 2;
-    private final int[] SQUARE_CHANGE = {-2, -1, 0, 1, 2};
     private int direction = 0;
     public UIMapController() {}
 
@@ -22,20 +21,34 @@ public class UIMapController {
         this.visibility = visibility;
     }
     public void minimap(Controller controller, MapController mapController, PlayerController playerController) {
-        for (int j = 0; j < SQUARE_CHANGE.length; j++) {
-            for (int k = 0; k < SQUARE_CHANGE.length; k++) {
-                if(Math.abs(SQUARE_CHANGE[j]) > visibility || Math.abs(SQUARE_CHANGE[k]) > visibility ){
-                    controller.modifyImage(k,j,mapController.getImage("?"));
-                } else if (SQUARE_CHANGE[j] == 0 && SQUARE_CHANGE[k] == 0) {
+        int mapSize = 5;
+        int mapMiddle = mapSize / 2;
+        Coordinates playerCoordinates = playerController.getMapCoordinates();
+        Coordinates maxCoordinates = mapController.getCoordinates();
+
+        int startColumn = Math.max(0, Math.min(playerCoordinates.x() - mapMiddle, maxCoordinates.x() - mapSize));
+        int startRow = Math.max(0, Math.min(playerCoordinates.y() - mapMiddle, maxCoordinates.y() - mapSize));
+
+        for (int column = 0; column < maxCoordinates.y(); column++) {
+            for (int row = 0; row < maxCoordinates.x(); row++) {
+
+                int mapColumn = startColumn + column;
+                int mapRow = startRow + row;
+
+                int deltaX = mapColumn - playerCoordinates.x();
+                int deltaY = mapRow - playerCoordinates.y();
+
+                if (Math.abs(deltaX) > visibility || Math.abs(deltaY) > visibility) {
+                    controller.modifyImage(row, column, mapController.getImage("?"));
+                } else if (deltaX == 0 && deltaY == 0) {
                     try {
-                        controller.modifyImage(k, j, overlayPlayer(playerController, mapController));
+                        controller.modifyImage(row, column, overlayPlayer(playerController, mapController));
                     } catch (IOException e) {
                         controller.UIUpdate(e.getMessage(), 0);
-                        throw new RuntimeException(e);
                     }
                 } else {
-                    controller.modifyImage(k, j, mapController.getImage(mapController.getMapValue(new Coordinates(playerController.getMapCoordinates().x()
-                            + SQUARE_CHANGE[j],playerController.getMapCoordinates().y() + SQUARE_CHANGE[k]))));
+                    String tileID = mapController.getMapValue(new Coordinates(mapColumn, mapRow));
+                    controller.modifyImage(row, column, mapController.getImage(tileID));
                 }
             }
         }

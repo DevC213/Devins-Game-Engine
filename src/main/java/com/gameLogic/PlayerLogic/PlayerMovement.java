@@ -5,6 +5,7 @@ import com.gameLogic.MapLogic.IDoesDamage;
 import com.gameLogic.MapLogic.IVisibility;
 
 import java.awt.geom.Point2D;
+import java.util.Objects;
 
 class PlayerMovement {
 
@@ -59,12 +60,15 @@ class PlayerMovement {
                 playerController.EmergencyUse();
             }
         }
-        if(visibility.getVisibility(newTile) < visibility.getVisibility(currTile)) {
+        if(visibility.getVisibility(newTile) < visibility.getVisibility(currTile) && !newTile.equals("-")) {
             if (visibility.getVisibility(newTile) == 0) {
                 playerController.sendMessage("Player: I cant see!!");
             } else {
                 playerController.sendMessage("PLayer: The air is so thick here...");
             }
+        }
+        if(newTile.equals("-")) {
+            return visibility.getVisibility(currTile);
         }
         return visibility.getVisibility(newTile);
     }
