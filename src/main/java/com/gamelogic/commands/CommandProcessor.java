@@ -113,6 +113,7 @@ public class CommandProcessor{
             return;
         }
         controller.UIUpdate("Which item?", 0);
+        controller.commandFocus();
     }
 
     private void attack() {
@@ -123,10 +124,12 @@ public class CommandProcessor{
         }
         controller.UIUpdate("Which monster?", 0);
         commandState = CommandState.ATTACK;
+        controller.commandFocus();
     }
 
     private void healing() {
         controller.UIUpdate("Which healing item?", 0);
+        controller.commandFocus();
         if (commandState == CommandState.ATTACK) {
             commandState = CommandState.HATTACK;
         } else {
@@ -175,11 +178,21 @@ public class CommandProcessor{
             controller.UIUpdate(message, 0);
         }
         combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
+        controller.textAreaFocus();
     }
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
+        if(messenger == null) {
+            commandState = CommandState.NONE;
+            controller.textAreaFocus();
+            return;
+        }
         switch (messenger.getItemType()) {
             case 0:
+                if(messenger.getWeapon().damage() < playerController.getAttack()){
+                    controller.UIUpdate("Current weapon is better.",0);
+                    return;
+                }
                 controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
                 controller.UIUpdate(messenger, 5);
                 playerController.equipWeapon(messenger.getWeapon());
@@ -196,6 +209,7 @@ public class CommandProcessor{
             default:
                 throw new IllegalArgumentException("Unexpected value: " + messenger.getItemType());
         }
+        controller.textAreaFocus();
         commandState = CommandState.NONE;
     }
 

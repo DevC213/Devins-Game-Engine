@@ -3,3 +3,4 @@
 src/main/resources/META-INF
 out
 .idea
+qodana.yaml

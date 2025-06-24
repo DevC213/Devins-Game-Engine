@@ -6,8 +6,6 @@ module com.example.adventure {
     requires java.desktop;
     requires javafx.media;
     requires com.google.gson;
-    requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.databind;
 
     exports com.monsters;
     exports com.weapons;

@@ -205,5 +205,10 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     public void scroll(){
         script.positionCaret(0);
     }
-
+    public void commandFocus(){
+        commandInput.requestFocus();
+    }
+    public void textAreaFocus(){
+        script.requestFocus();
+    }
 }

@@ -108,7 +108,11 @@ class MapItemController {
     public Messenger grabItems(Coordinates location, final String item) {
         Messenger messenger = new Messenger();
         point2D = new Point2D.Double(location.x(),location.y());
-        return switch (itemList.get(item)) {
+        String tempItem = itemList.get(item);
+        if(tempItem == null){
+            return null;
+        }
+        return switch (tempItem) {
             case "weapon" -> {
                 if (Objects.equals(weapons.get(point2D).name(), item)) {
                     messenger.setWeapon(weapons.get(point2D));
