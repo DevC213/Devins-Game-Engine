@@ -56,11 +56,13 @@ public class Application extends javafx.application.Application {
                 If multiple monsters of the same name are on tile:
                 Enter name + number, ex: Zombie #2, or Goblin #4.
                 
-                Use Z to enter cave, and X to climb ladder.
+                Use Z to enter cave or house.
+                Use X to climb ladder.
                 Use arrow keys for movement.
                 
                 Player information is on the side of map.
-                Max health increases each level you descend.
+                Max health increases each level you descend,
+                and as you kill monsters.
      
                 Press F1 to view again.
                 """
