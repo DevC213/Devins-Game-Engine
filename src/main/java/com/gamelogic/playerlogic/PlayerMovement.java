@@ -83,4 +83,8 @@ class PlayerMovement {
     public void resetLocation(Coordinates coords) {
         player.setLocation(coords.x(), coords.y());
     }
+
+    public void setLocation(int x, int y) {
+        player.setLocation(x, y);
+    }
 }

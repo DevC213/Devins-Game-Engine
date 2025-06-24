@@ -10,6 +10,8 @@ import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
+import com.gamelogic.villages.House;
+import com.gamelogic.villages.Village;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +28,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private ScriptController scriptController;
     private Map<String, TileKey> tileKeyMap;
     private String currentVillage;
-    private boolean inHouseOrDungeon = false;
+    private boolean inHouse = false;
+    House house;
 
     public void setHealth() {
         playerController.setHealth(uiMapController.getPlayerHealth());
@@ -112,12 +115,20 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         controller.UIUpdate("Health: " + playerController.getHealth(), 3);
         String cordOrigins = "[" + (-mapController.getCoordinates().x() / 2) + (-mapController.getCoordinates().y() / 2) + "]";
         controller.UIUpdate(cordOrigins, 2);
+        inHouse = false;
+        house = null;
     }
 
     //Mini-Map Control
     @Override
     public void renderMinimap() {
-        uiMapController.minimap(controller, mapController, playerController);
+
+        if(inHouse){
+            System.out.println("In House");
+            inHouse = false;
+        } else {
+            uiMapController.minimap(controller, mapController, playerController);
+        }
     }
     @Override
     public void setVisibility(int visibility) {
@@ -135,6 +146,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             uiMapController.setDirection("left");
         }
     }
+
+    @Override
+    public void toggleHouse() {
+        inHouse = !inHouse;
+    }
+
     @Override
     public void updateGameInfo() {
         if(playerController.isGameOver()){return;}
@@ -149,11 +166,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         checkTileEffect(effect);
         inventoryManager.updateInventoryDisplay();
         healthIncrease(mapController.getLevel());
-        String village = mapController.checkForVillages(playerController.getMapCoordinates()).getMessage();
-        String villageName = mapController.checkForVillages(playerController.getMapCoordinates()).getMessage();
+        Messenger messenger = mapController.checkForVillages(playerController.getMapCoordinates());
+        String village = messenger.getMessage();
+
         if(village != null) {
             controller.UIUpdate(village, 0);
-            currentVillage = villageName;
+            currentVillage = messenger.getPayloadString();
         }
     }
 

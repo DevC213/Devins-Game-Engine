@@ -316,7 +316,7 @@
   },
   {
     "tileId": "ph1",
-    "name": "plains house one",
+    "name": "house",
     "fileLocation": "/MapPics/plainsHouseOne.png",
     "walkable": true,
     "visibility": 2,
@@ -324,7 +324,7 @@
   },
   {
     "tileId": "ph2",
-    "name": "plains house two",
+    "name": "house",
     "fileLocation": "/MapPics/plainsHouseTwo.png",
     "walkable": true,
     "visibility": 2,
@@ -333,17 +333,17 @@
   {
     "tileId": "w",
     "name": "woodFloor",
-    "fileLocation": "/MapPics/plainsHouseTwo.png",
+    "fileLocation": "flooring.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "multiFile": true
   },
   {
     "tileId": "W",
     "name": "woodWall",
-    "fileLocation": "/MapPics/plainsHouseTwo.png",
+    "fileLocation": "wall.png",
     "walkable": false,
     "visibility": 2,
-    "multiFile": false
+    "multiFile": true
   }
 ]

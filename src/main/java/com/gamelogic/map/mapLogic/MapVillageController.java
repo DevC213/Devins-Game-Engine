@@ -3,6 +3,7 @@ package com.gamelogic.map.mapLogic;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.rawdataclasses.RVillage;
+import com.gamelogic.villages.House;
 import com.gamelogic.villages.Village;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,7 +68,7 @@ public class MapVillageController {
     public int checkHouse(Coordinates coordinates, String villageName){
         return villageMap.get(villageName).atHouse(coordinates);
     }
-    public List<List<String>> getHouseMap(int number, String villageName){
+    public House getHouseMap(int number, String villageName){
         return villageMap.get(villageName).getHouseMap(number);
     }
 }

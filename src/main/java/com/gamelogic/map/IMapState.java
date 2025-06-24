@@ -6,4 +6,5 @@ package com.gamelogic.map;
      int getLevel();
      void resetMap();
      String getMapValue(Coordinates coordinates);
+
  }

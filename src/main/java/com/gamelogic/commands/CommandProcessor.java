@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class CommandProcessor{
+public class CommandProcessor {
 
     private enum CommandState {
         NONE,  // 0 - Not in a command
@@ -27,8 +27,10 @@ public class CommandProcessor{
         ATTACK, // 4 - Attacking
         HATTACK, //5 - Using health item during fight
     }
+
     private enum Movement {
         LEFT, RIGHT, UP, DOWN;
+
         public static Movement getmovement(String string) {
             try {
                 return Movement.valueOf(string.toUpperCase());
@@ -37,13 +39,14 @@ public class CommandProcessor{
             }
         }
     }
+
     private CommandState commandState = CommandState.NONE;
     Map<String, Runnable> charCommands = Map.of(
             "C", this::healing,
             "V", this::attack,
             "B", this::grabItem,
             "X", () -> traverseLevels(-1),
-            "Z", () -> traverseLevels(1)
+            "Z", this::enterHouseCaveOrDungeon
     );
     private boolean escape = false;
     IGuiEventListener controller;
@@ -61,7 +64,7 @@ public class CommandProcessor{
 
     public CommandProcessor(Controller controller, PlayerController playerController
             , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
-                            IMonsters  monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
+                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
         this.controller = controller;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
@@ -86,7 +89,7 @@ public class CommandProcessor{
                 if (!attemptEscape()) return;
             }
         }
-        if(move != null) {
+        if (move != null) {
             moveOnLevel(move);
             updateGame.updateGameInfo();
             return;
@@ -95,7 +98,7 @@ public class CommandProcessor{
         controller.clearInput();
     }
 
-    private void handleAction(String keyPressed){
+    private void handleAction(String keyPressed) {
         Runnable runnable = charCommands.get(keyPressed);
         if (runnable != null) {
             runnable.run();
@@ -151,18 +154,20 @@ public class CommandProcessor{
         }
         return true;
     }
+
     private void handleTextCommand(String command) {
-            executePendingAction(command);
-            if (commandState == CommandState.HATTACK) {
-                commandState = CommandState.ATTACK;
-            } else {
-                if (commandState == CommandState.TAKE) {
-                    return;
-                }
-                commandState = CommandState.NONE;
+        executePendingAction(command);
+        if (commandState == CommandState.HATTACK) {
+            commandState = CommandState.ATTACK;
+        } else {
+            if (commandState == CommandState.TAKE) {
+                return;
             }
+            commandState = CommandState.NONE;
+        }
         controller.clearInput();
     }
+
     private void executePendingAction(String command) {
         switch (commandState) {
             case TAKE -> takeItem(command);
@@ -171,6 +176,7 @@ public class CommandProcessor{
             default -> controller.UIUpdate("Unexpected command state", 0);
         }
     }
+
     private void attackMonster(String command) {
         String message = combatSystem.attack(doesDamage.attackMonsters(command,
                 playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
@@ -181,17 +187,18 @@ public class CommandProcessor{
         combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
         controller.textAreaFocus();
     }
+
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
-        if(messenger == null) {
+        if (messenger == null) {
             commandState = CommandState.NONE;
             controller.textAreaFocus();
             return;
         }
         switch (messenger.getItemType()) {
             case 0:
-                if(messenger.getWeapon().damage() < playerController.getAttack()){
-                    controller.UIUpdate("Current weapon is better.",0);
+                if (messenger.getWeapon().damage() < playerController.getAttack()) {
+                    controller.UIUpdate("Current weapon is better.", 0);
                     return;
                 }
                 controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
@@ -236,7 +243,9 @@ public class CommandProcessor{
                 deltaX = 0;
                 deltaY = 1;
             }
-            default -> { return;}
+            default -> {
+                return;
+            }
         }
         updateMinimap.setVisibility(playerController.movement(new Coordinates(deltaX, deltaY),
                 mapState.getMapValue(playerCoords),
@@ -244,6 +253,7 @@ public class CommandProcessor{
         updateMinimap.setDirection(deltaX, deltaY);
         updateMinimap.renderMinimap();
     }
+
     public void traverseLevels(int dir) {
         TileKey tile = tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates()));
         if (tile.walkable()) {
@@ -260,11 +270,23 @@ public class CommandProcessor{
             controller.UIUpdate("Can only change level on a ladder or a cave", 0);
         }
     }
+
     public boolean escaped() {
         return escape;
     }
+
     public void toggleEscape() {
         escape = !escape;
+    }
+
+    public void enterHouseCaveOrDungeon() {
+        if (tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates())).name().equals("house")) {
+            updateMinimap.toggleHouse();
+            updateMinimap.renderMinimap();
+
+        } else {
+            traverseLevels(1);
+        }
     }
 }
 

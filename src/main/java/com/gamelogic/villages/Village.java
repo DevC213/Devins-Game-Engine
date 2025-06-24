@@ -51,8 +51,8 @@ public class Village{
         }
         return -1;
     }
-    public List<List<String>> getHouseMap(int number){
-        return houseMap.get(number).mapData;
+    public House getHouseMap(int number){
+        return houseMap.get(number);
     }
 
 }

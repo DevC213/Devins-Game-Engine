@@ -173,4 +173,8 @@ public class PlayerController implements PlayerDamageListener{
         this.playerHealth.setHealth(playerHealth);
         guiEventListener.UIUpdate("Health: " + this.playerHealth.getHealth(), 3);
     }
+
+    public void setCoordinatess(int x, int y) {
+        playerMovement.setLocation(x,y);
+    }
 }

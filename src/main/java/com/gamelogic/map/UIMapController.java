@@ -73,7 +73,7 @@ public class UIMapController {
         int mapSize = 5;
         int mapMiddle = mapSize / 2;
         Coordinates playerCoordinates = playerController.getMapCoordinates();
-        Coordinates maxCoordinates = house.getCoordinates();
+        Coordinates maxCoordinates = new Coordinates(5,5);
 
         int startColumn = Math.max(0, Math.min(playerCoordinates.x() - mapMiddle, maxCoordinates.x() - mapSize));
         int startRow = Math.max(0, Math.min(playerCoordinates.y() - mapMiddle, maxCoordinates.y() - mapSize));

@@ -32,7 +32,10 @@ public class House {
     }
 
     public Coordinates getCoordinates() {
-        return new Coordinates(mapData.size(), mapData.getFirst().size());
+        return mainCoordinates;
+    }
+    public Coordinates getExitCoordinates() {
+        return exitCoordinates;
     }
 
     public String getMapValue(Coordinates mapCoordinates) {

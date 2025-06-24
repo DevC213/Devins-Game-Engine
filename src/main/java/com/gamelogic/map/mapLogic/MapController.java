@@ -2,6 +2,7 @@ package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
 import com.gamelogic.core.TileKeyRegistry;
+import com.gamelogic.villages.House;
 import com.weapons.Weapon;
 import com.gamelogic.combat.IMonsters;
 import com.gamelogic.commands.IGuiEventListener;
@@ -23,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MapController implements IDoesDamage, IMapState, IAccessItems, IMonsters {
-
 
     private final MapData mapData;
     private final ValidStart validStart;
@@ -159,6 +159,12 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
 
     public Messenger checkForVillages(Coordinates location) {
         return mapData.getLevel(level).villages().checkVillage(location);
+    }
+    public int getHouseNumber(Coordinates coordinates, String string){
+        return mapData.getLevel(level).villages().checkHouse(coordinates, string);
+    }
+    public House getHouse(int houseNum, String village){
+        return mapData.getLevel(level).villages().getHouseMap(houseNum,village);
     }
 
 }
