@@ -106,8 +106,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.Commands.adventuregui/com.gameLogic.Application</mainClass>
-                    <mainClass>com.Commands.adventuregui/com.gameLogic.Application</mainClass>
+                    <mainClass>com.Commands.adventuregui/com.gamelogic.core.Application</mainClass>
+                    <mainClass>com.Commands.adventuregui/com.gamelogic.core.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
