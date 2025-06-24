@@ -6,9 +6,7 @@ import com.gamelogic.rawdataclasses.RVillage;
 import com.gamelogic.villages.Village;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.monsters.Monster;
 
-import java.io.Console;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -37,6 +35,7 @@ public class MapVillageController {
                 if (row <= bottom.x() && row >= top.x() && column <= bottom.y() && column >= top.y()) {
                     inVillage = true;
                     messenger.setMessage("Welcome to: " + village.getName());
+                    messenger.addPayloadS(village.getName());
                 }
             }
         } else{
@@ -63,5 +62,12 @@ public class MapVillageController {
             Coordinates bottom = new Coordinates(rVillage.bottomCoords()[0], rVillage.bottomCoords()[1]);
             villageMap.put(rVillage.name(), new Village(rVillage.name(), top, bottom, rVillage.houses()));
         }
+    }
+
+    public int checkHouse(Coordinates coordinates, String villageName){
+        return villageMap.get(villageName).atHouse(coordinates);
+    }
+    public List<List<String>> getHouseMap(int number, String villageName){
+        return villageMap.get(villageName).getHouseMap(number);
     }
 }

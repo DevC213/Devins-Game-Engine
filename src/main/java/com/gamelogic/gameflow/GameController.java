@@ -25,6 +25,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private CommandProcessor commandProcessor;
     private ScriptController scriptController;
     private Map<String, TileKey> tileKeyMap;
+    private String currentVillage;
+    private boolean inHouseOrDungeon = false;
 
     public void setHealth() {
         playerController.setHealth(uiMapController.getPlayerHealth());
@@ -148,8 +150,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         inventoryManager.updateInventoryDisplay();
         healthIncrease(mapController.getLevel());
         String village = mapController.checkForVillages(playerController.getMapCoordinates()).getMessage();
+        String villageName = mapController.checkForVillages(playerController.getMapCoordinates()).getMessage();
         if(village != null) {
             controller.UIUpdate(village, 0);
+            currentVillage = villageName;
         }
     }
 

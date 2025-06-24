@@ -58,7 +58,4 @@ public class MapData {
     public int getTotalLevels(){
         return levelDataList.size();
     }
-    public Messenger checkVillage(int level, Coordinates coordinates){
-        return levelDataList.get(level).villages().checkVillage(coordinates);
-    }
 }

@@ -2,11 +2,8 @@ package com.gamelogic.villages;
 
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.rawdataclasses.RHouse;
-import com.gamelogic.rawdataclasses.RMonster;
-import com.gamelogic.rawdataclasses.RVillage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.monsters.Monster;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,4 +43,16 @@ public class Village{
     public String getName(){
         return name;
     }
+    public int atHouse(Coordinates coordinates){
+        for(House house: houseMap.values()){
+            if(coordinates.y() == house.mainCoordinates.x() && coordinates.x() == house.mainCoordinates.y()){
+                return house.houseNumber;
+            }
+        }
+        return -1;
+    }
+    public List<List<String>> getHouseMap(int number){
+        return houseMap.get(number).mapData;
+    }
+
 }

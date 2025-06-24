@@ -5,6 +5,7 @@ import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.playerlogic.Character;
+import com.gamelogic.villages.House;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.embed.swing.SwingFXUtils;
@@ -68,6 +69,38 @@ public class UIMapController {
             }
         }
     }
+    public void minimap(Controller controller, House house, PlayerController playerController) {
+        int mapSize = 5;
+        int mapMiddle = mapSize / 2;
+        Coordinates playerCoordinates = playerController.getMapCoordinates();
+        Coordinates maxCoordinates = house.getCoordinates();
+
+        int startColumn = Math.max(0, Math.min(playerCoordinates.x() - mapMiddle, maxCoordinates.x() - mapSize));
+        int startRow = Math.max(0, Math.min(playerCoordinates.y() - mapMiddle, maxCoordinates.y() - mapSize));
+
+        for (int column = 0; column < maxCoordinates.y(); column++) {
+            for (int row = 0; row < maxCoordinates.x(); row++) {
+
+                int mapColumn = startColumn + column;
+                int mapRow = startRow + row;
+
+                int deltaX = mapColumn - playerCoordinates.x();
+                int deltaY = mapRow - playerCoordinates.y();
+
+                if (deltaX == 0 && deltaY == 0) {
+                    try {
+                        controller.modifyImage(row, column, overlayPlayer(playerController, house));
+                    } catch (IOException e) {
+                        controller.UIUpdate(e.getMessage(), 0);
+                    }
+                } else {
+                    String tileID = house.getMapValue(new Coordinates(mapColumn, mapRow));
+                    controller.modifyImage(row, column, getFilePath(tileID, house.getTheme()));
+                }
+            }
+        }
+    }
+
     private Image overlayPlayer(final PlayerController plays, MapController mapController) throws IOException {
         BufferedImage player;
         BufferedImage tile;
@@ -78,6 +111,32 @@ public class UIMapController {
 
         String valAtPlayer = mapController.getMapValue(plays.getMapCoordinates());
         String currTheme = mapController.getTheme();
+
+        player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(characterMap.get(characterID).directions().get(direction))));
+        tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(getFilePath(valAtPlayer, currTheme))));
+
+        imageWidth = Math.max(player.getWidth(), tile.getWidth());
+        imageHeight = Math.max(player.getHeight(), tile.getHeight());
+
+        blend = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+
+        merger = blend.getGraphics();
+        merger.drawImage(tile, 0, 0, null);
+        merger.drawImage(player, 0, 0, null);
+        merger.dispose();
+
+        return SwingFXUtils.toFXImage(blend, null);
+    }
+    private Image overlayPlayer(final PlayerController plays, House house) throws IOException {
+        BufferedImage player;
+        BufferedImage tile;
+        BufferedImage blend;
+        int imageWidth;
+        int imageHeight;
+        Graphics merger;
+
+        String valAtPlayer = house.getMapValue(plays.getMapCoordinates());
+        String currTheme = house.getTheme();
 
         player = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(characterMap.get(characterID).directions().get(direction))));
         tile = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(getFilePath(valAtPlayer, currTheme))));
