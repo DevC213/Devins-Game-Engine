@@ -3,17 +3,17 @@ package com.gamelogic.commands;
 import com.gamelogic.core.Controller;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.combat.IMonsters;
+import com.gamelogic.core.TileKeyRegistry;
+import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.ICanCross;
 import com.gamelogic.map.mapLogic.IDoesDamage;
 import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.inventory.InventoryManager;
-import com.gamelogic.map.Coordinates;
-import com.gamelogic.map.IMapState;
-import com.gamelogic.map.IUpdateGame;
-import com.gamelogic.map.IUpdateMinimap;
+import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -53,14 +53,15 @@ public class CommandProcessor{
     IUpdateGame updateGame;
     CombatSystem combatSystem;
     InventoryManager inventoryManager;
-    ICanCross canCross;
     IMapState mapState;
     IMonsters monsters;
     IDoesDamage doesDamage;
     IAccessItems accessItems;
+    Map<String, TileKey> tileKeyMap;
+
     public CommandProcessor(Controller controller, PlayerController playerController
             , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
-                            IMonsters  monsters, ICanCross canCross, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
+                            IMonsters  monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
         this.controller = controller;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
@@ -68,11 +69,11 @@ public class CommandProcessor{
         this.inventoryManager = inventoryManager;
         this.updateGame = updateGame;
         this.commandGetter = controller;
-        this.canCross = canCross;
         this.mapState = mapState;
         this.monsters = monsters;
         this.doesDamage = doesDamage;
         this.accessItems = accessItems;
+        tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
 
     public void handleKeyInput(String keyPressed) {
@@ -244,11 +245,12 @@ public class CommandProcessor{
         updateMinimap.renderMinimap();
     }
     public void traverseLevels(int dir) {
-        if (canCross.isWalkable(mapState.getMapValue(playerController.getMapCoordinates()))) {
-            if (dir > 0 && canCross.isCave(mapState.getMapValue(playerController.getMapCoordinates()))) {
+        TileKey tile = tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates()));
+        if (tile.walkable()) {
+            if (dir > 0 && Objects.equals(tile.name(), "cave")) {
                 mapState.changeLevel(dir);
                 updateMinimap.renderMinimap();
-            } else if (dir < 0 && canCross.isLadder(mapState.getMapValue(playerController.getMapCoordinates()))) {
+            } else if (dir < 0 && tile.name().equals("ladder")) {
                 mapState.changeLevel(dir);
                 updateMinimap.renderMinimap();
             } else {

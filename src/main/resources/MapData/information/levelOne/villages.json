@@ -1,6 +1,8 @@
 [
   {
     "name": "Rasenville",
-    "houses": "/MapData/information/levelOne/Houses"
+    "topCoords": [2,34],
+    "bottomCoords": [8,54],
+    "houses": "/MapData/information/levelOne/Villages/Rasenville/rasenville.json"
   }
 ]

@@ -1,5 +1,8 @@
 package com.gamelogic.map.mapLogic;
 
+import com.gamelogic.map.Coordinates;
+import com.gamelogic.messaging.Messenger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,7 @@ public class MapData {
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;
         MapMonsterController mapMonsterController = null;
+        MapVillageController mapVillageController = null;
 
         for(Map.Entry<String, String> entry : levelMap.entrySet()) {
             String file = entry.getKey();
@@ -32,7 +36,9 @@ public class MapData {
                     if (mapMonsterController != null) {
                         mapMonsterController.processSpawnChances(path);
                     }
+
                 }
+                case "Villages" -> mapVillageController = new MapVillageController(path);
                 default -> throw new RuntimeException("Unknown file found: " + path);
             }
 
@@ -40,10 +46,10 @@ public class MapData {
         if(mapItemController == null ||  mapMonsterController == null) {
             throw new IllegalStateException("Incomplete MapData for level: " + level);
         }
-        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,theme,voice,sound));
+        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,mapVillageController,theme,voice,sound));
     }
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null,"Default",null,null));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null));
     }
 
     public LevelData getLevel(int level){
@@ -51,5 +57,8 @@ public class MapData {
     }
     public int getTotalLevels(){
         return levelDataList.size();
+    }
+    public Messenger checkVillage(int level, Coordinates coordinates){
+        return levelDataList.get(level).villages().checkVillage(coordinates);
     }
 }

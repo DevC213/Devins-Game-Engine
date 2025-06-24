@@ -1,6 +1,7 @@
 package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
+import com.gamelogic.core.TileKeyRegistry;
 import com.weapons.Weapon;
 import com.gamelogic.combat.IMonsters;
 import com.gamelogic.commands.IGuiEventListener;
@@ -8,7 +9,6 @@ import com.gamelogic.gameflow.ValidStart;
 import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.IMapState;
-import com.gamelogic.map.TileKey;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.rawdataclasses.RMap;
 import com.google.gson.Gson;
@@ -22,21 +22,19 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapState, IAccessItems, IMonsters {
+public class MapController implements IDoesDamage, IMapState, IAccessItems, IMonsters {
 
 
     private final MapData mapData;
     private final ValidStart validStart;
-    private static final String KEY_FILE_PATH = "/key.json";
     private int level = 0;
     private final Random random = new Random();
 
     //Constructors/Map Generation:
     public MapController(final String filePath, final IGuiEventListener guiEventListener) {
 
-        validStart = new ValidStart(this, this, this, this);
+        validStart = new ValidStart(this, this, this);
         mapData = new MapData();
-        MapGeneration.processKey(Objects.requireNonNull(getClass().getResourceAsStream(KEY_FILE_PATH)));
         try {
             Gson gson = new Gson();
             InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
@@ -52,12 +50,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         }
 
     }
-    private Map<String, TileKey> getMapTileKey() {
-        return MapGeneration.getTileKey();
-
-    }
     public Coordinates generateValidStartPosition() {
-        return validStart.validStartingCoordinents(getMapTileKey());
+        return validStart.validStartingCoordinates(TileKeyRegistry.getTileKeyList());
     }
 
     private Map<String, String> getStringMap(String filePath) {
@@ -89,35 +83,13 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public String getMapValue(Coordinates coordinates) {
         return mapData.getLevel(level).map().getMapValue(coordinates);
     }
+
     //IDoesDamage
-    @Override
-    public int getHealthDelta(final String terrain) {
-        return getMapTileKey().get(terrain).healthDelta();
-    }
     public Messenger attackMonsters(String monster, int attack, Coordinates location) {
         return mapData.getLevel(level).monster().attackMonsters(monster, attack, location);
     }
     public Messenger getMonstersAttack(Coordinates location) {
         return mapData.getLevel(level).monster().getMonsterAttack(location);
-    }
-    //IVisibility
-    @Override
-    public int getVisibility(final String terrain) {
-        return getMapTileKey().get(terrain).visibility();
-    }
-
-    //ICanCross
-    @Override
-    public boolean isWalkable(final String terrain) {
-        return getMapTileKey().get(terrain).walkable();
-    }
-    @Override
-    public boolean isLadder(final String terrain) {
-        return getMapTileKey().get(terrain).name().equals("ladder");
-    }
-    @Override
-    public boolean isCave(final String terrain) {
-        return getMapTileKey().get(terrain).name().equals("cave");
     }
 
     //IAccessItems
@@ -155,6 +127,7 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public RecoveryItem getHealing(Coordinates location) {
         return mapData.getLevel(level).item().healingItemsOnTile(location);
     }
+
     //IMonsters
     public Messenger spawnMonsters(Coordinates location, int moves) {
         Messenger messenger = new Messenger();
@@ -175,6 +148,8 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
     public String getTheme(){
         return mapData.getLevel(level).theme();
     }
+
+    //ISound
     public String getVoice(){
         return mapData.getLevel(level).voice();
     }
@@ -182,6 +157,9 @@ public class MapController implements ICanCross, IDoesDamage, IVisibility, IMapS
         return mapData.getLevel(level).sound();
     }
 
+    public Messenger checkForVillages(Coordinates location) {
+        return mapData.getLevel(level).villages().checkVillage(location);
+    }
 
 }
 

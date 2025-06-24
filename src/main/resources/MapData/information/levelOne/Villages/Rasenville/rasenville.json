@@ -1,0 +1,8 @@
+[
+  {
+    "houseNumber": 0,
+    "mapCoords":[4,39],
+    "exit": [4,3],
+    "map":"/MapData/information/levelOne/Villages/Rasenville/h1.txt"
+  }
+]

@@ -1,6 +1,7 @@
 package com.gamelogic.map;
 
 import com.gamelogic.core.Controller;
+import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.playerlogic.Character;
@@ -25,22 +26,11 @@ public class UIMapController {
     private String direction = "down";
     private String characterID;
     private final Map<String, Character> characterMap;
-    private final Map<String, TileKey> tileKeyMap= new HashMap<>();
-    public UIMapController(String tileKey) {
+    public UIMapController() {
         characterMap = new HashMap<>();
-        processTileKey(tileKey);
     }
     public void setCharacterID(String gender) {
         characterID = gender + "One";
-    }
-    private void processTileKey(String tileKeyPath) {
-        Gson gson = new Gson();
-        InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream(tileKeyPath)));
-        Type listType = new TypeToken<List<TileKey>>() {}.getType();
-        List<TileKey> keyList = gson.fromJson(reader, listType);
-        for(TileKey tileKey : keyList){
-            tileKeyMap.put(tileKey.tileId(),tileKey);
-        }
     }
     public void setVisibility(int visibility) {
         this.visibility = visibility;
@@ -122,14 +112,15 @@ public class UIMapController {
         }
     }
     private String getFilePath(String tile, String theme){
-        TileKey tileKey = this.tileKeyMap.get(tile);
+        TileKey tileKey = TileKeyRegistry.getTileKey(tile);
         if(tileKey == null){
             throw new IllegalArgumentException("Tile Key not found: " + tile);
         }
-       return tileKeyMap.get(tile).resolvePath(theme);
+       return tileKey.resolvePath(theme);
     }
 
     public int getPlayerHealth() {
         return characterMap.get(characterID).startingHP();
     }
+
 }

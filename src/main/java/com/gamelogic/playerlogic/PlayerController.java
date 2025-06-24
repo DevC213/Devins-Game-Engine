@@ -1,6 +1,7 @@
 package com.gamelogic.playerlogic;
 
 import com.armor.Armor;
+import com.gamelogic.map.mapLogic.MapController;
 import com.weapons.Weapon;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.commands.IGuiEventListener;
@@ -28,12 +29,12 @@ public class PlayerController implements PlayerDamageListener{
     boolean gameOver = false;
 
     public PlayerController(Coordinates playerLocation, Coordinates maxCoordinates,
-                            IGuiEventListener guiEventListener, IVisibility visibility, IDoesDamage doesDamage, ICanCross canCross) {
+                            IGuiEventListener guiEventListener, MapController mapController) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
-        playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this, visibility, doesDamage, canCross);
+        playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this);
     }
     public List<String> viewInventory(){
         return playerInventory.viewInventory();

@@ -1,4 +1,4 @@
-package com.gamelogic.npcs;
+package com.gamelogic.villages;
 
 public class Quest {
     String title;

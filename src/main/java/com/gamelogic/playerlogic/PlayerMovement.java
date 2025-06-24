@@ -1,29 +1,30 @@
 package com.gamelogic.playerlogic;
+import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.Coordinates;
+import com.gamelogic.map.TileKey;
 import com.gamelogic.map.mapLogic.ICanCross;
 import com.gamelogic.map.mapLogic.IDoesDamage;
 import com.gamelogic.map.mapLogic.IVisibility;
+import com.gamelogic.map.mapLogic.MapController;
 
 import java.awt.geom.Point2D;
+import java.util.Map;
 
 class PlayerMovement {
 
     Coordinates maxCoords;
     PlayerController playerController;
-    IDoesDamage doesDamage;
-    ICanCross canCross;
-    IVisibility visibility;
     Point2D player;
+
+    Map<String, TileKey> tileKeyMap;
 
 
     PlayerMovement(Coordinates playerStart, Coordinates maxCoords,
-                   PlayerController playerController, IVisibility visibility, IDoesDamage doesDamage, ICanCross canCross) {
+                   PlayerController playerController) {
         player = new Point2D.Double(playerStart.x(), playerStart.y());
         this.maxCoords = new Coordinates(maxCoords.x(), maxCoords.y());
         this.playerController = playerController;
-        this.doesDamage = doesDamage;
-        this.canCross = canCross;
-        this.visibility = visibility;
+        tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
     public int move(Coordinates delta, String currTile, String newTile) {
         boolean withinBoundaries;
@@ -34,9 +35,11 @@ class PlayerMovement {
         } else{
             withinBoundaries = false;
         }
+        int visibilityNew = tileKeyMap.get(newTile).visibility();
+        int currentVisibility = tileKeyMap.get(currTile).visibility();
         if (withinBoundaries && playerController.getHealth() > 0) {
-            double tileDamageNew = doesDamage.getHealthDelta(newTile);
-            if (canCross.isWalkable(newTile)) {
+            double tileDamageNew = tileKeyMap.get(newTile).healthDelta();
+            if (tileKeyMap.get(newTile).walkable()) {
                 player.setLocation(player.getX() + delta.x(), player.getY() + delta.y());
             } else if (tileDamageNew != 0){
                 playerController.changeHealth(tileDamageNew);
@@ -59,17 +62,17 @@ class PlayerMovement {
                 playerController.EmergencyUse();
             }
         }
-        if(visibility.getVisibility(newTile) < visibility.getVisibility(currTile) && !newTile.equals("-")) {
-            if (visibility.getVisibility(newTile) == 0) {
+        if(visibilityNew < currentVisibility && !newTile.equals("-")) {
+            if (visibilityNew == 0) {
                 playerController.sendMessage("Player: I cant see!!");
             } else {
                 playerController.sendMessage("PLayer: The air is so thick here...");
             }
         }
         if(newTile.equals("-")) {
-            return visibility.getVisibility(currTile);
+            return currentVisibility;
         }
-        return visibility.getVisibility(newTile);
+        return visibilityNew;
     }
     public Coordinates getMapCoordinates() {
         return new Coordinates((int)player.getX() , (int)player.getY());
