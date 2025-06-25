@@ -5,9 +5,6 @@ import com.gamelogic.map.mapLogic.MapController;
 import com.weapons.Weapon;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.commands.IGuiEventListener;
-import com.gamelogic.map.mapLogic.ICanCross;
-import com.gamelogic.map.mapLogic.IDoesDamage;
-import com.gamelogic.map.mapLogic.IVisibility;
 import com.gamelogic.messaging.Messenger;
 
 import java.util.List;
@@ -174,7 +171,10 @@ public class PlayerController implements PlayerDamageListener{
         guiEventListener.UIUpdate("Health: " + this.playerHealth.getHealth(), 3);
     }
 
-    public void setCoordinatess(int x, int y) {
+    public void setCoordinates(int x, int y) {
         playerMovement.setLocation(x,y);
+    }
+    public void setMaxCoordinates(Coordinates maxCoords) {
+        playerMovement.setMaxCoords(maxCoords);
     }
 }

@@ -5,7 +5,6 @@ import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.villages.House;
 import com.weapons.Weapon;
 import com.gamelogic.combat.IMonsters;
-import com.gamelogic.commands.IGuiEventListener;
 import com.gamelogic.gameflow.ValidStart;
 import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.map.Coordinates;
@@ -31,24 +30,39 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     private final Random random = new Random();
 
     //Constructors/Map Generation:
-    public MapController(final String filePath, final IGuiEventListener guiEventListener) {
+    public MapController(final String filePath, MapType type) {
 
-        validStart = new ValidStart(this, this, this);
-        mapData = new MapData();
-        try {
-            Gson gson = new Gson();
-            InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
-            InputStreamReader reader = new InputStreamReader(input);
-            Type listType = new TypeToken<List<RMap>>() {}.getType();
-            List<RMap> tempMapList = gson.fromJson(reader, listType);
-            for(RMap rMap : tempMapList) {
-                mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme(),  rMap.voice(), rMap.sound());
+        switch(type) {
+
+            case OVERWORLD -> {
+                validStart = new ValidStart(this, this, this);
+                mapData = new MapData();
+                try {
+                    Gson gson = new Gson();
+                    InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
+                    InputStreamReader reader = new InputStreamReader(input);
+                    Type listType = new TypeToken<List<RMap>>() {
+                    }.getType();
+                    List<RMap> tempMapList = gson.fromJson(reader, listType);
+                    for (RMap rMap : tempMapList) {
+                        mapData.processHouse(rMap.level(), getStringMap(rMap.file()), rMap.theme(), rMap.voice(), rMap.sound());
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error: " + e.getMessage());
+                    mapData.defaultLevel();
+                }
             }
-        } catch (Exception e) {
-            guiEventListener.UIUpdate(e.getMessage(),0);
-            mapData.defaultLevel();
-        }
+            case HOUSE -> {
+                validStart = new ValidStart(this, this, this);
+                mapData = new MapData();
+               mapData.processHouse(filePath);
+            }
+            default -> {
+                validStart = new ValidStart(this, this, this);
+                mapData = new MapData();
+            }
 
+        }
     }
     public Coordinates generateValidStartPosition() {
         return validStart.validStartingCoordinates(TileKeyRegistry.getTileKeyList());

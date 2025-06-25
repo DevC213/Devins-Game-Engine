@@ -30,7 +30,7 @@ public class Village{
         List<RHouse> tempHouseList = gson.fromJson(reader, listType);
         for(RHouse rHouse : tempHouseList) {
             Coordinates map = new Coordinates(rHouse.mapCoords()[0], rHouse.mapCoords()[1]);
-            Coordinates exit = new Coordinates(rHouse.exit()[0], rHouse.exit()[1]);
+            Coordinates exit = new Coordinates(rHouse.exit()[1], rHouse.exit()[0]);
             houseMap.put(rHouse.houseNumber(),new House(rHouse.houseNumber(), map, exit, rHouse.map()));
         }
     }

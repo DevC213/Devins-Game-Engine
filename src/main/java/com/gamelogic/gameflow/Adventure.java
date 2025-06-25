@@ -1,6 +1,13 @@
 package com.gamelogic.gameflow;
 
+import com.gamelogic.commands.Keybindings;
 import com.gamelogic.core.Controller;
+import com.google.gson.Gson;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import java.util.Objects;
 
 public class Adventure {
 
@@ -18,7 +25,7 @@ public class Adventure {
     }
 
     public void startGame(final Controller control) {
-        gameController = new GameController(control);
+        gameController = new GameController(control, readInKeyBindings());
     }
     public void setCharacterID(String characterID) {
         gameController.setCharacter(characterID);
@@ -38,5 +45,16 @@ public class Adventure {
 
     public void setHealth() {
         gameController.setHealth();
+    }
+    private Keybindings readInKeyBindings(){
+
+        try {
+            Gson gson = new Gson();
+            InputStream input = Objects.requireNonNull(getClass().getResourceAsStream("/keyBindings.json"));
+            InputStreamReader reader = new InputStreamReader(input);
+            return gson.fromJson(reader, Keybindings.class);
+        } catch (Exception e) {
+            return new Keybindings("v","c","x","b");
+        }
     }
 }

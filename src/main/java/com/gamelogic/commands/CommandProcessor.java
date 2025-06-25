@@ -5,15 +5,12 @@ import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.combat.IMonsters;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
-import com.gamelogic.map.mapLogic.ICanCross;
 import com.gamelogic.map.mapLogic.IDoesDamage;
 import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.inventory.InventoryManager;
-import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,11 +24,19 @@ public class CommandProcessor {
         ATTACK, // 4 - Attacking
         HATTACK, //5 - Using health item during fight
     }
-
+    private final String HEALING;
+    private final String ATTACKING;
+    private final String GRAB_ITEM;
+    private final String ENTER_AREA;
     private enum Movement {
-        LEFT, RIGHT, UP, DOWN;
+        LEFT(-1,0), RIGHT(1,0), UP(0,-1), DOWN(0,1);
+        final int dx, dy;
+        Movement(int x, int y) {
+            this.dx = x;
+            this.dy = y;
+        }
 
-        public static Movement getmovement(String string) {
+        public static Movement getMovement(String string) {
             try {
                 return Movement.valueOf(string.toUpperCase());
             } catch (IllegalArgumentException e) {
@@ -41,13 +46,7 @@ public class CommandProcessor {
     }
 
     private CommandState commandState = CommandState.NONE;
-    Map<String, Runnable> charCommands = Map.of(
-            "C", this::healing,
-            "V", this::attack,
-            "B", this::grabItem,
-            "X", () -> traverseLevels(-1),
-            "Z", this::enterHouseCaveOrDungeon
-    );
+    Map<String, Runnable> charCommands;
     private boolean escape = false;
     IGuiEventListener controller;
     IGuiCommandGetter commandGetter;
@@ -64,7 +63,7 @@ public class CommandProcessor {
 
     public CommandProcessor(Controller controller, PlayerController playerController
             , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
-                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState) {
+                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState, Keybindings keybindings) {
         this.controller = controller;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
@@ -76,15 +75,28 @@ public class CommandProcessor {
         this.monsters = monsters;
         this.doesDamage = doesDamage;
         this.accessItems = accessItems;
+        HEALING = keybindings.heal().toUpperCase();  //<- Plan to have a JSON config file read-in with changeable keybindings, and maybe later an "options screen"
+        ATTACKING = keybindings.attack().toUpperCase();
+        GRAB_ITEM = keybindings.grabItem().toUpperCase();
+        ENTER_AREA = keybindings.enterArea().toUpperCase();
+        charCommands = Map.of(
+                HEALING, this::healing,
+                ATTACKING, this::attack,
+                GRAB_ITEM, this::grabItem,
+                ENTER_AREA, this::enterArea,
+                "ENTER", () -> handleTextCommand(commandGetter.getCommand())
+        );
         tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
-
+    public void changeMapState(IMapState mapState){
+        this.mapState = mapState;
+    }
     public void handleKeyInput(String keyPressed) {
-        Movement move = Movement.getmovement(keyPressed);
+        Movement move = Movement.getMovement(keyPressed.toUpperCase());
         if (commandState != CommandState.NONE && !keyPressed.equals("ENTER")) {
             return;
         }
-        if (combatSystem.isMonsterOnTile() && !Objects.equals(keyPressed, "V") && !Objects.equals(keyPressed, "C")) {
+        if (combatSystem.isMonsterOnTile() && !Objects.equals(keyPressed, ATTACKING) && !Objects.equals(keyPressed, HEALING)) {
             if (move != null) {
                 if (!attemptEscape()) return;
             }
@@ -99,11 +111,9 @@ public class CommandProcessor {
     }
 
     private void handleAction(String keyPressed) {
-        Runnable runnable = charCommands.get(keyPressed);
+        Runnable runnable = charCommands.get(keyPressed.toUpperCase());
         if (runnable != null) {
             runnable.run();
-        } else if (Objects.equals(keyPressed, "ENTER")) {
-            handleTextCommand(commandGetter.getCommand());
         }
         updateGame.updateGameInfo();
     }
@@ -223,70 +233,39 @@ public class CommandProcessor {
 
     //Command Processing for movement
     private void moveOnLevel(Movement movement) {
-        int deltaX;
-        int deltaY;
+        int deltaX = movement.dx;
+        int deltaY = movement.dy;
         Coordinates playerCoords = playerController.getMapCoordinates();
-        switch (movement) {
-            case LEFT -> {
-                deltaX = -1;
-                deltaY = 0;
-            }
-            case RIGHT -> {
-                deltaX = 1;
-                deltaY = 0;
-            }
-            case UP -> {
-                deltaX = 0;
-                deltaY = -1;
-            }
-            case DOWN -> {
-                deltaX = 0;
-                deltaY = 1;
-            }
-            default -> {
-                return;
-            }
-        }
         updateMinimap.setVisibility(playerController.movement(new Coordinates(deltaX, deltaY),
                 mapState.getMapValue(playerCoords),
                 mapState.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
         updateMinimap.setDirection(deltaX, deltaY);
         updateMinimap.renderMinimap();
     }
-
-    public void traverseLevels(int dir) {
+    public void enterArea() {
         TileKey tile = tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates()));
-        if (tile.walkable()) {
-            if (dir > 0 && Objects.equals(tile.name(), "cave")) {
-                mapState.changeLevel(dir);
-                updateMinimap.renderMinimap();
-            } else if (dir < 0 && tile.name().equals("ladder")) {
-                mapState.changeLevel(dir);
-                updateMinimap.renderMinimap();
-            } else {
-                controller.UIUpdate("Can only go up on a ladder or down on a cave", 0);
-            }
+        if(tile == null) {
+            controller.UIUpdate("Invalid tile found.", 0);
+            return;
+        }
+        int levelDelta = tile.levelDelta();
+        String mapTile = tile.name();
+        if (mapTile.equals("house")) {
+            updateMinimap.toggleHouse();
+            updateMinimap.renderMinimap();
+        }else if (levelDelta != 0) {
+            mapState.changeLevel(levelDelta);
+            updateMinimap.renderMinimap();
         } else {
-            controller.UIUpdate("Can only change level on a ladder or a cave", 0);
+            controller.UIUpdate("Can only change level on a ladder, cave, or stairs", 0);
         }
     }
-
     public boolean escaped() {
         return escape;
     }
-
     public void toggleEscape() {
         escape = !escape;
     }
 
-    public void enterHouseCaveOrDungeon() {
-        if (tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates())).name().equals("house")) {
-            updateMinimap.toggleHouse();
-            updateMinimap.renderMinimap();
-
-        } else {
-            traverseLevels(1);
-        }
-    }
 }
 

@@ -1,5 +1,6 @@
 package com.gamelogic.gameflow;
 
+import com.gamelogic.commands.Keybindings;
 import com.gamelogic.core.Controller;
 import com.gamelogic.core.ScriptController;
 import com.gamelogic.combat.CombatSystem;
@@ -8,35 +9,31 @@ import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.inventory.InventoryManager;
+import com.gamelogic.map.mapLogic.MapType;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.villages.House;
-import com.gamelogic.villages.Village;
 
 import java.util.Map;
 import java.util.Objects;
 
 public class GameController implements IUpdateMinimap, IUpdateGame {
 
-    private PlayerController playerController;
-    private Controller controller;
-    private MapController mapController;
-    private InventoryManager inventoryManager;
-    private CombatSystem combatSystem;
-    private UIMapController uiMapController;
-    private CommandProcessor commandProcessor;
-    private ScriptController scriptController;
-    private Map<String, TileKey> tileKeyMap;
-    private String currentVillage;
-    private boolean inHouse = false;
+    private final PlayerController playerController;
+    private final Controller controller;
+    private final MapController MainMapController;
+    private MapController currentMapController;
+    private final InventoryManager inventoryManager;
+    private final CombatSystem combatSystem;
+    private final UIMapController uiMapController;
+    private final CommandProcessor commandProcessor;
+    private final ScriptController scriptController;
+    private final EnvironmentChecker environmentChecker;
+    private final Map<String, TileKey> tileKeyMap;
+
+    Coordinates mainMapLocation;
     House house;
 
-    public void setHealth() {
-        playerController.setHealth(uiMapController.getPlayerHealth());
-    }
-
-    enum TileStatus {NEUTRAL, HEALING, DAMAGING}
-    private TileStatus tileStatus = TileStatus.NEUTRAL;
     enum Movement{LEFT, RIGHT, UP, DOWN;
         public static Movement getmovement(String string){
             try {
@@ -46,33 +43,37 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             }
         }
     }
+
     private int moves = 0;
     private int deepestLevel = 0;
+    private String currentVillage;
+    private boolean inHouse = false;
 
-    public GameController() {
-    }
-    public GameController(Controller controller) {
+    //Constructor
+    public GameController(Controller controller, Keybindings keybindings) {
         tileKeyMap = TileKeyRegistry.getTileKeyList();
         scriptController = new ScriptController();
         this.controller = controller;
         TileKeyRegistry.initialize("/key.json");
         uiMapController = new UIMapController();
-        this.mapController = new MapController("/levelData.json", this.controller);
+        this.MainMapController = new MapController("/levelData.json", MapType.OVERWORLD);
         uiMapController.processCharacters("/characters.json");
-        Coordinates startingCords = mapController.generateValidStartPosition();
-        this.playerController = new PlayerController(startingCords,mapController.getCoordinates(), this.controller, mapController);
+        Coordinates startingCords = MainMapController.generateValidStartPosition();
+        this.playerController = new PlayerController(startingCords, MainMapController.getCoordinates(), this.controller, MainMapController);
         this.combatSystem = new CombatSystem(playerController);
         inventoryManager = new InventoryManager(playerController, controller);
         commandProcessor = new CommandProcessor(controller, playerController, this, this, combatSystem, inventoryManager,
-                mapController,mapController,mapController,mapController);
-        int startingVisibility = tileKeyMap.get(mapController.getMapValue(playerController.getMapCoordinates())).visibility();
+                MainMapController, MainMapController, MainMapController, MainMapController, keybindings);
+        int startingVisibility = tileKeyMap.get(MainMapController.getMapValue(playerController.getMapCoordinates())).visibility();
         uiMapController.setVisibility(startingVisibility);
         if (startingVisibility != 2) {
             controller.UIUpdate("Player: The air is thick here", 0);
         }
+        currentMapController = MainMapController;
+        environmentChecker = new EnvironmentChecker(this.controller,playerController,currentMapController);
     }
-    public void setCharacter(String character) {
-        uiMapController.setCharacterID(character);
+    public double tileHealthData(Coordinates location) {
+        return TileKeyRegistry.getTileKey(currentMapController.getMapValue(location)).healthDelta();
     }
     public void handleInput(String keyPressed) {
         if(playerController.isGameOver()){return;}
@@ -83,13 +84,16 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             spawnMonster();
         }
     }
+
+    //dialog
     public void newGame() {
-        Coordinates startingCords = mapController.generateValidStartPosition();
+        Coordinates startingCords = MainMapController.generateValidStartPosition();
         playerController.resetPlayer(startingCords);
-        mapController.setLevel(0);
-        mapController.resetMap();
+        MainMapController.setLevel(0);
+        MainMapController.resetMap();
+        currentMapController = MainMapController;
         intro();
-        int startingVisibility = tileKeyMap.get(mapController.getMapValue(playerController.getMapCoordinates())).visibility();
+        int startingVisibility = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates())).visibility();
         uiMapController.setVisibility(startingVisibility);
         uiMapController.setDirection("down");
         controller.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
@@ -105,30 +109,38 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
                 After hearing the voice you feel a chill go down you back,
                 something isn't right!
                 """, 0);
-        renderMinimap();
         controller.clearInput();
-        updateGameInfo();
         controller.scroll();
+        renderMinimap();
+        updateGameInfo();
     }
     public void resetGame() {
         newGame();
         controller.UIUpdate("Health: " + playerController.getHealth(), 3);
-        String cordOrigins = "[" + (-mapController.getCoordinates().x() / 2) + (-mapController.getCoordinates().y() / 2) + "]";
+        String cordOrigins = "[" + (-currentMapController.getCoordinates().x() / 2) + (-currentMapController.getCoordinates().y() / 2) + "]";
         controller.UIUpdate(cordOrigins, 2);
         inHouse = false;
         house = null;
     }
 
-    //Mini-Map Control
+    //IUpdateMinimap
     @Override
     public void renderMinimap() {
-
         if(inHouse){
-            System.out.println("In House");
+            switchMap(currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage));
             inHouse = false;
-        } else {
-            uiMapController.minimap(controller, mapController, playerController);
         }
+        if(currentMapController instanceof House){ //<- I plan to have a third map type: dungeon, but haven't got to it yet.
+            if(new Coordinates(playerController.getMapCoordinates().y(), playerController.getMapCoordinates().x()).equals(((House) currentMapController).getExitCoordinates())){
+                returnToMainMap();
+                inHouse = false;
+            }
+        }
+        uiMapController.minimap(controller, currentMapController, playerController);
+    }
+    @Override
+    public void toggleHouse() {
+        inHouse = !inHouse;
     }
     @Override
     public void setVisibility(int visibility) {
@@ -147,91 +159,41 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
 
-    @Override
-    public void toggleHouse() {
-        inHouse = !inHouse;
-    }
-
-    @Override
-    public void updateGameInfo() {
-        if(playerController.isGameOver()){return;}
-        controller.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
-        checkForItems();
-        checkForMonsters();
-        String image = mapController.getMapValue(playerController.getMapCoordinates());
-        if(Objects.equals(image, "GOAL")) {
-            Victory();
-        }
-        double effect = tileHealthData(playerController.getMapCoordinates());
-        checkTileEffect(effect);
-        inventoryManager.updateInventoryDisplay();
-        healthIncrease(mapController.getLevel());
-        Messenger messenger = mapController.checkForVillages(playerController.getMapCoordinates());
-        String village = messenger.getMessage();
-
-        if(village != null) {
-            controller.UIUpdate(village, 0);
-            currentVillage = messenger.getPayloadString();
+    private void switchMap(MapController mapController) {
+        currentMapController = mapController;
+        commandProcessor.changeMapState(currentMapController);
+        mainMapLocation = playerController.getMapCoordinates();
+        environmentChecker.changeMap(mapController);
+        if(currentMapController instanceof House) {
+            playerController.setCoordinates(((House) currentMapController).getExitCoordinates().y(), ((House) currentMapController).getExitCoordinates().x()-1);
+            playerController.setMaxCoordinates(((House) currentMapController).getMaxCoordinates());
         }
     }
-
-    //checking map
-    private void checkTileEffect(double effect) {
-        if (effect < 0) {
-            if (tileStatus != TileStatus.DAMAGING) {
-                controller.UIUpdate("Player: It hurts walking here.", 0);
-                tileStatus = TileStatus.DAMAGING;
-            }
-        } else if (effect > 0) {
-            if (tileStatus != TileStatus.HEALING) {
-                controller.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
-                tileStatus = TileStatus.HEALING;
-            }
-        } else {
-            tileStatus = TileStatus.NEUTRAL;
-        }
-        if (effect != 0) {
-            playerController.changeHealth(effect);
-        }
+    private void returnToMainMap(){
+        currentMapController = MainMapController;
+        commandProcessor.changeMapState(currentMapController);
+        playerController.setMaxCoordinates(currentMapController.getCoordinates());
+        playerController.setCoordinates(mainMapLocation.x(),  mainMapLocation.y()+1);
     }
-    private void checkForItems() {
-        String string = mapController.itemList(playerController.getMapCoordinates()).toString();
-        if (!string.isEmpty()) {
-            controller.UIUpdate("Items at location: \n" + string, 0);
-        }
+    public void setHealth() {
+        playerController.setHealth(uiMapController.getPlayerHealth());
     }
-    private void checkForMonsters() {
-        boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
-        if (monsterFound) {
-            controller.UIUpdate("Monsters at location: " +
-                    mapController.getMonsters(playerController.getMapCoordinates()), 0);
-            if (!combatSystem.isMonsterOnTile()) {
-                combatSystem.toggleMonster();
-            }
-        } else {
-            if (commandProcessor.escaped()) {
-                commandProcessor.toggleEscape();
-                combatSystem.toggleMonster();
-            } else if (combatSystem.isMonsterOnTile()) {
-                controller.UIUpdate("Monsters Killed", 0);
-                combatSystem.toggleMonster();
-            }
-        }
+    public void setCharacter(String character) {
+        uiMapController.setCharacterID(character);
     }
     private void spawnMonster() {
-        Messenger messenger = mapController.spawnMonsters(playerController.getMapCoordinates(), moves);
+        Messenger messenger = currentMapController.spawnMonsters(playerController.getMapCoordinates(), moves);
         if (messenger != null && messenger.getMessage() != null) {
             controller.UIUpdate(messenger.getMessage(), 0);
             moves = 0;
         }
     }
-    public double tileHealthData(Coordinates location) {
-        return TileKeyRegistry.getTileKey(mapController.getMapValue(location)).healthDelta();
-    }
-    public void healthIncrease(int level) {
+
+    //progression
+    public void levelProgression(int level) {
         if (level > deepestLevel) {
-            String sound = mapController.getSound();
-            String voice = mapController.getVoice();
+            String sound = currentMapController.getSound();
+            String voice = currentMapController.getVoice();
             controller.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
             playerController.increaseMaxHealth(25 * level);
             playerController.increaseLevel();
@@ -253,6 +215,33 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private void Victory(){
         playerController.toggleGameOver();
         controller.GameOver(true);
+    }
+
+
+    @Override
+    public void updateGameInfo() {
+        if(playerController.isGameOver()){return;}
+        controller.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
+
+        String image = currentMapController.getMapValue(playerController.getMapCoordinates());
+        if(Objects.equals(image, "GOAL")) {
+            Victory();
+        }
+        double effect =  tileHealthData(playerController.getMapCoordinates());
+        environmentChecker.checkTile(combatSystem, commandProcessor, effect);
+        inventoryManager.updateInventoryDisplay();
+        if(currentMapController == MainMapController) {
+            levelProgression(MainMapController.getLevel());
+            if(currentMapController.getLevel() == 0 && currentMapController == MainMapController) {
+                Messenger messenger = MainMapController.checkForVillages(playerController.getMapCoordinates());
+                String village = messenger.getMessage();
+
+                if (village != null) {
+                    controller.UIUpdate(village, 0);
+                    currentVillage = messenger.getPayloadString();
+                }
+            }
+        }
     }
 }
 

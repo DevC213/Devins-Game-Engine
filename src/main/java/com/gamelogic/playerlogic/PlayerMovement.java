@@ -2,10 +2,6 @@ package com.gamelogic.playerlogic;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.TileKey;
-import com.gamelogic.map.mapLogic.ICanCross;
-import com.gamelogic.map.mapLogic.IDoesDamage;
-import com.gamelogic.map.mapLogic.IVisibility;
-import com.gamelogic.map.mapLogic.MapController;
 
 import java.awt.geom.Point2D;
 import java.util.Map;
@@ -86,5 +82,8 @@ class PlayerMovement {
 
     public void setLocation(int x, int y) {
         player.setLocation(x, y);
+    }
+    public void setMaxCoords(Coordinates maxCoords) {
+        this.maxCoords = maxCoords;
     }
 }

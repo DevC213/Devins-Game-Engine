@@ -1,47 +1,31 @@
 package com.gamelogic.villages;
 
+import com.armor.Armor;
 import com.gamelogic.map.Coordinates;
-import com.gamelogic.map.mapLogic.MapProcesser;
+import com.gamelogic.map.mapLogic.MapController;
+import com.gamelogic.map.mapLogic.MapType;
 
 import java.util.*;
 
-public class House {
+public class House extends MapController {
     int houseNumber;
-    Coordinates mainCoordinates;
-    Coordinates exitCoordinates;
-    List<List<String>> mapData;
-    String theme = "overworld";
+    final Coordinates mainCoordinates;
+    final Coordinates exitCoordinates;
 
     House(int houseNumber, Coordinates mainCoordinates, Coordinates exitCoordinates, String fileMap) {
+        super(fileMap, MapType.HOUSE);
         this.houseNumber = houseNumber;
         this.mainCoordinates = mainCoordinates;
         this.exitCoordinates = exitCoordinates;
-        mapData = new ArrayList<>();
-        processHouseMap(fileMap);
     }
 
-    private void processHouseMap(String filePath) {
-        List<List<String>> mapTemp;
-        MapProcesser mapProcesser = new MapProcesser();
-        try {
-           mapTemp = mapProcesser.processMap(filePath);
-        }catch(Exception e){
-            return;
-        }
-        mapData = mapTemp;
+    public Coordinates getExitCoordinates() {
+            return exitCoordinates;
     }
-
-    public Coordinates getCoordinates() {
+    public Coordinates getMainCoordinates() {
         return mainCoordinates;
     }
-    public Coordinates getExitCoordinates() {
-        return exitCoordinates;
-    }
-
-    public String getMapValue(Coordinates mapCoordinates) {
-        return mapData.get(mapCoordinates.x()).get(mapCoordinates.y());
-    }
-    public String getTheme() {
-        return theme;
+    public Coordinates getMaxCoordinates() {
+        return super.getCoordinates();
     }
 }

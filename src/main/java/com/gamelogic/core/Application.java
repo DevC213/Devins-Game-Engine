@@ -56,8 +56,10 @@ public class Application extends javafx.application.Application {
                 If multiple monsters of the same name are on tile:
                 Enter name + number, ex: Zombie #2, or Goblin #4.
                 
-                Use Z to enter cave or house.
-                Use X to climb ladder.
+                Use X to explore area: whether it is a cave, house or dungeon
+                
+                Shown keys are default values, change values in keyBindings.json
+                
                 Use arrow keys for movement.
                 
                 Player information is on the side of map.
