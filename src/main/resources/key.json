@@ -370,21 +370,5 @@
     "walkable": false,
     "visibility": 2,
     "multiFile": true
-  },
-  {
-    "tileId": "🨨",
-    "name": "woodFloor",
-    "fileLocation": "flooring.png",
-    "walkable": true,
-    "visibility": 2,
-    "multiFile": true
-  },
-  {
-    "tileId": "􏿿",
-    "name": "woodWall",
-    "fileLocation": "wall.png",
-    "walkable": false,
-    "visibility": 2,
-    "multiFile": true
   }
 ]
