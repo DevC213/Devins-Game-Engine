@@ -22,9 +22,6 @@ public class House extends MapController {
     public Coordinates getExitCoordinates() {
             return exitCoordinates;
     }
-    public Coordinates getMainCoordinates() {
-        return mainCoordinates;
-    }
     public Coordinates getMaxCoordinates() {
         return super.getCoordinates();
     }

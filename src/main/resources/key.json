@@ -108,7 +108,7 @@
     "multiFile": false
   },
   {
-    "tileId": "GOAL",
+    "tileId": "🎯",
     "name": "goal",
     "fileLocation": "/MapPics/treasure.png",
     "walkable": true,
@@ -134,7 +134,7 @@
     "multiFile": false
   },
   {
-    "tileId": "ph1",
+    "tileId": "ਆ",
     "name": "house",
     "fileLocation": "/MapPics/plainsHouseOne.png",
     "walkable": true,
@@ -142,7 +142,7 @@
     "multiFile": false
   },
   {
-    "tileId": "ph2",
+    "tileId": "৸",
     "name": "house",
     "fileLocation": "/MapPics/plainsHouseTwo.png",
     "walkable": true,
@@ -348,7 +348,7 @@
     "multiFile": true
   },
   {
-    "tileId": "i",
+    "tileId": "ĥ",
     "name": "window",
     "fileLocation": "window.png",
     "walkable": false,
@@ -365,6 +365,22 @@
   },
   {
     "tileId": "W",
+    "name": "woodWall",
+    "fileLocation": "wall.png",
+    "walkable": false,
+    "visibility": 2,
+    "multiFile": true
+  },
+  {
+    "tileId": "🨨",
+    "name": "woodFloor",
+    "fileLocation": "flooring.png",
+    "walkable": true,
+    "visibility": 2,
+    "multiFile": true
+  },
+  {
+    "tileId": "􏿿",
     "name": "woodWall",
     "fileLocation": "wall.png",
     "walkable": false,

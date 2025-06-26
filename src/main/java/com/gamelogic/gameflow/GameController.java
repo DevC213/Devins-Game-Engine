@@ -223,8 +223,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         if(playerController.isGameOver()){return;}
         controller.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
 
-        String image = currentMapController.getMapValue(playerController.getMapCoordinates());
-        if(Objects.equals(image, "GOAL")) {
+        TileKey tile = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates()));
+        if(Objects.equals(tile.name(), "goal")) {
             Victory();
         }
         double effect =  tileHealthData(playerController.getMapCoordinates());

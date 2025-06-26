@@ -1,6 +1,7 @@
 package com.gamelogic.map.mapLogic;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MapProcesser {
@@ -12,7 +13,7 @@ public class MapProcesser {
         Scanner reader;
         List<List<String>> mapTemp = new ArrayList<>();
         input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
-        reader = new Scanner(input);
+        reader = new Scanner(input, StandardCharsets.UTF_8);
         while (reader.hasNext()) {
             List<String> tempRow;
             String mapLine = reader.nextLine();
@@ -24,23 +25,12 @@ public class MapProcesser {
         return mapTemp;
     }
     private List<String> lineParser(String line) {
-        Vector<String> temp = new Vector<>();
+        List<String> temp = new ArrayList<>();
         int i = 0;
-        while(i < line.length()){
-            if(line.startsWith("//",i)){
-                int end = line.indexOf("//",i+2);
-                if (end == -1 || end == i + 2) {
-                    temp.add("/");
-                    i += 1;
-                } else {
-                    String key = line.substring(i + 2, end);
-                    temp.add(key);
-                    i = end + 2;
-                }
-            } else {
-                temp.add(String.valueOf(line.charAt(i)));
-                i++;
-            }
+        while (i < line.length()) {
+            int codePoint = line.codePointAt(i);
+            temp.add(new String(Character.toChars(codePoint)));
+            i += Character.charCount(codePoint);
         }
         return temp;
     }
