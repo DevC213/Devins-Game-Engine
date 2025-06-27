@@ -5,7 +5,7 @@
     "fileLocation": "/MapPics/acid.png",
     "walkable": false,
     "healthDelta": -11,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "A",
@@ -14,7 +14,7 @@
     "walkable": true,
     "visibility": 2,
     "healthDelta": 5,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "b",
@@ -22,7 +22,7 @@
     "fileLocation": "/MapPics/beach.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "s",
@@ -30,7 +30,23 @@
     "fileLocation": "bigRocks.png",
     "walkable": false,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
+  },
+  {
+    "tileId": "!",
+    "name": "bridge",
+    "fileLocation": "bridge.png",
+    "walkable": true,
+    "visibility": 2,
+    "themed": true
+  },
+  {
+    "tileId": "\"",
+    "name": "brokenBridge",
+    "fileLocation": "brokenBridge.png",
+    "walkable": true,
+    "visibility": 2,
+    "themed": true
   },
   {
     "tileId": "c",
@@ -38,7 +54,7 @@
     "fileLocation": "cave.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true,
+    "themed": true,
     "levelDelta": 1
   },
   {
@@ -47,7 +63,7 @@
     "fileLocation": "/MapPics/chest.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": ",",
@@ -55,7 +71,7 @@
     "fileLocation": "/MapPics/cloud.png",
     "walkable": true,
     "visibility": 1,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "#",
@@ -63,7 +79,7 @@
     "fileLocation": "/MapPics/rainCloud.png",
     "walkable": true,
     "visibility": 1,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "$",
@@ -72,15 +88,22 @@
     "walkable": true,
     "visibility": 1,
     "healthDelta": -3,
-    "multiFile": false
-  },
+    "themed": false
+  },{
+  "tileId": "=",
+  "name": "deep Water",
+  "fileLocation": "/MapPics/deepWater.png",
+  "walkable": false,
+  "visibility": 2,
+  "themed": false
+},
   {
-    "tileId": "=",
-    "name": "deep Water",
-    "fileLocation": "/MapPics/deepWater.png",
-    "walkable": false,
+    "tileId": "🕸",
+    "name": "dungeonEntrance",
+    "fileLocation": "dungeon.png",
+    "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": true
   },
   {
     "tileId": "d",
@@ -88,7 +111,7 @@
     "fileLocation": "/MapPics/desert.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "f",
@@ -96,7 +119,7 @@
     "fileLocation": "/MapPics/forest.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "G",
@@ -105,7 +128,7 @@
     "walkable": true,
     "visibility": 1,
     "healthDelta": -5,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "🎯",
@@ -113,7 +136,7 @@
     "fileLocation": "/MapPics/treasure.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "H",
@@ -122,7 +145,7 @@
     "walkable": true,
     "visibility": 2,
     "healthDelta": 3,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "&",
@@ -131,7 +154,7 @@
     "walkable": true,
     "visibility": 1,
     "healthDelta": -7,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "ਆ",
@@ -139,7 +162,7 @@
     "fileLocation": "/MapPics/plainsHouseOne.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "৸",
@@ -147,7 +170,7 @@
     "fileLocation": "/MapPics/plainsHouseTwo.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "e",
@@ -155,7 +178,7 @@
     "fileLocation": "ladder.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true,
+    "themed": true,
     "levelDelta": -1
   },
   {
@@ -164,7 +187,7 @@
     "fileLocation": "/MapPics/lava.png",
     "walkable": false,
     "healthDelta": -5,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "|",
@@ -172,7 +195,7 @@
     "fileLocation": "/MapPics/minecartTrack.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "M",
@@ -180,7 +203,7 @@
     "fileLocation": "/MapPics/mountain.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "-",
@@ -188,7 +211,7 @@
     "fileLocation": "/MapPics/out.png",
     "walkable": false,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "1",
@@ -196,7 +219,7 @@
     "fileLocation": "/MapPics/player.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": ".",
@@ -204,7 +227,7 @@
     "fileLocation": "/MapPics/plains.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "2",
@@ -212,7 +235,7 @@
     "fileLocation": "/MapPics/playerBlend",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "p",
@@ -221,7 +244,15 @@
     "walkable": true,
     "visibility": 2,
     "healthDelta": -8,
-    "multiFile": false
+    "themed": false
+  },
+  {
+    "tileId": "'",
+    "name": "river",
+    "fileLocation": "river.png",
+    "walkable": false,
+    "visibility": 2,
+    "themed": true
   },
   {
     "tileId": "r",
@@ -229,7 +260,7 @@
     "fileLocation": "stone.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
   },
   {
     "tileId": "q",
@@ -237,7 +268,7 @@
     "fileLocation": "/MapPics/savanna.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "g",
@@ -245,7 +276,7 @@
     "fileLocation": "smallRocks.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
   },
   {
     "tileId": "^",
@@ -253,7 +284,7 @@
     "fileLocation": "/MapPics/smoke.png",
     "walkable": true,
     "visibility": 1,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "X",
@@ -262,7 +293,7 @@
     "walkable": true,
     "visibility": 2,
     "healthDelta": -3,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "@",
@@ -270,7 +301,7 @@
     "fileLocation": "stairsT.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true,
+    "themed": true,
     "levelDelta": -1
   },
   {
@@ -279,7 +310,7 @@
     "fileLocation": "stairsB.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true,
+    "themed": true,
     "levelDelta": 1
   },
   {
@@ -288,7 +319,7 @@
     "fileLocation": "/MapPics/swamp.png",
     "walkable": true,
     "visibility": 1,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "t",
@@ -297,7 +328,7 @@
     "walkable": true,
     "visibility": 1,
     "healthDelta": -2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": ">",
@@ -305,7 +336,7 @@
     "fileLocation": "/MapPics/undergroundSpring.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "<",
@@ -313,7 +344,7 @@
     "fileLocation": "/MapPics/undergroundStream.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "?",
@@ -321,7 +352,7 @@
     "fileLocation": "/MapPics/unknown.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "V",
@@ -329,7 +360,7 @@
     "fileLocation": "/MapPics/void.png",
     "walkable": true,
     "healthDelta": -50,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "F",
@@ -337,7 +368,7 @@
     "fileLocation": "/MapPics/voidFlux.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": false
+    "themed": false
   },
   {
     "tileId": "~",
@@ -345,7 +376,7 @@
     "fileLocation": "water.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
   },
   {
     "tileId": "ĥ",
@@ -353,7 +384,15 @@
     "fileLocation": "window.png",
     "walkable": false,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
+  },
+  {
+    "tileId": "(",
+    "name": "whiteWater",
+    "fileLocation": "whiteWater.png",
+    "walkable": false,
+    "visibility": 2,
+    "themed": true
   },
   {
     "tileId": "w",
@@ -361,7 +400,7 @@
     "fileLocation": "flooring.png",
     "walkable": true,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
   },
   {
     "tileId": "W",
@@ -369,6 +408,6 @@
     "fileLocation": "wall.png",
     "walkable": false,
     "visibility": 2,
-    "multiFile": true
+    "themed": true
   }
 ]

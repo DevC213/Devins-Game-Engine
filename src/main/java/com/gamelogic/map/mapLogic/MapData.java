@@ -1,9 +1,6 @@
 package com.gamelogic.map.mapLogic;
 
-import com.gamelogic.map.Coordinates;
-import com.gamelogic.rawdataclasses.RHouse;
 import com.gamelogic.rawdataclasses.RHouseMap;
-import com.gamelogic.villages.House;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,16 +14,17 @@ import java.util.Objects;
 
 public class MapData {
     private final List<LevelData> levelDataList;
+    private final MapType mapType;
 
-    MapData(){
+    MapData(MapType mapType) {
         levelDataList = new ArrayList<>();
+        this.mapType = mapType;
     }
     public void processHouse(int level, Map<String, String> levelMap, String theme, String voice, String sound) {
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;
         MapMonsterController mapMonsterController = null;
         MapVillageController mapVillageController = null;
-
         for(Map.Entry<String, String> entry : levelMap.entrySet()) {
             String file = entry.getKey();
             String path = entry.getValue();
@@ -54,11 +52,10 @@ public class MapData {
         if(mapItemController == null ||  mapMonsterController == null) {
             throw new IllegalStateException("Incomplete MapData for level: " + level);
         }
-        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,mapVillageController,theme,voice,sound));
+        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,mapVillageController,theme,voice,sound, mapType));
     }
     public void processHouse(String filePath){
-        MapGeneration mapGeneration = null;
-        MapItemController mapItemController = null;
+        MapGeneration mapGeneration;
         Gson gson = new Gson();
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
         InputStreamReader reader = new InputStreamReader(input);
@@ -66,13 +63,12 @@ public class MapData {
         List<RHouseMap> tempHouseFloorList = gson.fromJson(reader, listType);
         for(RHouseMap rHouseMap : tempHouseFloorList) {
             mapGeneration = new MapGeneration(rHouseMap.map());
-            mapItemController = new MapItemController(rHouseMap.items(), mapGeneration.getColumnsAndRows());
-            levelDataList.add(new LevelData(mapGeneration, mapItemController, null,null,rHouseMap.theme(),null,null));
+            levelDataList.add(new LevelData(mapGeneration, null, null,null,rHouseMap.theme(),null,null, mapType));
         }
     }
     public void processDungeon(String string){}
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null, mapType));
     }
 
     public LevelData getLevel(int level){

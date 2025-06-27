@@ -36,7 +36,7 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
 
             case OVERWORLD -> {
                 validStart = new ValidStart(this, this, this);
-                mapData = new MapData();
+                mapData = new MapData(type);
                 try {
                     Gson gson = new Gson();
                     InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
@@ -54,12 +54,12 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
             }
             case HOUSE -> {
                 validStart = new ValidStart(this, this, this);
-                mapData = new MapData();
+                mapData = new MapData(type);
                mapData.processHouse(filePath);
             }
             default -> {
                 validStart = new ValidStart(this, this, this);
-                mapData = new MapData();
+                mapData = new MapData(type);
             }
 
         }
