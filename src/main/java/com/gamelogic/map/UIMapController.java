@@ -54,7 +54,7 @@ public class UIMapController {
                 int deltaX = mapColumn - playerCoordinates.x();
                 int deltaY = mapRow - playerCoordinates.y();
 
-                if ((Math.abs(deltaX) > visibility || Math.abs(deltaY) > visibility) && !(mapController instanceof House)) {
+                if ((Math.abs(deltaX) > visibility || Math.abs(deltaY) > visibility) && mapController.usesFog()) {
                     controller.modifyImage(row, column, getFilePath("?", mapController.getTheme()));
                 } else if (deltaX == 0 && deltaY == 0) {
                     try {

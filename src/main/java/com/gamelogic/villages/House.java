@@ -2,12 +2,13 @@ package com.gamelogic.villages;
 
 import com.armor.Armor;
 import com.gamelogic.map.Coordinates;
+import com.gamelogic.map.IExitCoordinates;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.map.mapLogic.MapType;
 
 import java.util.*;
 
-public class House extends MapController {
+public class House extends MapController implements IExitCoordinates {
     int houseNumber;
     final Coordinates mainCoordinates;
     final Coordinates exitCoordinates;
@@ -19,10 +20,17 @@ public class House extends MapController {
         this.exitCoordinates = exitCoordinates;
     }
 
+    @Override
     public Coordinates getExitCoordinates() {
             return exitCoordinates;
     }
-    public Coordinates getMaxCoordinates() {
-        return super.getCoordinates();
+
+    @Override
+    public boolean isMonsterOnTile(Coordinates location) {
+        return false;
+    }
+    @Override
+    public boolean usesFog() {
+        return false;
     }
 }

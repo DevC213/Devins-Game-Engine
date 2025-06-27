@@ -67,7 +67,9 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     public Coordinates generateValidStartPosition() {
         return validStart.validStartingCoordinates(TileKeyRegistry.getTileKeyList());
     }
-
+    public boolean usesFog(){
+        return true;
+    }
     private Map<String, String> getStringMap(String filePath) {
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
         InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
@@ -111,6 +113,9 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         return mapData.getLevel(level).item().itemsOnTile(location);
     }
     public StringBuilder itemList(Coordinates location) {
+        if(mapData.getLevel(level) == null){
+            return null;
+        }
         Weapon weapons = getWeapons(location);
         Armor armor = getArmor(location);
         RecoveryItem recoveryItems = getHealing(location);

@@ -130,10 +130,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             switchMap(currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage));
             inHouse = false;
         }
-        if(currentMapController instanceof House){ //<- I plan to have a third map type: dungeon, but haven't got to it yet.
-            if(new Coordinates(playerController.getMapCoordinates().y(), playerController.getMapCoordinates().x()).equals(((House) currentMapController).getExitCoordinates())){
+        if(currentMapController instanceof IExitCoordinates exitCoordinates){
+            Coordinates exit = exitCoordinates.getExitCoordinates();
+            if(new Coordinates(playerController.getMapCoordinates().y(), playerController.getMapCoordinates().x()).equals(exit)){
                 returnToMainMap();
-                inHouse = false;
             }
         }
         uiMapController.minimap(controller, currentMapController, playerController);
@@ -164,9 +164,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         commandProcessor.changeMapState(currentMapController);
         mainMapLocation = playerController.getMapCoordinates();
         environmentChecker.changeMap(mapController);
-        if(currentMapController instanceof House) {
-            playerController.setCoordinates(((House) currentMapController).getExitCoordinates().y(), ((House) currentMapController).getExitCoordinates().x()-1);
-            playerController.setMaxCoordinates(((House) currentMapController).getMaxCoordinates());
+        if(currentMapController instanceof IExitCoordinates exitCoordinates) {
+            Coordinates exit = exitCoordinates.getExitCoordinates();
+            playerController.setCoordinates(exit.y(), exit.x()-1);
+            playerController.setMaxCoordinates(currentMapController.getCoordinates());
         }
     }
     private void returnToMainMap(){
@@ -174,6 +175,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         commandProcessor.changeMapState(currentMapController);
         playerController.setMaxCoordinates(currentMapController.getCoordinates());
         playerController.setCoordinates(mainMapLocation.x(),  mainMapLocation.y()+1);
+        environmentChecker.changeMap(currentMapController);
     }
     public void setHealth() {
         playerController.setHealth(uiMapController.getPlayerHealth());

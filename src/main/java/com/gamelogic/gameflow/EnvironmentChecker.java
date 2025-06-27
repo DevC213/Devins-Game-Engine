@@ -9,6 +9,7 @@ import com.gamelogic.villages.House;
 
 public class EnvironmentChecker {
     enum TileStatus {NEUTRAL, HEALING, DAMAGING}
+
     TileStatus tileStatus = TileStatus.NEUTRAL;
     Controller controller;
     PlayerController playerController;
@@ -19,9 +20,11 @@ public class EnvironmentChecker {
         this.playerController = playerController;
         this.mapController = mapController;
     }
+
     public void changeMap(MapController mapController) {
         this.mapController = mapController;
     }
+
     private void checkTileEffect(double effect) {
         if (effect < 0) {
             if (tileStatus != TileStatus.DAMAGING) {
@@ -40,9 +43,10 @@ public class EnvironmentChecker {
             playerController.changeHealth(effect);
         }
     }
+
     public void checkTile(CombatSystem combatSystem, CommandProcessor commandProcessor, double effect) {
         checkForItems();
-        checkForMonsters(combatSystem,commandProcessor);
+        checkForMonsters(combatSystem, commandProcessor);
         checkTileEffect(effect);
     }
 
@@ -52,23 +56,22 @@ public class EnvironmentChecker {
             controller.UIUpdate("Items at location: \n" + string, 0);
         }
     }
+
     private void checkForMonsters(CombatSystem combatSystem, CommandProcessor commandProcessor) {
-        if (!(mapController instanceof House)) {
-            boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
-            if (monsterFound) {
-                controller.UIUpdate("Monsters at location: " +
-                        mapController.getMonsters(playerController.getMapCoordinates()), 0);
-                if (!combatSystem.isMonsterOnTile()) {
-                    combatSystem.toggleMonster();
-                }
-            } else {
-                if (commandProcessor.escaped()) {
-                    commandProcessor.toggleEscape();
-                    combatSystem.toggleMonster();
-                } else if (combatSystem.isMonsterOnTile()) {
-                    controller.UIUpdate("Monsters Killed", 0);
-                    combatSystem.toggleMonster();
-                }
+        boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
+        if (monsterFound) {
+            controller.UIUpdate("Monsters at location: " +
+                    mapController.getMonsters(playerController.getMapCoordinates()), 0);
+            if (!combatSystem.isMonsterOnTile()) {
+                combatSystem.toggleMonster();
+            }
+        } else {
+            if (commandProcessor.escaped()) {
+                commandProcessor.toggleEscape();
+                combatSystem.toggleMonster();
+            } else if (combatSystem.isMonsterOnTile()) {
+                controller.UIUpdate("Monsters Killed", 0);
+                combatSystem.toggleMonster();
             }
         }
     }

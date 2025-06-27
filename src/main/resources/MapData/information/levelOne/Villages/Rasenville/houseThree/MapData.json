@@ -1,0 +1,14 @@
+[
+  {
+    "floor": 0,
+    "map": "/MapData/information/levelOne/Villages/Rasenville/houseOne/h1.txt",
+    "theme": "Overworld",
+    "items": "/MapData/information/levelOne/Villages/Rasenville/houseOne/ItemsF1.json"
+  },
+  {
+    "floor": 1,
+    "map": "/MapData/information/levelOne/Villages/Rasenville/houseOne/h2.txt",
+    "theme": "Overworld",
+    "items": "/MapData/information/levelOne/Villages/Rasenville/houseOne/ItemsF2.json"
+  }
+]
