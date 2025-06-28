@@ -119,28 +119,31 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
                     Congratulations!
                     
                     Thank you for playing my game. Press start to begin again.""");
+            toggleItems();
         } else if (difficultySelected == Difficulty.HARDCORE) {
             script.appendText("Game Over, press start to begin again.");
             if (!gameOver) {
-                start.setVisible(true);
-                characterSelection.setVisible(true);
-                inventory.setVisible(false);
-                health.setVisible(false);
-                defence.setVisible(false);
-                cords.setVisible(false);
-                commandInput.setVisible(false);
-                commandInput.setEditable(false);
-                weapon.setVisible(false);
-                miniMap.setVisible(false);
-                money.setVisible(false);
-                difficulty.setVisible(true);
-                gameOver = true;
+                toggleItems();
             }
         } else {
             adventure.respawn();
         }
     }
-
+    private void toggleItems(){
+        start.setVisible(true);
+        characterSelection.setVisible(true);
+        inventory.setVisible(false);
+        health.setVisible(false);
+        defence.setVisible(false);
+        cords.setVisible(false);
+        commandInput.setVisible(false);
+        commandInput.setEditable(false);
+        weapon.setVisible(false);
+        miniMap.setVisible(false);
+        money.setVisible(false);
+        difficulty.setVisible(true);
+        gameOver = true;
+    }
     @Override
     public void clearInput() {
         commandInput.clear();

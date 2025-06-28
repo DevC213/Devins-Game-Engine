@@ -68,12 +68,9 @@ class MapMonsterController {
     public List<String> getMonsters(Coordinates location){
         List<String> rtnStrVec = new ArrayList<>();
         List<Monster> monsters = monsterVectorMap.get(location);
-        Map<String,Integer> monstersNum = new HashMap<>();
-        if(monsters == null){
+        Map<String,Integer> monstersNum = getMonsterNumbers(location);
+        if(monstersNum == null){
             return null;
-        }
-        for(Monster i: monsters){
-            monstersNum.merge(i.getName(),1,Integer::sum);
         }
         if (!monsters.isEmpty()) {
             for(Monster i: monsters){
@@ -86,6 +83,32 @@ class MapMonsterController {
             return rtnStrVec;
         }
         return null;
+    }
+    public List<String> getMonsterNames(Coordinates location){
+        List<String> rtnStrVec = new ArrayList<>();
+        List<Monster> monsters = monsterVectorMap.get(location);
+        Map<String,Integer> monstersNum = getMonsterNumbers(location);
+        if(monstersNum == null){
+            return null;
+        }
+        if (!monsters.isEmpty()) {
+            for(Monster i: monsters){
+                rtnStrVec.add(i.getName());
+            }
+            return rtnStrVec;
+        }
+        return null;
+    }
+    private Map<String, Integer> getMonsterNumbers(Coordinates location){
+        List<Monster> monsters = monsterVectorMap.get(location);
+        Map<String,Integer> monstersNum = new HashMap<>();
+        if(monsters == null){
+            return null;
+        }
+        for(Monster i: monsters){
+            monstersNum.merge(i.getName(),1,Integer::sum);
+        }
+        return monstersNum;
     }
     public synchronized Messenger attackMonsters(String monster, int attack, Coordinates location){
         Messenger rtnMessage = new Messenger();

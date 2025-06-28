@@ -7,11 +7,14 @@ import com.gamelogic.messaging.Messenger;
 import com.recoveryitems.RecoveryItem;
 
 public interface IAccessItems {
-    boolean itemsOnTile(Coordinates location);
+    boolean areItemsOnTile(Coordinates location);
     StringBuilder itemList(Coordinates location);
     Weapon getWeapons(Coordinates location);
     Coordinates getCoordinates();
     Messenger grabItem(Coordinates location, final String item);
+    Messenger grabItem(Coordinates location);
     Armor getArmor(Coordinates location);
     RecoveryItem getHealing(Coordinates location);
+
+    String getItemName(Coordinates location);
 }

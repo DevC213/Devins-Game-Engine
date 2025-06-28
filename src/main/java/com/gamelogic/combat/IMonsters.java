@@ -9,4 +9,6 @@ public interface IMonsters {
     Messenger spawnMonsters(Coordinates location, int moves);
     List<String> getMonsters(Coordinates location);
     boolean isMonsterOnTile(Coordinates location);
+
+    List<String> getMonsterNames(Coordinates mapCoordinates);
 }

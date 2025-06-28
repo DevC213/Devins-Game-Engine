@@ -11,6 +11,7 @@ import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -121,18 +122,25 @@ public class CommandProcessor {
     private void grabItem() {
         commandState = CommandState.TAKE;
         controller.clearInput();
-        if (!accessItems.itemsOnTile(playerController.getMapCoordinates())) {
+        if (!accessItems.areItemsOnTile(playerController.getMapCoordinates())) {
             controller.UIUpdate("No items on tile", 0);
-            commandState = CommandState.NONE;
-            return;
+        } else{
+            String item = accessItems.getItemName(playerController.getMapCoordinates());
+            executePendingAction(item);
         }
-        controller.UIUpdate("Which item?", 0);
-        controller.commandFocus();
+        commandState = CommandState.NONE;
     }
 
     private void attack() {
-        if (monsters.getMonsters(playerController.getMapCoordinates()) == null) {
+
+        List<String> monstersOnTile = monsters.getMonsterNames(playerController.getMapCoordinates());
+        if (monstersOnTile == null) {
             controller.UIUpdate("No monster on tile", 0);
+            commandState = CommandState.NONE;
+            return;
+        } else if (monstersOnTile.size() == 1) {
+            commandState = CommandState.ATTACK;
+            executePendingAction(monstersOnTile.getFirst());
             commandState = CommandState.NONE;
             return;
         }
@@ -216,6 +224,10 @@ public class CommandProcessor {
                 playerController.equipWeapon(messenger.getWeapon());
                 break;
             case 1:
+                if(messenger.getArmor().defence() < playerController.getDefence()){
+                    controller.UIUpdate("Current armor is better.", 0);
+                    return;
+                }
                 controller.UIUpdate("Grabbed armor: " + messenger.getArmor().name(), 0);
                 controller.UIUpdate(messenger, 4);
                 playerController.equipArmor(messenger.getArmor());

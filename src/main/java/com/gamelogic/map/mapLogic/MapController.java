@@ -127,10 +127,13 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     }
 
     //IAccessItems
-    public boolean itemsOnTile(Coordinates location) {
+    public boolean areItemsOnTile(Coordinates location) {
         return mapData.getLevel(level).item().itemsOnTile(location);
     }
-
+    @Override
+    public String getItemName(Coordinates location) {
+        return mapData.getLevel(level).item().itemOnTile(location);
+    }
     public StringBuilder itemList(Coordinates location) {
         if (mapData.getLevel(level) == null) {
             return null;
@@ -163,6 +166,11 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         return mapData.getLevel(level).item().grabItems(location, item);
     }
 
+    @Override
+    public Messenger grabItem(Coordinates location) {
+        return mapData.getLevel(level).item().grabItem(location);
+    }
+
     public Armor getArmor(Coordinates location) {
         return mapData.getLevel(level).item().armorOnTile(location);
     }
@@ -189,6 +197,11 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
 
     public boolean isMonsterOnTile(Coordinates location) {
         return (mapData.getLevel(level).monster().getMonsters(location) != null);
+    }
+
+    @Override
+    public List<String> getMonsterNames(Coordinates mapCoordinates) {
+        return mapData.getLevel(level).monster().getMonsterNames(mapCoordinates);
     }
 
     public String getTheme() {

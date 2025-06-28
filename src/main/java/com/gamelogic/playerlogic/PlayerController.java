@@ -236,4 +236,7 @@ public class PlayerController implements PlayerDamageListener{
         this.level = playerState.maxLevel;
     }
 
+    public int getDefence() {
+        return playerEquipment.getDefence();
+    }
 }

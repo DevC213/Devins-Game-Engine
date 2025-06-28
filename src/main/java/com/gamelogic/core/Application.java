@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class Application extends javafx.application.Application {
@@ -71,9 +70,10 @@ public class Application extends javafx.application.Application {
         alert.setHeaderText("How to Play: ");
         alert.setContentText(
                 """
-                Press B then enter item name to pick up item.
+                Press B to grab item.
                 Press C then enter name of healing item to use.
                 Press V to attack, and then enter monster name.
+                Will auto attack when only one monster.
                
                 Press enter after item or monster name.
                 

@@ -31,7 +31,7 @@ public class Adventure {
     }
 
     public void startGame(final MainGameController control) {
-        gameController = new GameController(control, readInKeyBindings());
+        gameController = new GameController(control, readCustomBindings());
     }
     public void setCharacterID(String characterID) {
         gameController.setCharacter(characterID);
@@ -62,6 +62,33 @@ public class Adventure {
         } catch (Exception e) {
             return new Keybindings("v","c","x","b");
         }
+    }
+    private Keybindings readCustomBindings() {
+        String saveDir = getSystemPath();
+        Keybindings kb = readInKeyBindings();
+        if (!Files.exists(Paths.get(saveDir + "/keyBindings.json"))) {
+            try {
+                Gson gson = new Gson();
+                String json = gson.toJson(kb);
+                Path savePath = Paths.get(saveDir, "keyBindings.json");
+                Files.createDirectories(savePath.getParent());
+                Files.write(savePath, json.getBytes());
+                Files.write(Paths.get("keyBindings.json"), json.getBytes());
+            } catch (Exception e) {
+                System.out.println("Error saving keybindings");
+                kb = new Keybindings("v","c","x","b");
+            }
+        } else {
+            try {
+                Gson gson = new Gson();
+                String json = Files.readString(Paths.get(getSystemPath() + "/keyBindings.json"));
+                kb = gson.fromJson(json, Keybindings.class);
+            } catch (Exception e) {
+                System.out.println("Error loading keybindings");
+                kb = new Keybindings("v","c","x","b");
+            }
+        }
+        return kb;
     }
 
     public void setDifficulty(String difficulty) {

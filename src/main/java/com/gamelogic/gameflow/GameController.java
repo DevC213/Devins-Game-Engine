@@ -45,8 +45,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         currentMapController.setLevel(0);
         Coordinates coordinates = currentMapController.generateValidStartPosition();
         playerController.respawn(coordinates);
-        mainGameController.UIUpdate("A villager found you passed out, and took you to a nurse.\n" +
-                "They took 50",0);
+        mainGameController.UIUpdate("You passed out for a time, and found yourself if a different location.\n" +
+                "You were robbed 50!",0);
         mainGameController.UIUpdate("Money: " + playerController.getGold(),6);
         mainGameController.UIUpdate("Health: " + playerController.getHealth(),3);
         updateGameInfo();

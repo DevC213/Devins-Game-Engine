@@ -147,6 +147,19 @@ class MapItemController {
             default -> null;
         };
     }
+    public Messenger grabItem(Coordinates location) {
+        Messenger messenger = new Messenger();
+        point2D = new Point2D.Double(location.x(),location.y());
+        String item = "";
+        if(weapons.containsKey(point2D)){
+            item =  weapons.get(point2D).name();
+        } else if (armorList.containsKey(point2D)) {
+            item = armorList.get(point2D).name();
+        } else if (healingItems.containsKey(point2D)) {
+            item = healingItems.get(point2D).getName();
+        }
+        return grabItems(location, item);
+    }
     public void resetMap(){
         healingItems.clear();
         weapons.clear();
@@ -248,5 +261,33 @@ class MapItemController {
             weapons.put(point2D, new Weapon(weaponState.name, weaponState.attack));
             itemList.put(weaponState.name, "weapon");
         }
+    }
+
+    public int items(Coordinates location) {
+        int items = 0;
+        Point2D point2D = new Point2D.Double(location.x(),location.y());
+        if(healingItems.containsKey(point2D)){
+            items++;
+        }
+        if(armorList.containsKey(point2D)){
+            items++;
+        }
+        if(weapons.containsKey(point2D)){
+            items++;
+        }
+        return items;
+    }
+    public String itemOnTile(Coordinates coordinates){
+        String item = "";
+        if(healingItems.containsKey(point2D)){
+            item = healingItems.get(point2D).getName();
+        }
+        if(armorList.containsKey(point2D)){
+            item = armorList.get(point2D).name();
+        }
+        if(weapons.containsKey(point2D)){
+            item = weapons.get(point2D).name();
+        }
+        return item;
     }
 }
