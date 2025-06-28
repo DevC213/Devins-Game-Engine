@@ -40,4 +40,6 @@ module com.example.adventure {
     opens com.gamelogic.map to javafx.fxml;
     exports com.gamelogic.villages;
     opens com.gamelogic.villages to javafx.fxml;
+    exports com.savesystem to javafx.fxml;
+    opens com.savesystem to javafx.fxml,com.google.gson;
 }

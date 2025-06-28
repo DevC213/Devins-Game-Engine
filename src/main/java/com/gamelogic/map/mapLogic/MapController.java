@@ -1,8 +1,10 @@
 package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
+import com.gamelogic.core.MapRegistry;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.villages.House;
+import com.savesystem.MapState;
 import com.weapons.Weapon;
 import com.gamelogic.combat.IMonsters;
 import com.gamelogic.gameflow.ValidStart;
@@ -24,15 +26,18 @@ import java.util.*;
 
 public class MapController implements IDoesDamage, IMapState, IAccessItems, IMonsters {
 
-    private final MapData mapData;
+    protected final MapData mapData;
     private final ValidStart validStart;
     private int level = 0;
+    protected int ID;
+    protected MapType mapType;
     private final Random random = new Random();
 
     //Constructors/Map Generation:
-    public MapController(final String filePath, MapType type) {
-
-        switch(type) {
+    public MapController(final String filePath, MapType type, int ID) {
+        mapType = type;
+        this.ID = ID;
+        switch (type) {
 
             case OVERWORLD -> {
                 validStart = new ValidStart(this, this, this);
@@ -45,17 +50,21 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
                     }.getType();
                     List<RMap> tempMapList = gson.fromJson(reader, listType);
                     for (RMap rMap : tempMapList) {
-                        mapData.processHouse(rMap.level(), getStringMap(rMap.file()), rMap.theme(), rMap.voice(), rMap.sound());
+
+                        mapData.processMap(rMap.level(), getStringMap(rMap.file()), rMap.theme(), rMap.voice(), rMap.sound());
                     }
+                    MapRegistry.addMap(this,0);
                 } catch (Exception e) {
                     System.err.println("Error: " + e.getMessage());
                     mapData.defaultLevel();
                 }
+
             }
             case HOUSE -> {
                 validStart = new ValidStart(this, this, this);
                 mapData = new MapData(type);
-               mapData.processHouse(filePath);
+                mapData.processHouse(filePath);
+                MapRegistry.addMap(this, ID);
             }
             default -> {
                 validStart = new ValidStart(this, this, this);
@@ -64,18 +73,22 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
 
         }
     }
+
     public Coordinates generateValidStartPosition() {
         return validStart.validStartingCoordinates(TileKeyRegistry.getTileKeyList());
     }
-    public boolean usesFog(){
+
+    public boolean usesFog() {
         return true;
     }
+
     private Map<String, String> getStringMap(String filePath) {
         InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
         InputStreamReader isr = new InputStreamReader(input, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(isr);
         Gson gson = new Gson();
-        Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, String>>() {
+        }.getType();
         return gson.fromJson(reader, mapType);
     }
 
@@ -85,17 +98,21 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
             level += levelDelta;
         }
     }
+
     public void setLevel(int level) {
         this.level = level;
     }
+
     public int getLevel() {
         return level;
     }
+
     public void resetMap() {
         for (int i = 0; i < mapData.getTotalLevels(); i++) {
             mapData.getLevel(i).resetGame();
         }
     }
+
     public String getMapValue(Coordinates coordinates) {
         return mapData.getLevel(level).map().getMapValue(coordinates);
     }
@@ -104,6 +121,7 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     public Messenger attackMonsters(String monster, int attack, Coordinates location) {
         return mapData.getLevel(level).monster().attackMonsters(monster, attack, location);
     }
+
     public Messenger getMonstersAttack(Coordinates location) {
         return mapData.getLevel(level).monster().getMonsterAttack(location);
     }
@@ -112,8 +130,9 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     public boolean itemsOnTile(Coordinates location) {
         return mapData.getLevel(level).item().itemsOnTile(location);
     }
+
     public StringBuilder itemList(Coordinates location) {
-        if(mapData.getLevel(level) == null){
+        if (mapData.getLevel(level) == null) {
             return null;
         }
         Weapon weapons = getWeapons(location);
@@ -131,18 +150,23 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         }
         return str;
     }
+
     public Weapon getWeapons(Coordinates location) {
         return mapData.getLevel(level).item().weaponsOnTile(location);
     }
+
     public Coordinates getCoordinates() {
         return mapData.getLevel(level).map().getColumnsAndRows();
     }
+
     public Messenger grabItem(Coordinates location, final String item) {
         return mapData.getLevel(level).item().grabItems(location, item);
     }
+
     public Armor getArmor(Coordinates location) {
         return mapData.getLevel(level).item().armorOnTile(location);
     }
+
     public RecoveryItem getHealing(Coordinates location) {
         return mapData.getLevel(level).item().healingItemsOnTile(location);
     }
@@ -158,33 +182,70 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         }
         return messenger;
     }
-    public  List<String> getMonsters(Coordinates location) {
+
+    public List<String> getMonsters(Coordinates location) {
         return mapData.getLevel(level).monster().getMonsters(location);
     }
+
     public boolean isMonsterOnTile(Coordinates location) {
         return (mapData.getLevel(level).monster().getMonsters(location) != null);
     }
-    public String getTheme(){
+
+    public String getTheme() {
         return mapData.getLevel(level).theme();
     }
 
     //ISound
-    public String getVoice(){
+    public String getVoice() {
         return mapData.getLevel(level).voice();
     }
-    public String getSound(){
+
+    public String getSound() {
         return mapData.getLevel(level).sound();
     }
 
     public Messenger checkForVillages(Coordinates location) {
         return mapData.getLevel(level).villages().checkVillage(location);
     }
-    public int getHouseNumber(Coordinates coordinates, String string){
+
+    public int getHouseNumber(Coordinates coordinates, String string) {
         return mapData.getLevel(level).villages().checkHouse(coordinates, string);
     }
-    public House getHouse(int houseNum, String village){
-        return mapData.getLevel(level).villages().getHouseMap(houseNum,village);
+
+    public House getHouse(int houseNum, String village) {
+        return mapData.getLevel(level).villages().getHouseMap(houseNum, village);
     }
 
+    public MapState getMapState() {
+        MapState mapState = new MapState();
+        mapState.ID = this.ID;
+        mapState.type = this.mapType.toString();
+        for(int i =0; i< mapData.getTotalLevels(); i++){
+            LevelData levelData = this.mapData.getLevel(i);
+            mapState.recoveryItemsList.put(i,levelData.item().getItems());
+            mapState.weaponList.put(i,levelData.item().getWeapons());
+            mapState.armorList.put(i,levelData.item().getArmor());
+            mapState.monsterList.put(i, levelData.monster().getMonsterState());
+        }
+        return mapState;
+    }
+
+    public int getID() {
+        return ID;
+    }
+    public boolean progressesGame(){
+        return true;
+    }
+
+    public void loadData(MapState mapState) {
+        for(int i = 0; i < mapData.getTotalLevels(); i++){
+            LevelData levelData = mapData.getLevel(i);
+            levelData.item().clearItemList();
+            levelData.item().loadItems(mapState.recoveryItemsList.get(i));
+            levelData.monster().loadMonsters(mapState.monsterList.get(i));
+            levelData.item().loadArmor(mapState.armorList.get(i));
+            levelData.item().loadWeapons(mapState.weaponList.get(i));
+        }
+    }
 }
 

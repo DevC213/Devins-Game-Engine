@@ -1,11 +1,9 @@
 package com.gamelogic.gameflow;
 
 import com.gamelogic.commands.Keybindings;
-import com.gamelogic.core.Controller;
-import com.gamelogic.core.ScriptController;
+import com.gamelogic.core.*;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.commands.CommandProcessor;
-import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.inventory.InventoryManager;
@@ -13,6 +11,7 @@ import com.gamelogic.map.mapLogic.MapType;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.villages.House;
+import com.savesystem.PlayerState;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,8 +19,7 @@ import java.util.Objects;
 public class GameController implements IUpdateMinimap, IUpdateGame {
 
     private final PlayerController playerController;
-    private final Controller controller;
-    private final MapController MainMapController;
+    private final MainGameController mainGameController;
     private MapController currentMapController;
     private final InventoryManager inventoryManager;
     private final CombatSystem combatSystem;
@@ -30,9 +28,56 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private final ScriptController scriptController;
     private final EnvironmentChecker environmentChecker;
     private final Map<String, TileKey> tileKeyMap;
+    private Difficulty difficulty;
 
     Coordinates mainMapLocation;
     House house;
+
+    public void setDifficulty(String difficulty) {
+        switch(difficulty.toLowerCase()) {
+            case "normal" -> this.difficulty = Difficulty.NORMAL;
+            case "daredevil"  -> this.difficulty = Difficulty.HARDCORE;
+        }
+    }
+
+    public void respawn() {
+        currentMapController = MapRegistry.getMapController(0);
+        currentMapController.setLevel(0);
+        Coordinates coordinates = currentMapController.generateValidStartPosition();
+        playerController.respawn(coordinates);
+        mainGameController.UIUpdate("A villager found you passed out, and took you to a nurse.\n" +
+                "They took 50",0);
+        mainGameController.UIUpdate("Money: " + playerController.getGold(),6);
+        mainGameController.UIUpdate("Health: " + playerController.getHealth(),3);
+        updateGameInfo();
+        renderMinimap();
+    }
+
+    public int getID() {
+        return currentMapController.getID();
+    }
+    public int getLevel() {
+        return currentMapController.getLevel();
+    }
+
+    public void setID(int currentMapID) {
+        switchMap(currentMapID);
+
+        if(currentMapController instanceof IExitCoordinates exitCoordinates && currentMapController.getLevel() == 0) {
+            Coordinates mainMap = exitCoordinates.getMapCoordinates();
+            mainMapLocation = new Coordinates(mainMap.y(), mainMap.x());
+            playerController.setMaxCoordinates(currentMapController.getCoordinates());
+        }
+        updateGameInfo();
+        renderMinimap();
+    }
+    public void setLevel(int level) {
+        currentMapController.setLevel(level);
+    }
+
+    public void setDeepestLevel(int deepestLevel) {
+        this.deepestLevel = deepestLevel;
+    }
 
     enum Movement{LEFT, RIGHT, UP, DOWN;
         public static Movement getmovement(String string){
@@ -50,27 +95,27 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private boolean inHouse = false;
 
     //Constructor
-    public GameController(Controller controller, Keybindings keybindings) {
+    public GameController(MainGameController mainGameController, Keybindings keybindings) {
         tileKeyMap = TileKeyRegistry.getTileKeyList();
         scriptController = new ScriptController();
-        this.controller = controller;
+        this.mainGameController = mainGameController;
         TileKeyRegistry.initialize("/key.json");
         uiMapController = new UIMapController();
-        this.MainMapController = new MapController("/levelData.json", MapType.OVERWORLD);
+        this.currentMapController = new MapController("/levelData.json", MapType.OVERWORLD,0);
+        MapRegistry.addMap(currentMapController,0);
         uiMapController.processCharacters("/characters.json");
-        Coordinates startingCords = MainMapController.generateValidStartPosition();
-        this.playerController = new PlayerController(startingCords, MainMapController.getCoordinates(), this.controller, MainMapController);
+        Coordinates startingCords = currentMapController.generateValidStartPosition();
+        this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), this.mainGameController, difficulty);
         this.combatSystem = new CombatSystem(playerController);
-        inventoryManager = new InventoryManager(playerController, controller);
-        commandProcessor = new CommandProcessor(controller, playerController, this, this, combatSystem, inventoryManager,
-                MainMapController, MainMapController, MainMapController, MainMapController, keybindings);
-        int startingVisibility = tileKeyMap.get(MainMapController.getMapValue(playerController.getMapCoordinates())).visibility();
+        inventoryManager = new InventoryManager(playerController, mainGameController);
+        commandProcessor = new CommandProcessor(mainGameController, playerController, this, this, combatSystem, inventoryManager,
+                currentMapController, currentMapController, currentMapController, currentMapController, keybindings);
+        int startingVisibility = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates())).visibility();
         uiMapController.setVisibility(startingVisibility);
         if (startingVisibility != 2) {
-            controller.UIUpdate("Player: The air is thick here", 0);
+            mainGameController.UIUpdate("Player: The air is thick here", 0);
         }
-        currentMapController = MainMapController;
-        environmentChecker = new EnvironmentChecker(this.controller,playerController,currentMapController);
+        environmentChecker = new EnvironmentChecker(this.mainGameController,playerController,currentMapController);
     }
     public double tileHealthData(Coordinates location) {
         return TileKeyRegistry.getTileKey(currentMapController.getMapValue(location)).healthDelta();
@@ -87,38 +132,38 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
     //dialog
     public void newGame() {
-        Coordinates startingCords = MainMapController.generateValidStartPosition();
+        currentMapController = MapRegistry.getMapController(0);
+        Coordinates startingCords = currentMapController.generateValidStartPosition();
         playerController.resetPlayer(startingCords);
-        MainMapController.setLevel(0);
-        MainMapController.resetMap();
-        currentMapController = MainMapController;
+        currentMapController.setLevel(0);
+        currentMapController.resetMap();
         intro();
         int startingVisibility = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates())).visibility();
         uiMapController.setVisibility(startingVisibility);
         uiMapController.setDirection("down");
-        controller.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
+        mainGameController.UIUpdate(playerController.getWeapon().name() + ": " + playerController.getWeapon().damage(), 5);
         if(playerController.isGameOver()){playerController.toggleGameOver();}
         if (startingVisibility != 2) {
-            controller.UIUpdate("Player: The air is thick here", 0);
+            mainGameController.UIUpdate("Player: The air is thick here", 0);
         }
     }
     public void intro() {
-        controller.UIUpdate("""
+        mainGameController.UIUpdate("""
                 Upon awaking on this strange island
                 you hear a strange voice calling from the caves below.
                 After hearing the voice you feel a chill go down you back,
                 something isn't right!
                 """, 0);
-        controller.clearInput();
-        controller.scroll();
+        mainGameController.clearInput();
+        mainGameController.scroll();
         renderMinimap();
         updateGameInfo();
     }
     public void resetGame() {
         newGame();
-        controller.UIUpdate("Health: " + playerController.getHealth(), 3);
+        mainGameController.UIUpdate("Health: " + playerController.getHealth(), 3);
         String cordOrigins = "[" + (-currentMapController.getCoordinates().x() / 2) + (-currentMapController.getCoordinates().y() / 2) + "]";
-        controller.UIUpdate(cordOrigins, 2);
+        mainGameController.UIUpdate(cordOrigins, 2);
         inHouse = false;
         house = null;
     }
@@ -127,7 +172,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     @Override
     public void renderMinimap() {
         if(inHouse){
-            switchMap(currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage));
+            mainMapLocation = playerController.getMapCoordinates();
+            switchMap(currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage).getID());
             inHouse = false;
         }
         if(currentMapController instanceof IExitCoordinates exitCoordinates){
@@ -136,7 +182,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
                 returnToMainMap();
             }
         }
-        uiMapController.minimap(controller, currentMapController, playerController);
+        uiMapController.minimap(mainGameController, currentMapController, playerController);
     }
     @Override
     public void toggleHouse() {
@@ -159,11 +205,10 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
 
-    private void switchMap(MapController mapController) {
-        currentMapController = mapController;
+    private void switchMap(int ID) {
+        currentMapController = MapRegistry.getMapController(ID);
         commandProcessor.changeMapState(currentMapController);
-        mainMapLocation = playerController.getMapCoordinates();
-        environmentChecker.changeMap(mapController);
+        environmentChecker.changeMap(currentMapController);
         if(currentMapController instanceof IExitCoordinates exitCoordinates) {
             Coordinates exit = exitCoordinates.getExitCoordinates();
             playerController.setCoordinates(exit.y(), exit.x()-1);
@@ -171,7 +216,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
     }
     private void returnToMainMap(){
-        currentMapController = MainMapController;
+        currentMapController = MapRegistry.getMapController(0);
         commandProcessor.changeMapState(currentMapController);
         playerController.setMaxCoordinates(currentMapController.getCoordinates());
         playerController.setCoordinates(mainMapLocation.x(),  mainMapLocation.y()+1);
@@ -186,7 +231,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private void spawnMonster() {
         Messenger messenger = currentMapController.spawnMonsters(playerController.getMapCoordinates(), moves);
         if (messenger != null && messenger.getMessage() != null) {
-            controller.UIUpdate(messenger.getMessage(), 0);
+            mainGameController.UIUpdate(messenger.getMessage(), 0);
             moves = 0;
         }
     }
@@ -196,13 +241,13 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         if (level > deepestLevel) {
             String sound = currentMapController.getSound();
             String voice = currentMapController.getVoice();
-            controller.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
+            mainGameController.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
             playerController.increaseMaxHealth(25 * level);
             playerController.increaseLevel();
             deepestLevel = level;
             String script = scriptController.script(level);
             if(script != null) {
-                controller.UIUpdate(script, 0);
+                mainGameController.UIUpdate(script, 0);
             } else {
                 if(sound != null) {
                     scriptController.playSound(sound);
@@ -210,21 +255,18 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
                 if(voice != null) {
                     scriptController.playSound(voice);
                 }
-
             }
         }
     }
     private void Victory(){
         playerController.toggleGameOver();
-        controller.GameOver(true);
+        mainGameController.GameOver(true);
     }
-
 
     @Override
     public void updateGameInfo() {
         if(playerController.isGameOver()){return;}
-        controller.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
-
+        mainGameController.UIUpdate("(" + playerController.getDisplayCoordinates().x() + "," + playerController.getDisplayCoordinates().y() + ")", 2);
         TileKey tile = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates()));
         if(Objects.equals(tile.name(), "goal")) {
             Victory();
@@ -232,18 +274,31 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         double effect =  tileHealthData(playerController.getMapCoordinates());
         environmentChecker.checkTile(combatSystem, commandProcessor, effect);
         inventoryManager.updateInventoryDisplay();
-        if(currentMapController == MainMapController) {
-            levelProgression(MainMapController.getLevel());
-            if(currentMapController.getLevel() == 0 && currentMapController == MainMapController) {
-                Messenger messenger = MainMapController.checkForVillages(playerController.getMapCoordinates());
+        if(currentMapController.progressesGame()){
+            levelProgression(currentMapController.getLevel());
+        }
+        if(currentMapController.getLevel() == 0) {
+            Messenger messenger = currentMapController.checkForVillages(playerController.getMapCoordinates());
+            if (messenger != null) {
                 String village = messenger.getMessage();
-
                 if (village != null) {
-                    controller.UIUpdate(village, 0);
+                    mainGameController.UIUpdate(village, 0);
                     currentVillage = messenger.getPayloadString();
                 }
             }
         }
+    }
+    public int getDeepestLevel() {
+        return deepestLevel;
+    }
+    public PlayerState getPlayerState(){
+        return playerController.createPlayerState();
+    }
+    public void loadData(PlayerState playerState) {
+        playerController.loadFromPlayerState(playerState);
+        updateGameInfo();
+        renderMinimap();
+
     }
 }
 

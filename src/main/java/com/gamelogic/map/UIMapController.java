@@ -1,11 +1,10 @@
 package com.gamelogic.map;
 
-import com.gamelogic.core.Controller;
+import com.gamelogic.core.MainGameController;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.playerlogic.Character;
-import com.gamelogic.villages.House;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.embed.swing.SwingFXUtils;
@@ -36,7 +35,7 @@ public class UIMapController {
     public void setVisibility(int visibility) {
         this.visibility = visibility;
     }
-    public void minimap(Controller controller, MapController mapController, PlayerController playerController) {
+    public void minimap(MainGameController mainGameController, MapController mapController, PlayerController playerController) {
         int mapSize = 5;
         int mapMiddle = mapSize / 2;
         Coordinates playerCoordinates = playerController.getMapCoordinates();
@@ -55,16 +54,16 @@ public class UIMapController {
                 int deltaY = mapRow - playerCoordinates.y();
 
                 if ((Math.abs(deltaX) > visibility || Math.abs(deltaY) > visibility) && mapController.usesFog()) {
-                    controller.modifyImage(row, column, getFilePath("?", mapController.getTheme()));
+                    mainGameController.modifyImage(row, column, getFilePath("?", mapController.getTheme()));
                 } else if (deltaX == 0 && deltaY == 0) {
                     try {
-                        controller.modifyImage(row, column, overlayPlayer(playerController, mapController));
+                        mainGameController.modifyImage(row, column, overlayPlayer(playerController, mapController));
                     } catch (IOException e) {
-                        controller.UIUpdate(e.getMessage(), 0);
+                        mainGameController.UIUpdate(e.getMessage(), 0);
                     }
                 } else {
                     String tileID = mapController.getMapValue(new Coordinates(mapColumn, mapRow));
-                    controller.modifyImage(row, column, getFilePath(tileID, mapController.getTheme()));
+                    mainGameController.modifyImage(row, column, getFilePath(tileID, mapController.getTheme()));
                 }
             }
         }

@@ -34,4 +34,8 @@ class PlayerEquipment {
     public Weapon getWeapon() {
         return weapon;
     }
+
+    public Armor getArmor() {
+        return armor;
+    }
 }

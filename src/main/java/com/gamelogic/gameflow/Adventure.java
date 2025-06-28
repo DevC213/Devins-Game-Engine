@@ -1,12 +1,18 @@
 package com.gamelogic.gameflow;
 
 import com.gamelogic.commands.Keybindings;
-import com.gamelogic.core.Controller;
+import com.gamelogic.core.MainGameController;
+import com.gamelogic.core.MapRegistry;
 import com.google.gson.Gson;
+import com.savesystem.GameState;
+import com.savesystem.PlayerState;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public class Adventure {
@@ -24,7 +30,7 @@ public class Adventure {
         return adventure;
     }
 
-    public void startGame(final Controller control) {
+    public void startGame(final MainGameController control) {
         gameController = new GameController(control, readInKeyBindings());
     }
     public void setCharacterID(String characterID) {
@@ -56,5 +62,60 @@ public class Adventure {
         } catch (Exception e) {
             return new Keybindings("v","c","x","b");
         }
+    }
+
+    public void setDifficulty(String difficulty) {
+        gameController.setDifficulty(difficulty);
+    }
+
+    public void respawn() {
+        gameController.respawn();
+    }
+
+    public void saveGame() {
+        GameState gameState = new GameState();
+        gameState.playerState =  gameController.getPlayerState();
+        gameState.mapStates = MapRegistry.getMapStates();
+        gameState.currentMapID = gameController.getID();
+        gameState.level = gameController.getLevel();
+        gameState.deepestLevel = gameController.getDeepestLevel();
+        String saveDir = getSystemPath();
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(gameState);
+            Path savePath = Paths.get(saveDir, "savegame.json");
+            Files.createDirectories(savePath.getParent());
+            Files.write(savePath, json.getBytes());
+            Files.write(Paths.get("savegame.json"), json.getBytes());
+        } catch (Exception e){
+            System.out.println("Error saving game");
+        }
+    }
+    public void loadGame() {
+
+        try{
+            Gson gson = new Gson();
+            String json = Files.readString(Paths.get(getSystemPath() + "/savegame.json"));
+            GameState gameState = gson.fromJson(json, GameState.class);
+            MapRegistry.loadData(gameState.mapStates);
+            gameController.setID(gameState.currentMapID);
+            gameController.setLevel(gameState.level);
+            gameController.setDeepestLevel(gameState.deepestLevel);
+            gameController.loadData(gameState.playerState);
+        } catch(Exception e){
+            System.out.println("Error loading Game Data");
+        }
+    }
+    private String getSystemPath(){
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            saveDir = System.getenv("APPDATA") + "\\IslandAdventure";
+        } else if (os.contains("mac")) {
+            saveDir = System.getProperty("user.home") + "/Library/Application Support/IslandAdventure";
+        } else {
+            saveDir = System.getProperty("user.home") + "/.islandadventure";
+        }
+        return saveDir;
     }
 }

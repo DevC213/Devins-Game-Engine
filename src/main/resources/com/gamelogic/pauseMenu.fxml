@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="pausePane" prefHeight="960.0" prefWidth="1080" stylesheets="@game.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gamelogic.core.PauseMenuController">
+    <Button fx:id="LoadGame" layoutX="294.0" layoutY="156.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="164.0" stylesheets="@game.css" text="Load Game" onAction="#loadGame" />
+    <Button fx:id="Resume" layoutX="294.0" layoutY="208.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="164.0" stylesheets="@game.css" text="Resume" onAction="#Resume" />
+    <Button fx:id="SaveGame" layoutX="294.0" layoutY="103.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="164.0" stylesheets="@game.css" text="Save Game" GridPane.columnIndex="3" onAction="#saveGame"/>
+    <Button fx:id="Quit" layoutX="294.0" layoutY="338.0" mnemonicParsing="false" onAction="#QuitGame" prefHeight="25.0" prefWidth="164.0" stylesheets="@game.css" text="Quit" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+</AnchorPane>

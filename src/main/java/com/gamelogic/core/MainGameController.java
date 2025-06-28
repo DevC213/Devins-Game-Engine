@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Objects;
 
-public class Controller implements IGuiEventListener, IGuiCommandGetter {
+public class MainGameController implements IGuiEventListener, IGuiCommandGetter {
 
     public TextField health;
     public TextField defence;
@@ -26,6 +26,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     private static final int SIZE = 5;
     public TextField money;
     public ComboBox<String> characterSelection;
+    public ComboBox<String> difficulty;
     @FXML
     private TextField commandInput;
     @FXML
@@ -39,14 +40,17 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
     private Adventure adventure;
     private boolean activated = false;
     private boolean gameOver = false;
+    private Difficulty difficultySelected;
 
-    public Controller() {
+
+    public MainGameController() {
         script = new TextArea();
     }
+
     @FXML
     public void gameStart() {
 
-        if(adventure == null){
+        if (adventure == null) {
             adventure = Adventure.getAdventure();
         }
 
@@ -54,13 +58,13 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             adventure.resetGame();
             gameOver = false;
         } else {
-            for(int i = 0; i < SIZE; i++) {
-                for(int j = 0; j < SIZE; j++) {
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
                     ImageView img = new ImageView();
                     img.fitWidthProperty().bind(miniMap.widthProperty().divide(SIZE));
                     img.fitHeightProperty().bind(miniMap.heightProperty().divide(SIZE));
                     img.setPreserveRatio(false);
-                    miniMap.add(img,i,j);
+                    miniMap.add(img, i, j);
                 }
             }
 
@@ -68,11 +72,21 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             activated = true;
         }
         String character = characterSelection.getValue();
-        if(character == null){
+        String difficulty = this.difficulty.getValue();
+        if (character == null) {
             character = "Male";
+        }
+        if (difficulty == null) {
+            difficulty = "Normal";
+        }
+        switch (difficulty.toLowerCase()) {
+            case "normal" -> this.difficultySelected = Difficulty.NORMAL;
+            case "daredevil" -> this.difficultySelected = Difficulty.HARDCORE;
+            default -> throw new IllegalArgumentException("Invalid difficulty");
         }
         activateFields();
         adventure.setCharacterID(character);
+        adventure.setDifficulty(difficulty);
         adventure.setHealth();
         script.clear();
         adventure.intro();
@@ -80,7 +94,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
         Platform.runLater(() -> script.setScrollTop(0));
     }
     @FXML
-    private void activateFields(){
+    private void activateFields() {
         characterSelection.setVisible(false);
         inventory.setVisible(true);
         health.setVisible(true);
@@ -91,41 +105,49 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
         weapon.setVisible(true);
         miniMap.setVisible(true);
         money.setVisible(true);
+        difficulty.setVisible(false);
         Platform.runLater(() -> script.setScrollTop(0));
     }
-    @FXML @Override
+
+    @FXML
+    @Override
     public void GameOver(boolean victory) {
         script.clear();
-        if(victory){
+        if (victory) {
             script.appendText("""
                     You have managed to free this island and its inhabitants from the Void's Avatar.
                     Congratulations!
                     
                     Thank you for playing my game. Press start to begin again.""");
-        }else {
+        } else if (difficultySelected == Difficulty.HARDCORE) {
             script.appendText("Game Over, press start to begin again.");
-        }
-        if (!gameOver) {
-            start.setVisible(true);
-            characterSelection.setVisible(true);
-            inventory.setVisible(false);
-            health.setVisible(false);
-            defence.setVisible(false);
-            cords.setVisible(false);
-            commandInput.setVisible(false);
-            commandInput.setEditable(false);
-            weapon.setVisible(false);
-            miniMap.setVisible(false);
-            money.setVisible(false);
-            gameOver = true;
+            if (!gameOver) {
+                start.setVisible(true);
+                characterSelection.setVisible(true);
+                inventory.setVisible(false);
+                health.setVisible(false);
+                defence.setVisible(false);
+                cords.setVisible(false);
+                commandInput.setVisible(false);
+                commandInput.setEditable(false);
+                weapon.setVisible(false);
+                miniMap.setVisible(false);
+                money.setVisible(false);
+                difficulty.setVisible(true);
+                gameOver = true;
+            }
+        } else {
+            adventure.respawn();
         }
     }
+
     @Override
     public void clearInput() {
         commandInput.clear();
     }
+
     @Override
-    public void UIUpdate(String message, int box){
+    public void UIUpdate(String message, int box) {
         //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
         String rtn = message + "\n";
         switch (box) {
@@ -141,11 +163,14 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             case 3 -> health.setText(rtn);
             case 4 -> defence.setText(rtn);
             case 5 -> weapon.setText(rtn);
-            default -> {}
+            case 6 -> money.setText(rtn);
+            default -> {
+            }
         }
     }
+
     @Override
-    public void UIUpdate(Messenger message, int box){
+    public void UIUpdate(Messenger message, int box) {
         //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
         String rtn = message + "\n";
         switch (box) {
@@ -160,10 +185,12 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             case 2 -> cords.setText(rtn);
             case 3 -> health.setText(rtn);
             case 4 -> defence.setText(message.getArmor().name() + ": " + message.getArmor().defence());
-            case 5 -> weapon.setText(message.getWeapon().name()+ ": " + message.getWeapon().damage());
-            default -> {}
+            case 5 -> weapon.setText(message.getWeapon().name() + ": " + message.getWeapon().damage());
+            default -> {
+            }
         }
     }
+
     public void modifyImage(final int row, final int col, final String imagePath) {
         try {
             for (javafx.scene.Node node : miniMap.getChildren()) {
@@ -181,6 +208,7 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             UIUpdate(e.getMessage(), 0);
         }
     }
+
     public void modifyImage(final int row, final int col, final Image image) {
         try {
             for (javafx.scene.Node node : miniMap.getChildren()) {
@@ -199,16 +227,26 @@ public class Controller implements IGuiEventListener, IGuiCommandGetter {
             System.out.println(e.getMessage());
         }
     }
+
     public String getCommand() {
         return commandInput.getText();
     }
-    public void scroll(){
+
+    public void scroll() {
         script.positionCaret(0);
     }
-    public void commandFocus(){
+
+    public void commandFocus() {
         commandInput.requestFocus();
     }
-    public void textAreaFocus(){
+
+    public void textAreaFocus() {
         script.requestFocus();
     }
 }
+/*
+ Press 'start' to explore the island.
+                        Normal: Respawn on death
+                        Hardcore: Deletes save on death
+                        Both will save progress, but hardcore will delete save upon death.
+ */

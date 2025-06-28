@@ -2,17 +2,15 @@ package com.gamelogic.playerlogic;
 
 import com.recoveryitems.*;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 class PlayerHealth {
-    private Vector<RecoveryItem> recoveryItems;
+    private List<RecoveryItem> recoveryItems;
     private double health;
     private double maxHealth;
     private double secondaryMaxHealth;
     public PlayerHealth(){
-        recoveryItems = new Vector<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+        recoveryItems = new ArrayList<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
     }
     public double UpdateHealth(double change){
         health += change;
@@ -38,6 +36,9 @@ class PlayerHealth {
         secondaryMaxHealth = 150;
         maxHealth = 100;
         recoveryItems = new Vector<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+    }
+    public void clearHealingItems(){
+        recoveryItems.clear();
     }
     public void addHealthItem(RecoveryItem item){
         recoveryItems.add(item);
@@ -67,12 +68,26 @@ class PlayerHealth {
     public double getSecondaryMaxHealth(){
         return secondaryMaxHealth;
     }
+    public double getMaxHealth(){
+        return maxHealth;
+    }
     public void setHealth(int health){
         this.health = health;
         maxHealth = this.health;
         secondaryMaxHealth = health*1.5;
     }
-
+    public void setHealthFromFile(double health, double maxHealth, double secondaryMaxHealth){
+        this.health = health;
+        this.maxHealth = maxHealth;
+        this.secondaryMaxHealth = secondaryMaxHealth;
+    }
+    public Map<String, Integer> getHealingItemsMap(){
+        Map<String, Integer> rtnMap = new HashMap<>();
+        for(RecoveryItem i: recoveryItems){
+            rtnMap.put(i.getName(), i.getHealValue());
+        }
+        return rtnMap;
+    }
 
     public double getHealth() {
         return this.health;

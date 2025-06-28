@@ -20,7 +20,7 @@ public class MapData {
         levelDataList = new ArrayList<>();
         this.mapType = mapType;
     }
-    public void processHouse(int level, Map<String, String> levelMap, String theme, String voice, String sound) {
+    public void processMap(int level, Map<String, String> levelMap, String theme, String voice, String sound) {
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;
         MapMonsterController mapMonsterController = null;
@@ -65,8 +65,11 @@ public class MapData {
             mapGeneration = new MapGeneration(rHouseMap.map());
             levelDataList.add(new LevelData(mapGeneration, null, null,null,rHouseMap.theme(),null,null, mapType));
         }
+
     }
-    public void processDungeon(String string){}
+    public void processDungeon(String string){
+
+    }
     public void defaultLevel(){
         levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null, mapType));
     }

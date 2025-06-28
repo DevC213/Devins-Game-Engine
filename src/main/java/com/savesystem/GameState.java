@@ -1,0 +1,17 @@
+package com.savesystem;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class GameState {
+    public PlayerState playerState;
+    public Map<Integer, MapState> mapStates;
+    public int level;
+    public int currentMapID;
+    public int deepestLevel;
+    public GameState(){
+        mapStates = new HashMap<>();
+    }
+
+}

@@ -31,7 +31,8 @@ public class Village{
         for(RHouse rHouse : tempHouseList) {
             Coordinates map = new Coordinates(rHouse.mapCoords()[0], rHouse.mapCoords()[1]);
             Coordinates exit = new Coordinates(rHouse.exit()[1], rHouse.exit()[0]);
-            houseMap.put(rHouse.houseNumber(),new House(rHouse.houseNumber(), map, exit, rHouse.map()));
+            House house = new House(rHouse.houseNumber(), map, exit, rHouse.map(), rHouse.mapID());
+            houseMap.put(rHouse.houseNumber(), house);
         }
     }
     public Coordinates getTopCoordinates(){

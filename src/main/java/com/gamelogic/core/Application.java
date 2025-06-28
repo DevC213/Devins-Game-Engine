@@ -2,10 +2,15 @@ package com.gamelogic.core;
 
 import com.gamelogic.gameflow.Adventure;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class Application extends javafx.application.Application {
 
@@ -15,11 +20,24 @@ public class Application extends javafx.application.Application {
         final int defaultV = 700;
         final int defaultV1 = 500;
         adventure = Adventure.getAdventure();
-        FXMLLoader fxmlLoader = new FXMLLoader(Application
-                .class.getResource("/com/gamelogic/mainGame.fxml"));
+        FXMLLoader mainGame = new FXMLLoader(Application.class.getResource("/com/gamelogic/mainGame.fxml"));
+        FXMLLoader pauseMenu = new FXMLLoader(Application.class.getResource("/com/gamelogic/pauseMenu.fxml"));
+        PauseMenuController pauseMenuController;
+
+        Parent game = null;
+        Parent pause = null;
         Scene scene = null;
         try {
-            scene = new Scene(fxmlLoader.load(), defaultV, defaultV1);
+            game = mainGame.load();
+            pause = pauseMenu.load();
+            pauseMenuController = pauseMenu.getController();
+            pauseMenuController.setAdventure();
+            pauseMenuController.linkViews(game);
+            StackPane root = new StackPane();
+            pause.setVisible(false);
+            root.getChildren().addAll(game, pause);
+            scene = new Scene(root, defaultV, defaultV1);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/gamelogic/game.css")).toExternalForm());
             stage.setResizable(false);
             stage.setTitle("Island Adventure");
             stage.setScene(scene);
@@ -30,9 +48,15 @@ public class Application extends javafx.application.Application {
             System.out.println(e.getMessage());
         }
         assert scene != null;
+        Parent finalPause = pause;
+        Parent finalGame = game;
+
         scene.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.F1) {
                 showInstructions();
+            } else if (event.getCode() == KeyCode.F2) {
+                finalPause.setVisible(true);
+                finalGame.setVisible(false);
             } else {
                 String keyPressed = String.valueOf(event.getCode());
                 adventure.commandProcessor(keyPressed);
@@ -65,7 +89,12 @@ public class Application extends javafx.application.Application {
                 Player information is on the side of map.
                 Max health increases each level you descend,
                 and as you kill monsters.
-     
+                
+                Normal: Respawn on death
+                Daredevil: Permadeath
+                Both settings will allow you to save your progress.
+                However, daredevil will delete your save upon death.
+                
                 Press F1 to view again.
                 """
         );

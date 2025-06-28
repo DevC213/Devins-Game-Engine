@@ -8,7 +8,7 @@ import com.gamelogic.messaging.Messenger;
 import com.gamelogic.map.SpawnTable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
+import com.savesystem.MonsterState;
 
 
 import java.io.InputStream;
@@ -142,4 +142,41 @@ class MapMonsterController {
         rtnMessenger.addPayloadD(rtnVec);
         return rtnMessenger;
     }
+    public List<MonsterState> getMonsterState(){
+        List<MonsterState> rtnList = new ArrayList<>();
+        for(Coordinates coordinates: monsterVectorMap.keySet()){
+            for(Monster monster: monsterVectorMap.get(coordinates)){
+                MonsterState monsterState = new MonsterState();
+                monsterState.name = monster.getName();
+                monsterState.damage = monster.getBaseAttack();
+                monsterState.health = monster.getHealth();
+                monsterState.x = coordinates.x();
+                monsterState.y = coordinates.y();
+                rtnList.add(monsterState);
+            }
+        }
+        return rtnList;
+    }
+
+    public void loadMonsters(List<MonsterState> monsterList) {
+        monsterVectorMap.clear();
+        Coordinates coordinates;
+        int number= 1;
+        Monster monster;
+        for(MonsterState monsterState: monsterList){
+            coordinates = new Coordinates(monsterState.x, monsterState.y);
+
+            if(monsterVectorMap.get(coordinates) != null){
+                number++;
+                monster = monsterFactory.MonsterFac((int)monsterState.damage, monsterState.health, monsterState.name, number);
+                monsterVectorMap.get(coordinates).add(monster);
+            } else{
+                monsterVectorMap.put(coordinates, new ArrayList<>());
+                number = 1;
+                monster = monsterFactory.MonsterFac((int)monsterState.damage, monsterState.health, monsterState.name, number);
+                monsterVectorMap.get(coordinates).add(monster);
+            }
+        }
+    }
+
 }

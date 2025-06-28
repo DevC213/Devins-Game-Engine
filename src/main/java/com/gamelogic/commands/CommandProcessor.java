@@ -1,6 +1,6 @@
 package com.gamelogic.commands;
 
-import com.gamelogic.core.Controller;
+import com.gamelogic.core.MainGameController;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.combat.IMonsters;
 import com.gamelogic.core.TileKeyRegistry;
@@ -61,16 +61,16 @@ public class CommandProcessor {
     IAccessItems accessItems;
     Map<String, TileKey> tileKeyMap;
 
-    public CommandProcessor(Controller controller, PlayerController playerController
+    public CommandProcessor(MainGameController mainGameController, PlayerController playerController
             , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
                             IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState, Keybindings keybindings) {
-        this.controller = controller;
+        this.controller = mainGameController;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
         this.combatSystem = combatSystem;
         this.inventoryManager = inventoryManager;
         this.updateGame = updateGame;
-        this.commandGetter = controller;
+        this.commandGetter = mainGameController;
         this.mapState = mapState;
         this.monsters = monsters;
         this.doesDamage = doesDamage;

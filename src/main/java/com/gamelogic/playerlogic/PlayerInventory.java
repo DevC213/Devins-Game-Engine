@@ -16,8 +16,10 @@ class PlayerInventory {
         return inventory;
     }
 
-    public void addToInventory(final String[] items) {
-        inventory.addAll(Arrays.asList(items));
+    public void addToInventory(final List<String> items) {
+        if (items!= null && !items.isEmpty()) {
+            inventory.addAll(items);
+        }
     }
 
     public void resetInventory(){

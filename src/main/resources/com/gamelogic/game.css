@@ -30,12 +30,12 @@
 .label {
     -fx-text-fill: #cccccc;
 }
-#characterSelection{
+#characterSelection, #difficulty{
     -fx-background-color: #5F5F5F;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
-#characterSelection .list-cell{
+#characterSelection .list-cell, #difficulty .list-cell{
     -fx-background-color: #5F5F5F;
     -fx-font-weight: bold;
     -fx-text-fill: white;

@@ -1,6 +1,10 @@
 package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
+import com.savesystem.ArmorData;
+import com.savesystem.ItemState;
+import com.savesystem.MapState;
+import com.savesystem.WeaponState;
 import com.weapons.Weapon;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.rawdataclasses.RArmor;
@@ -170,5 +174,79 @@ class MapItemController {
             return healingItems.get(point2D);
         }
         return null;
+    }
+
+    public List<ItemState> getItems(){
+        List<ItemState> itemList = new ArrayList<>();
+        for(Point2D point2D : healingItems.keySet()){
+            ItemState itemState = new ItemState();
+            RecoveryItem recoveryItem = healingItems.get(point2D);
+            itemState.name = recoveryItem.getName();
+            itemState.type = this.itemList.get(itemState.name);
+            itemState.value = recoveryItem.getHealValue();
+            itemState.x = point2D.getX();
+            itemState.y = point2D.getY();
+            itemList.add(itemState);
+        }
+        return itemList;
+    }
+    public List<ArmorData> getArmor() {
+        List<ArmorData> tempList = new ArrayList<>();
+
+        for(Point2D point2D : armorList.keySet()){
+            ArmorData armorData = new ArmorData();
+            Armor armor = armorList.get(point2D);
+            armorData.x = point2D.getX();
+            armorData.y = point2D.getY();
+            armorData.Name = armor.name();
+            armorData.defence = armor.defence();
+            tempList.add(armorData);
+        }
+        return tempList;
+    }
+    public List<WeaponState> getWeapons(){
+        List<WeaponState> tempList = new ArrayList<>();
+        for(Point2D point2D : weapons.keySet()){
+            WeaponState weaponState = new WeaponState();
+            Weapon weapon = weapons.get(point2D);
+            weaponState.x = point2D.getX();
+            weaponState.y = point2D.getY();
+            weaponState.name = weapon.name();
+            weaponState.attack = weapon.damage();
+            tempList.add(weaponState);
+        }
+        return tempList;
+    }
+    public void clearItemList(){
+        itemList.clear();
+    }
+    public void loadItems(List<ItemState> itemStates) {
+        healingItems.clear();
+        Point2D point2D = new Point2D.Double();
+        for(ItemState item : itemStates) {
+            point2D.setLocation(item.x,item.y);
+            healingItems.put(point2D, new RecoveryItem(item.name,item.value));
+            itemList.put(item.name, "recoveryItem");
+        }
+    }
+
+    public void loadArmor(List<ArmorData> armorData) {
+        Point2D point2D = new Point2D.Double();
+        armorList.clear();
+        for(ArmorData armor: armorData){
+            point2D.setLocation(armor.x,armor.y);
+            armorList.put(point2D, new Armor(armor.Name,armor.defence));
+            itemList.put(armor.Name, "armor");
+        }
+    }
+
+    public void loadWeapons(List<WeaponState> weaponStates) {
+        Point2D point2D = new Point2D.Double();
+        weapons.clear();
+        for(WeaponState weaponState: weaponStates){
+            point2D.setLocation(weaponState.x, weaponState.y);
+            weapons.put(point2D, new Weapon(weaponState.name, weaponState.attack));
+            itemList.put(weaponState.name, "weapon");
+        }
     }
 }

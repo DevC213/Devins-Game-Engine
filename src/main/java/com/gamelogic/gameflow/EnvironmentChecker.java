@@ -2,21 +2,20 @@ package com.gamelogic.gameflow;
 
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.commands.CommandProcessor;
-import com.gamelogic.core.Controller;
+import com.gamelogic.core.MainGameController;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.playerlogic.PlayerController;
-import com.gamelogic.villages.House;
 
 public class EnvironmentChecker {
     enum TileStatus {NEUTRAL, HEALING, DAMAGING}
 
     TileStatus tileStatus = TileStatus.NEUTRAL;
-    Controller controller;
+    MainGameController mainGameController;
     PlayerController playerController;
     MapController mapController;
 
-    EnvironmentChecker(Controller controller, PlayerController playerController, MapController mapController) {
-        this.controller = controller;
+    EnvironmentChecker(MainGameController mainGameController, PlayerController playerController, MapController mapController) {
+        this.mainGameController = mainGameController;
         this.playerController = playerController;
         this.mapController = mapController;
     }
@@ -28,12 +27,12 @@ public class EnvironmentChecker {
     private void checkTileEffect(double effect) {
         if (effect < 0) {
             if (tileStatus != TileStatus.DAMAGING) {
-                controller.UIUpdate("Player: It hurts walking here.", 0);
+                mainGameController.UIUpdate("Player: It hurts walking here.", 0);
                 tileStatus = TileStatus.DAMAGING;
             }
         } else if (effect > 0) {
             if (tileStatus != TileStatus.HEALING) {
-                controller.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
+                mainGameController.UIUpdate("Player: Its is soothing to my feet walking here.", 0);
                 tileStatus = TileStatus.HEALING;
             }
         } else {
@@ -53,14 +52,14 @@ public class EnvironmentChecker {
     private void checkForItems() {
         String string = mapController.itemList(playerController.getMapCoordinates()).toString();
         if (!string.isEmpty()) {
-            controller.UIUpdate("Items at location: \n" + string, 0);
+            mainGameController.UIUpdate("Items at location: \n" + string, 0);
         }
     }
 
     private void checkForMonsters(CombatSystem combatSystem, CommandProcessor commandProcessor) {
         boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
         if (monsterFound) {
-            controller.UIUpdate("Monsters at location: " +
+            mainGameController.UIUpdate("Monsters at location: " +
                     mapController.getMonsters(playerController.getMapCoordinates()), 0);
             if (!combatSystem.isMonsterOnTile()) {
                 combatSystem.toggleMonster();
@@ -70,7 +69,7 @@ public class EnvironmentChecker {
                 commandProcessor.toggleEscape();
                 combatSystem.toggleMonster();
             } else if (combatSystem.isMonsterOnTile()) {
-                controller.UIUpdate("Monsters Killed", 0);
+                mainGameController.UIUpdate("Monsters Killed", 0);
                 combatSystem.toggleMonster();
             }
         }
