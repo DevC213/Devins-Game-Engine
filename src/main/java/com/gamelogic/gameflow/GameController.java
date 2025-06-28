@@ -31,6 +31,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private Difficulty difficulty;
 
     Coordinates mainMapLocation;
+    int mainMapCurrentLevel = 0;
     House house;
 
     public void setDifficulty(String difficulty) {
@@ -56,6 +57,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public int getID() {
         return currentMapController.getID();
     }
+
     public int getLevel() {
         return currentMapController.getLevel();
     }
@@ -298,7 +300,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         playerController.loadFromPlayerState(playerState);
         updateGameInfo();
         renderMinimap();
-
     }
 }
 

@@ -10,6 +10,7 @@ public class GameState {
     public int level;
     public int currentMapID;
     public int deepestLevel;
+    public int mainMapLevel;
     public GameState(){
         mapStates = new HashMap<>();
     }

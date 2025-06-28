@@ -106,6 +106,7 @@ public class Adventure {
         gameState.currentMapID = gameController.getID();
         gameState.level = gameController.getLevel();
         gameState.deepestLevel = gameController.getDeepestLevel();
+        gameState.mainMapLevel = MapRegistry.getMapController(0).getLevel();
         String saveDir = getSystemPath();
         try {
             Gson gson = new Gson();
@@ -129,6 +130,7 @@ public class Adventure {
             gameController.setLevel(gameState.level);
             gameController.setDeepestLevel(gameState.deepestLevel);
             gameController.loadData(gameState.playerState);
+            MapRegistry.getMapController(0).setLevel(gameState.mainMapLevel);
         } catch(Exception e){
             System.out.println("Error loading Game Data");
         }

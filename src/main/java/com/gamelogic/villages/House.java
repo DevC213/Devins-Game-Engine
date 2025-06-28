@@ -78,4 +78,8 @@ public class House extends MapController implements IExitCoordinates {
     @Override
     public void loadData(MapState mapState) {
     }
+
+    public boolean areItemsOnTile(Coordinates location) {
+        return false;
+    }
 }

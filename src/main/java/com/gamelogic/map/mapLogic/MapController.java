@@ -260,5 +260,6 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
             levelData.item().loadWeapons(mapState.weaponList.get(i));
         }
     }
+
 }
 
