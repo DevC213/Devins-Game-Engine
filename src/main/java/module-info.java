@@ -6,6 +6,7 @@ module com.example.adventure {
     requires java.desktop;
     requires javafx.media;
     requires com.google.gson;
+    requires org.jetbrains.annotations;
 
     exports com.monsters;
     exports com.weapons;

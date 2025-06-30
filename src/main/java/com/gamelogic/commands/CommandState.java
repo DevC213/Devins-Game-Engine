@@ -4,5 +4,5 @@ enum CommandState {
     TAKE,  // 2 - Taking item
     HEAL,  // 3 - Using health item
     ATTACK, // 4 - Attacking
-    HATTACK, //5 - Using health item during fight
+    HEAL_IN_COMBAT, //5 - Using health item during fight
 }

@@ -10,6 +10,7 @@ import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,10 @@ import java.util.Objects;
 public class CommandProcessor {
 
 
-    private final String HEALING;
-    private final String ATTACKING;
-    private final String GRAB_ITEM;
-    private final String ENTER_AREA;
+    private String HEALING;
+    private String ATTACKING;
+    private String GRAB_ITEM;
+    private String ENTER_AREA;
     private CommandState commandState = CommandState.NONE;
     Map<String, Runnable> charCommands;
     private boolean escape = false;
@@ -41,7 +42,7 @@ public class CommandProcessor {
 
     public CommandProcessor(MainGameController mainGameController, PlayerController playerController
             , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
-                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState, Keybindings keybindings) {
+                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState, @NotNull Keybindings keybindings) {
         this.controller = mainGameController;
         this.playerController = playerController;
         this.updateMinimap = updateMinimap;
@@ -53,7 +54,7 @@ public class CommandProcessor {
         this.monsters = monsters;
         this.doesDamage = doesDamage;
         this.accessItems = accessItems;
-        HEALING = keybindings.heal().toUpperCase();  //<- Plan to have a JSON config file read-in with changeable keybindings, and maybe later an "options screen"
+        HEALING = keybindings.heal().toUpperCase();
         ATTACKING = keybindings.attack().toUpperCase();
         GRAB_ITEM = keybindings.grabItem().toUpperCase();
         ENTER_AREA = keybindings.enterArea().toUpperCase();
@@ -69,7 +70,7 @@ public class CommandProcessor {
     public void changeMapState(IMapState mapState){
         this.mapState = mapState;
     }
-    public void handleKeyInput(String keyPressed) {
+    public void handleKeyInput(@NotNull String keyPressed) {
         Movement move = Movement.getMovement(keyPressed.toUpperCase());
         if (commandState != CommandState.NONE && !keyPressed.equals("ENTER")) {
             return;
@@ -88,7 +89,7 @@ public class CommandProcessor {
         controller.clearInput();
     }
 
-    private void handleAction(String keyPressed) {
+    private void handleAction(@NotNull String keyPressed) {
         Runnable runnable = charCommands.get(keyPressed.toUpperCase());
         if (runnable != null) {
             runnable.run();
@@ -130,7 +131,7 @@ public class CommandProcessor {
         controller.UIUpdate("Which healing item?", 0);
         controller.commandFocus();
         if (commandState == CommandState.ATTACK) {
-            commandState = CommandState.HATTACK;
+            commandState = CommandState.HEAL_IN_COMBAT;
         } else {
             commandState = CommandState.HEAL;
         }
@@ -152,7 +153,7 @@ public class CommandProcessor {
 
     private void handleTextCommand(String command) {
         executePendingAction(command);
-        if (commandState == CommandState.HATTACK) {
+        if (commandState == CommandState.HEAL_IN_COMBAT) {
             commandState = CommandState.ATTACK;
         } else {
             if (commandState == CommandState.TAKE) {
@@ -220,7 +221,7 @@ public class CommandProcessor {
     }
 
     //Command Processing for movement
-    private void moveOnLevel(Movement movement) {
+    private void moveOnLevel(@NotNull Movement movement) {
         int deltaX = movement.dx;
         int deltaY = movement.dy;
         Coordinates playerCoords = playerController.getMapCoordinates();
@@ -253,6 +254,12 @@ public class CommandProcessor {
     }
     public void toggleEscape() {
         escape = !escape;
+    }
+    public void updateKeyBindings(@NotNull Keybindings keybindings) {
+        HEALING = keybindings.heal();
+        ENTER_AREA = keybindings.enterArea();
+        ATTACKING = keybindings.attack();
+        GRAB_ITEM = keybindings.grabItem();
     }
 
 }
