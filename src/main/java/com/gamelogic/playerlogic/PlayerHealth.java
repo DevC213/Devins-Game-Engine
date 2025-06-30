@@ -29,7 +29,7 @@ class PlayerHealth {
                 return "Used " + item;
             }
         }
-        return null;
+        return "";
     }
     public void reset(){
         health = 100;
@@ -46,7 +46,7 @@ class PlayerHealth {
     public StringBuilder getHealingItems() {
         StringBuilder rtnString = new StringBuilder();
         if(recoveryItems.isEmpty()){
-            return null;
+            return new StringBuilder();
         } else{
             for(RecoveryItem i: recoveryItems){
                 rtnString.append(i.getName()).append(" — ").append(i.getHealValue()).append("\n");

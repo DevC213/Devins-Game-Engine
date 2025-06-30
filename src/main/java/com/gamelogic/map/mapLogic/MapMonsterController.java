@@ -66,11 +66,12 @@ class MapMonsterController {
         }
     }
     public List<String> getMonsters(Coordinates location){
-        List<String> rtnStrVec = new ArrayList<>();
+
         List<Monster> monsters = monsterVectorMap.get(location);
         Map<String,Integer> monstersNum = getMonsterNumbers(location);
-        if(monstersNum == null){
-            return null;
+        List<String> rtnStrVec = new ArrayList<>();
+        if(monsters == null){
+            return rtnStrVec;
         }
         if (!monsters.isEmpty()) {
             for(Monster i: monsters){
@@ -82,29 +83,26 @@ class MapMonsterController {
             }
             return rtnStrVec;
         }
-        return null;
+        return Collections.emptyList();
     }
     public List<String> getMonsterNames(Coordinates location){
-        List<String> rtnStrVec = new ArrayList<>();
+
         List<Monster> monsters = monsterVectorMap.get(location);
-        Map<String,Integer> monstersNum = getMonsterNumbers(location);
-        if(monstersNum == null){
-            return null;
+        if(monsters == null || monsters.isEmpty()){
+            return Collections.emptyList();
         }
-        if (!monsters.isEmpty()) {
-            for(Monster i: monsters){
-                rtnStrVec.add(i.getName());
-            }
-            return rtnStrVec;
+        List<String> rtnStrVec = new ArrayList<>();
+        for (Monster i : monsters) {
+            rtnStrVec.add(i.getName());
         }
-        return null;
+        return rtnStrVec;
     }
     private Map<String, Integer> getMonsterNumbers(Coordinates location){
         List<Monster> monsters = monsterVectorMap.get(location);
-        Map<String,Integer> monstersNum = new HashMap<>();
-        if(monsters == null){
-            return null;
+        if(monsters == null || monsters.isEmpty()){
+            return Collections.emptyMap();
         }
+        Map<String,Integer> monstersNum = new HashMap<>();
         for(Monster i: monsters){
             monstersNum.merge(i.getName(),1,Integer::sum);
         }

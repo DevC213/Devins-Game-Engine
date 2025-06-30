@@ -79,7 +79,7 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     }
 
     public boolean usesFog() {
-        return true;
+        return mapType.hasFog();
     }
 
     private Map<String, String> getStringMap(String filePath) {
@@ -136,7 +136,10 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     }
     public StringBuilder itemList(Coordinates location) {
         if (mapData.getLevel(level) == null) {
-            return null;
+            return new StringBuilder();
+        }
+        if(!mapType.hasItems()){
+            return new StringBuilder();
         }
         Weapon weapons = getWeapons(location);
         Armor armor = getArmor(location);
@@ -166,11 +169,6 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         return mapData.getLevel(level).item().grabItems(location, item);
     }
 
-    @Override
-    public Messenger grabItem(Coordinates location) {
-        return mapData.getLevel(level).item().grabItem(location);
-    }
-
     public Armor getArmor(Coordinates location) {
         return mapData.getLevel(level).item().armorOnTile(location);
     }
@@ -178,7 +176,6 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     public RecoveryItem getHealing(Coordinates location) {
         return mapData.getLevel(level).item().healingItemsOnTile(location);
     }
-
     //IMonsters
     public Messenger spawnMonsters(Coordinates location, int moves) {
         Messenger messenger = new Messenger();
@@ -196,7 +193,7 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     }
 
     public boolean isMonsterOnTile(Coordinates location) {
-        return (mapData.getLevel(level).monster().getMonsters(location) != null);
+        return (mapType.hasMonsters() && !mapData.getLevel(level).monster().getMonsters(location).isEmpty());
     }
 
     @Override
@@ -218,6 +215,10 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
     }
 
     public Messenger checkForVillages(Coordinates location) {
+
+        if(!mapType.hasVillages()) {
+            return new Messenger();
+        }
         return mapData.getLevel(level).villages().checkVillage(location);
     }
 
@@ -247,7 +248,7 @@ public class MapController implements IDoesDamage, IMapState, IAccessItems, IMon
         return ID;
     }
     public boolean progressesGame(){
-        return true;
+        return mapType.progressesGame();
     }
 
     public void loadData(MapState mapState) {

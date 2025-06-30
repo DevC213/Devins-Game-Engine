@@ -67,7 +67,7 @@ public class PlayerController implements PlayerDamageListener{
                 sendString.append(i).append("\n");
             }
         }
-        if(!(getHealingItems() == null)){
+        if(!(getHealingItems().isEmpty())){
             sendString.append(getHealingItems());
         }
         guiEventListener.UIUpdate(sendString.toString(),1);
@@ -138,7 +138,7 @@ public class PlayerController implements PlayerDamageListener{
         changeHealth(-finalDamage);
 
         if (getHealth() <= 0) {
-            if (getHealingItems() == null) {
+            if (getHealingItems().isEmpty()) {
                 gameOver();
             } else {
                 EmergencyUse();

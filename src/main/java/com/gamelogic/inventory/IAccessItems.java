@@ -12,7 +12,6 @@ public interface IAccessItems {
     Weapon getWeapons(Coordinates location);
     Coordinates getCoordinates();
     Messenger grabItem(Coordinates location, final String item);
-    Messenger grabItem(Coordinates location);
     Armor getArmor(Coordinates location);
     RecoveryItem getHealing(Coordinates location);
 

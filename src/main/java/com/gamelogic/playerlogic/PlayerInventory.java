@@ -2,6 +2,7 @@ package com.gamelogic.playerlogic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 class PlayerInventory {
@@ -11,7 +12,7 @@ class PlayerInventory {
     PlayerInventory(){ inventory  = new ArrayList<>(); }
     public List<String> viewInventory() {
         if (inventory.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         return inventory;
     }

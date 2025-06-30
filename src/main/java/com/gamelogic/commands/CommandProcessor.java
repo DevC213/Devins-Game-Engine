@@ -18,34 +18,11 @@ import java.util.Objects;
 
 public class CommandProcessor {
 
-    private enum CommandState {
-        NONE,  // 0 - Not in a command
-        TAKE,  // 2 - Taking item
-        HEAL,  // 3 - Using health item
-        ATTACK, // 4 - Attacking
-        HATTACK, //5 - Using health item during fight
-    }
+
     private final String HEALING;
     private final String ATTACKING;
     private final String GRAB_ITEM;
     private final String ENTER_AREA;
-    private enum Movement {
-        LEFT(-1,0), RIGHT(1,0), UP(0,-1), DOWN(0,1);
-        final int dx, dy;
-        Movement(int x, int y) {
-            this.dx = x;
-            this.dy = y;
-        }
-
-        public static Movement getMovement(String string) {
-            try {
-                return Movement.valueOf(string.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-    }
-
     private CommandState commandState = CommandState.NONE;
     Map<String, Runnable> charCommands;
     private boolean escape = false;
@@ -98,11 +75,11 @@ public class CommandProcessor {
             return;
         }
         if (combatSystem.isMonsterOnTile() && !Objects.equals(keyPressed, ATTACKING) && !Objects.equals(keyPressed, HEALING)) {
-            if (move != null) {
+            if (move != Movement.DEFAULT) {
                 if (!attemptEscape()) return;
             }
         }
-        if (move != null) {
+        if (move != Movement.DEFAULT) {
             moveOnLevel(move);
             updateGame.updateGameInfo();
             return;
@@ -134,7 +111,7 @@ public class CommandProcessor {
     private void attack() {
 
         List<String> monstersOnTile = monsters.getMonsterNames(playerController.getMapCoordinates());
-        if (monstersOnTile == null) {
+        if (monstersOnTile.isEmpty()) {
             controller.UIUpdate("No monster on tile", 0);
             commandState = CommandState.NONE;
             return;
@@ -208,12 +185,11 @@ public class CommandProcessor {
 
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
-        if (messenger == null) {
-            commandState = CommandState.NONE;
-            controller.textAreaFocus();
-            return;
-        }
         switch (messenger.getItemType()) {
+            case -1:
+                commandState = CommandState.NONE;
+                controller.textAreaFocus();
+                return;
             case 0:
                 if (messenger.getWeapon().damage() < playerController.getAttack()) {
                     controller.UIUpdate("Current weapon is better.", 0);

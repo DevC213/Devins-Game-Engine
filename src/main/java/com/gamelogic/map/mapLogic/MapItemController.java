@@ -3,7 +3,6 @@ package com.gamelogic.map.mapLogic;
 import com.armor.Armor;
 import com.savesystem.ArmorData;
 import com.savesystem.ItemState;
-import com.savesystem.MapState;
 import com.savesystem.WeaponState;
 import com.weapons.Weapon;
 import com.gamelogic.map.Coordinates;
@@ -114,7 +113,7 @@ class MapItemController {
         point2D = new Point2D.Double(location.x(),location.y());
         String tempItem = itemList.get(item);
         if(tempItem == null){
-            return null;
+            return new Messenger();
         }
         return switch (tempItem) {
             case "weapon" -> {
@@ -147,46 +146,25 @@ class MapItemController {
             default -> null;
         };
     }
-    public Messenger grabItem(Coordinates location) {
-        Messenger messenger = new Messenger();
-        point2D = new Point2D.Double(location.x(),location.y());
-        String item = "";
-        if(weapons.containsKey(point2D)){
-            item =  weapons.get(point2D).name();
-        } else if (armorList.containsKey(point2D)) {
-            item = armorList.get(point2D).name();
-        } else if (healingItems.containsKey(point2D)) {
-            item = healingItems.get(point2D).getName();
-        }
-        return grabItems(location, item);
-    }
     public void resetMap(){
         healingItems.clear();
         weapons.clear();
         armorList.clear();
         processItems(itemFile);
     }
-
     public Weapon weaponsOnTile(Coordinates location){
         point2D = new Point2D.Double(location.x(),location.y());
-        if (weapons.containsKey(point2D)) {
-            return weapons.get(point2D);
-        }
-        return null;
+        return weapons.get(point2D);
+
     }
     public Armor armorOnTile(Coordinates location) {
         point2D = new Point2D.Double(location.x(),location.y());
-        if (armorList.containsKey(point2D)) {
-            return armorList.get(point2D);
-        }
-        return null;
+        return armorList.get(point2D);
+
     }
     public RecoveryItem healingItemsOnTile(Coordinates location) {
         point2D = new Point2D.Double(location.x(),location.y());
-        if (healingItems.containsKey(point2D)) {
-            return healingItems.get(point2D);
-        }
-        return null;
+        return healingItems.get(point2D);
     }
 
     public List<ItemState> getItems(){
@@ -279,6 +257,7 @@ class MapItemController {
     }
     public String itemOnTile(Coordinates coordinates){
         String item = "";
+        Point2D point2D = new Point2D.Double(coordinates.x(),coordinates.y());
         if(healingItems.containsKey(point2D)){
             item = healingItems.get(point2D).getName();
         }

@@ -42,7 +42,7 @@ class PlayerMovement {
                 playerController.sendMessage("PLayer: Ouch!");
             }
             while(playerController.getHealth() <= 0) {
-                if (playerController.getHealingItems() == null) {
+                if (playerController.getHealingItems().isEmpty()) {
                     playerController.gameOver();
                     return -1;
                 } else {
@@ -51,7 +51,7 @@ class PlayerMovement {
             }
         }
         while(playerController.getHealth() <= 0) {
-            if (playerController.getHealingItems() == null) {
+            if (playerController.getHealingItems().isEmpty()) {
                 playerController.gameOver();
                 return -1;
             } else {

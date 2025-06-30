@@ -81,12 +81,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         this.deepestLevel = deepestLevel;
     }
 
-    enum Movement{LEFT, RIGHT, UP, DOWN;
+    enum Movement{LEFT, RIGHT, UP, DOWN, DEFAULT;
         public static Movement getmovement(String string){
             try {
                 return Movement.valueOf(string.toUpperCase());
             } catch (IllegalArgumentException e) {
-                return null;
+                return DEFAULT;
             }
         }
     }
@@ -126,7 +126,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         if(playerController.isGameOver()){return;}
         commandProcessor.handleKeyInput(keyPressed);
         Movement move = Movement.getmovement(keyPressed);
-        if (move != null) {
+        if (!move.equals(Movement.DEFAULT)) {
             moves++;
             spawnMonster();
         }

@@ -26,7 +26,7 @@ public class InventoryManager {
                 sendString.append(i).append("\n");
             }
         }
-        if (!(playerController.getHealingItems() == null)) {
+        if (!(playerController.getHealingItems().isEmpty())) {
             sendString.append(playerController.getHealingItems());
         }
         guiEventListener.UIUpdate(sendString.toString(), 1);
