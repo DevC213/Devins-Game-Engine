@@ -117,13 +117,12 @@ public class CommandProcessor {
             commandState = CommandState.NONE;
             return;
         } else if (monstersOnTile.size() == 1) {
-            commandState = CommandState.ATTACK;
             executePendingAction(monstersOnTile.getFirst());
             commandState = CommandState.NONE;
             return;
         }
-        controller.UIUpdate("Which monster?", 0);
-        commandState = CommandState.ATTACK;
+        controller.UIUpdate("AOE or Single", 0);
+        commandState = CommandState.ATTACK_CHOICE;
         controller.commandFocus();
     }
 
@@ -156,7 +155,7 @@ public class CommandProcessor {
         if (commandState == CommandState.HEAL_IN_COMBAT) {
             commandState = CommandState.ATTACK;
         } else {
-            if (commandState == CommandState.TAKE) {
+            if (commandState == CommandState.TAKE || commandState == CommandState.ATTACK || commandState == CommandState.ATTACK_CHOICE) {
                 return;
             }
             commandState = CommandState.NONE;
@@ -169,13 +168,40 @@ public class CommandProcessor {
             case TAKE -> takeItem(command);
             case HEAL -> inventoryManager.useHealthItem(command);
             case ATTACK -> attackMonster(command);
+            case ATTACK_CHOICE -> attackChoice(command);
             default -> controller.UIUpdate("Unexpected command state", 0);
         }
     }
 
+    private void attackChoice(String command) {
+        String choice = command.toLowerCase();
+        switch (choice) {
+            case("aoe") -> {
+                List<Messenger> messengers = doesDamage.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
+                for(Messenger messenger : messengers) {
+                    String message = combatSystem.attack(messenger).getMessage();
+                    processAttacks(message);
+                }
+                attack();
+            }case("single") -> {
+                controller.UIUpdate("Which Monster?", 0);
+                commandState = CommandState.ATTACK;
+                controller.commandFocus();
+            } default ->{
+                controller.UIUpdate("Invalid choice", 0);
+                controller.UIUpdate("Defaulting to Single. Which Monster?",0);
+                commandState = CommandState.ATTACK;
+                controller.commandFocus();
+            }
+        }
+    }
     private void attackMonster(String command) {
         String message = combatSystem.attack(doesDamage.attackMonsters(command,
                 playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
+        processAttacks(message);
+        attack();
+    }
+    private void processAttacks(String message){
         if (message != null) {
             playerController.monsterKilled();
             controller.UIUpdate(message, 0);
@@ -183,7 +209,6 @@ public class CommandProcessor {
         combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
         controller.textAreaFocus();
     }
-
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
         switch (messenger.getItemType()) {
@@ -262,5 +287,7 @@ public class CommandProcessor {
         GRAB_ITEM = keybindings.grabItem();
     }
 
+    public void clearCommandState() {
+        commandState = CommandState.NONE;
+    }
 }
-

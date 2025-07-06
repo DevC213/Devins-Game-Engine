@@ -21,8 +21,6 @@ module com.example.adventure {
     opens com.weapons to javafx.fxml;
     opens com.armor to javafx.fxml;
     opens com.gamelogic.playerlogic to javafx.fxml;
-    exports com.monsters.overworld;
-    opens com.monsters.overworld to javafx.fxml;
     opens com.gamelogic.rawdataclasses to com.google.gson;
     opens com.gamelogic.map.mapLogic to com.google.gson, javafx.fxml;
     exports com.gamelogic.core;

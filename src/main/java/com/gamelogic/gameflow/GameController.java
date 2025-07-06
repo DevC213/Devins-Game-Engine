@@ -8,6 +8,7 @@ import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.map.mapLogic.MapType;
+import com.gamelogic.map.mapLogic.Overworld;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.villages.House;
@@ -32,7 +33,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
     Coordinates mainMapLocation;
     int mainMapCurrentLevel = 0;
-    House house;
 
     public void setDifficulty(String difficulty) {
         switch(difficulty.toLowerCase()) {
@@ -103,7 +103,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         this.mainGameController = mainGameController;
         TileKeyRegistry.initialize("/key.json");
         uiMapController = new UIMapController();
-        this.currentMapController = new MapController("/levelData.json", MapType.OVERWORLD,0);
+        this.currentMapController = new Overworld("/levelData.json", MapType.OVERWORLD,0);
         MapRegistry.addMap(currentMapController,0);
         uiMapController.processCharacters("/characters.json");
         Coordinates startingCords = currentMapController.generateValidStartPosition();
@@ -167,7 +167,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         String cordOrigins = "[" + (-currentMapController.getCoordinates().x() / 2) + (-currentMapController.getCoordinates().y() / 2) + "]";
         mainGameController.UIUpdate(cordOrigins, 2);
         inHouse = false;
-        house = null;
     }
 
     //IUpdateMinimap
@@ -175,7 +174,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public void renderMinimap() {
         if(inHouse){
             mainMapLocation = playerController.getMapCoordinates();
-            switchMap(currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage).getID());
+            House house = currentMapController.getHouse(currentMapController.getHouseNumber(playerController.getMapCoordinates(), currentVillage), currentVillage);
+            switchMap(house.getID());
             inHouse = false;
         }
         if(currentMapController instanceof IExitCoordinates exitCoordinates){

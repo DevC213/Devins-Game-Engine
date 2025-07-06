@@ -4,11 +4,13 @@ import com.armor.Armor;
 import com.weapons.Weapon;
 import com.recoveryitems.RecoveryItem;
 
+import java.util.List;
 import java.util.Vector;
 
 public class Messenger {
     private String message;
     private Vector<Double> payloadDouble;
+    private List<Messenger> messages;
     private String payloadString;
     private Weapon weapon;
     private Armor armor;
@@ -23,6 +25,9 @@ public class Messenger {
     }
     public void addPayloadD(Vector<Double> payload){
         payloadDouble = payload;
+    }
+    public void addMessengerPayload(Messenger messenger){
+        messages = messenger.messages;
     }
     public void addPayloadS(String string){
         payloadString = string;

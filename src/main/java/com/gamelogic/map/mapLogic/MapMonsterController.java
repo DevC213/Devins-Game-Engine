@@ -1,6 +1,7 @@
 package com.gamelogic.map.mapLogic;
 
 import com.monsters.Monster;
+import com.monsters.Monster;
 import com.monsters.MonsterFactory;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.rawdataclasses.RMonster;
@@ -200,4 +201,12 @@ class MapMonsterController {
         }
     }
 
+    public List<Messenger> attackAllMonsters(double damage, Coordinates location) {
+        List<Monster> monsterList = monsterVectorMap.get(location);
+        List<Messenger> rtnMessenger = new ArrayList<>();
+        for(Monster i: monsterList){
+            rtnMessenger.add(attackMonsters(i.getName(),(int)Math.round(damage),location));
+        }
+        return rtnMessenger;
+    }
 }

@@ -37,7 +37,6 @@ public class Application extends javafx.application.Application {
             root.getChildren().addAll(game, pause);
             scene = new Scene(root, defaultV, defaultV1);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/gamelogic/game.css")).toExternalForm());
-            stage.setResizable(false);
             stage.setTitle("Island Adventure");
             stage.setScene(scene);
             stage.show();
