@@ -1,7 +1,7 @@
 package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
-import com.gamelogic.combat.IMonsters;
+import com.gamelogic.map.IMonsters;
 import com.gamelogic.core.MapRegistry;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.gameflow.ValidStart;
@@ -17,11 +17,9 @@ import com.recoveryitems.RecoveryItem;
 import com.savesystem.MapState;
 import com.weapons.Weapon;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

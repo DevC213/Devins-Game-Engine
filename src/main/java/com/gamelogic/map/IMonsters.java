@@ -1,6 +1,5 @@
-package com.gamelogic.combat;
+package com.gamelogic.map;
 
-import com.gamelogic.map.Coordinates;
 import com.gamelogic.messaging.Messenger;
 
 import java.util.List;

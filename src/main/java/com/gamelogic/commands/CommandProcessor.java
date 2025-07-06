@@ -2,7 +2,7 @@ package com.gamelogic.commands;
 
 import com.gamelogic.core.MainGameController;
 import com.gamelogic.combat.CombatSystem;
-import com.gamelogic.combat.IMonsters;
+import com.gamelogic.map.IMonsters;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.IDoesDamage;

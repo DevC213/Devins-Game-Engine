@@ -5,7 +5,6 @@ import com.gamelogic.core.MainGameController;
 import com.gamelogic.core.MapRegistry;
 import com.google.gson.Gson;
 import com.savesystem.GameState;
-import com.savesystem.PlayerState;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -126,7 +125,7 @@ public class Adventure {
             String json = Files.readString(Paths.get(getSystemPath() + "/savegame.json"));
             GameState gameState = gson.fromJson(json, GameState.class);
             MapRegistry.loadData(gameState.mapStates);
-            gameController.setID(gameState.currentMapID);
+            gameController.loadMapFromID(gameState.currentMapID);
             gameController.setLevel(gameState.level);
             gameController.setDeepestLevel(gameState.deepestLevel);
             gameController.loadData(gameState.playerState);

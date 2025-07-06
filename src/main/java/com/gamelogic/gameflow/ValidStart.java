@@ -1,6 +1,6 @@
 package com.gamelogic.gameflow;
 
-import com.gamelogic.combat.IMonsters;
+import com.gamelogic.map.IMonsters;
 import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.IMapState;
