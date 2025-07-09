@@ -1,8 +1,8 @@
 [
   {
-   "name": "John",
-    "Messages": [""],
+    "name": "John",
+    "messages": ["Hello","Welcome to Rasenville"],
     "quest": [],
-    "location": [0,0]
+    "location": [6,40]
   }
 ]

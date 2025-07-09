@@ -4,6 +4,7 @@ import com.gamelogic.map.Coordinates;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.rawdataclasses.RVillage;
 import com.gamelogic.villages.House;
+import com.gamelogic.villages.NPC;
 import com.gamelogic.villages.Village;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -61,14 +62,20 @@ public class MapVillageController {
         for(RVillage rVillage : tempVillageList) {
             Coordinates top = new Coordinates(rVillage.topCoords()[0], rVillage.topCoords()[1]);
             Coordinates bottom = new Coordinates(rVillage.bottomCoords()[0], rVillage.bottomCoords()[1]);
-            villageMap.put(rVillage.name(), new Village(rVillage.name(), top, bottom, rVillage.houses()));
+            villageMap.put(rVillage.name(), new Village(rVillage.name(), top, bottom, rVillage.houses(),rVillage.npcs()));
         }
     }
 
     public int checkHouse(Coordinates coordinates, String villageName){
         return villageMap.get(villageName).atHouse(coordinates);
     }
+    public NPC checkNPCs(Coordinates coordinates, String villageName){
+        return villageMap.get(villageName).getNPC(coordinates);
+    }
     public House getHouseMap(int number, String villageName){
         return villageMap.get(villageName).getHouseMap(number);
+    }
+    public boolean inVillage(){
+        return inVillage;
     }
 }

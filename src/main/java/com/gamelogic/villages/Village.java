@@ -1,7 +1,9 @@
 package com.gamelogic.villages;
 
 import com.gamelogic.map.Coordinates;
+
 import com.gamelogic.rawdataclasses.RHouse;
+import com.gamelogic.rawdataclasses.RVillager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -15,12 +17,15 @@ public class Village{
     Coordinates topCoordinates;
     Coordinates bottomCoordinates;
     Map<Integer, House> houseMap = new HashMap<>();
+    Map<Coordinates, NPC> NPCs = new HashMap<>();
 
-    public Village(String name, Coordinates topCoordinates, Coordinates bottomCoordinates, String filePath){
+
+    public Village(String name, Coordinates topCoordinates, Coordinates bottomCoordinates, String filePath, String npcData){
         this.name = name;
         this.topCoordinates = topCoordinates;
         this.bottomCoordinates = bottomCoordinates;
         processMap(filePath);
+        processNPCs(npcData);
     }
     private void processMap(String filePath){
         Gson gson = new Gson();
@@ -33,6 +38,21 @@ public class Village{
             Coordinates exit = new Coordinates(rHouse.exit()[1], rHouse.exit()[0]);
             House house = new House(rHouse.houseNumber(), map, exit, rHouse.map(), rHouse.mapID());
             houseMap.put(rHouse.houseNumber(), house);
+        }
+    }
+    private void processNPCs(String filePath){
+        Gson gson = new Gson();
+        InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
+        InputStreamReader reader = new InputStreamReader(input);
+        Type listType = new TypeToken<List<RVillager>>() {}.getType();
+        List<RVillager> tempNPCList = gson.fromJson(reader, listType);
+        for(RVillager rVillager : tempNPCList) {
+            Coordinates location = new Coordinates(rVillager.location()[1], rVillager.location()[0]);
+            NPC npc = new NPC(location,rVillager.name(), rVillager.quests());
+            for(String dialogue: rVillager.messages()){
+                npc.addDialogue(dialogue);
+            }
+            NPCs.put(location, npc);
         }
     }
     public Coordinates getTopCoordinates(){
@@ -51,6 +71,9 @@ public class Village{
             }
         }
         return -1;
+    }
+    public NPC getNPC(Coordinates coordinates){
+        return NPCs.get(coordinates);
     }
     public House getHouseMap(int number){
         return houseMap.get(number);

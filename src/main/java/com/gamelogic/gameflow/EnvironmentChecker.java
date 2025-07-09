@@ -3,8 +3,10 @@ package com.gamelogic.gameflow;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.commands.CommandProcessor;
 import com.gamelogic.core.MainGameController;
+import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.playerlogic.PlayerController;
+import com.gamelogic.villages.NPC;
 
 public class EnvironmentChecker {
     enum TileStatus {NEUTRAL, HEALING, DAMAGING}
@@ -47,6 +49,16 @@ public class EnvironmentChecker {
         checkForItems();
         checkForMonsters(combatSystem, commandProcessor);
         checkTileEffect(effect);
+
+    }
+
+    public void checkNPC(String villageName, Coordinates coordinates) {
+        NPC npc;
+        npc = mapController.getNPC(coordinates, villageName);
+
+        if (npc == null) {return;}
+        String dialogue = npc.getName() + ": " + npc.getDialogue();
+        mainGameController.UIUpdate(dialogue, 0);
     }
 
     private void checkForItems() {
@@ -55,6 +67,7 @@ public class EnvironmentChecker {
             mainGameController.UIUpdate("Items at location: \n" + string, 0);
         }
     }
+
 
     private void checkForMonsters(CombatSystem combatSystem, CommandProcessor commandProcessor) {
         boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());

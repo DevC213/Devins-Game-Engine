@@ -6,6 +6,7 @@ import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.villages.House;
+import com.gamelogic.villages.NPC;
 import com.savesystem.PlayerState;
 
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     Coordinates mainMapLocation;
     private int moves = 0;
     private int deepestLevel = 0;
-    private String currentVillage;
+    private String currentVillage = "";
     private boolean inHouse = false;
     //Constructor
     public GameController(MainGameController mainGameController, Keybindings keybindings) {
@@ -175,12 +176,20 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     }
 
     private void checkProgression() {
+
         if(currentMapController.progressesGame()){
             gameProgression.levelProgression(currentMapController.getLevel(), deepestLevel, currentMapController);
         }
         String village = gameProgression.checkProgression(currentMapController);
-        if(village != null){
+        if(village != null) {
             currentVillage = village;
+            classController.environmentChecker.checkNPC(currentVillage, classController.playerController.getMapCoordinates());
+        }
+        if(!classController.currentMapController.inVillage()){
+            currentVillage = "";
+        }
+        if(!currentVillage.isEmpty()){
+            classController.environmentChecker.checkNPC(currentVillage, classController.playerController.getMapCoordinates());
         }
     }
 
@@ -191,6 +200,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
         double effect =  tileHealthData(classController.playerController.getMapCoordinates());
         classController.environmentChecker.checkTile(classController.combatSystem, classController.commandProcessor, effect);
+
     }
 
     public int getDeepestLevel() {
