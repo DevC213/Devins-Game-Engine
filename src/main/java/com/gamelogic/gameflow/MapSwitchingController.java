@@ -27,7 +27,7 @@ public class MapSwitchingController {
         classController.environmentChecker.changeMap(currentMapController);
         if(currentMapController instanceof IExitCoordinates exitCoordinates) {
             Coordinates exit = exitCoordinates.getExitCoordinates();
-            classController.playerController.setCoordinates(exit.y(), exit.x()-1);
+            classController.playerController.setCoordinates(exit.x(), exit.y() - 1);
             classController.playerController.setMaxCoordinates(currentMapController.getCoordinates());
         }
         return currentMapController;

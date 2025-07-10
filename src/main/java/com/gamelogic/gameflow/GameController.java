@@ -6,7 +6,6 @@ import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.villages.House;
-import com.gamelogic.villages.NPC;
 import com.savesystem.PlayerState;
 
 import java.util.Objects;
@@ -107,8 +106,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private void leaveHouse() {
         if(currentMapController instanceof IExitCoordinates exitCoordinates){
             Coordinates exit = exitCoordinates.getExitCoordinates();
-            Coordinates flippedPlayer = new Coordinates(classController.playerController.getMapCoordinates().y(), classController.playerController.getMapCoordinates().x());
-            if(flippedPlayer.equals(exit)){
+            Coordinates player = classController.playerController.getMapCoordinates();
+            if(player.equals(exit)){
                 currentMapController = mapSwitchingController.returnToMainMap(mainMapLocation);
             }
         }
@@ -117,7 +116,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private void enterHouse() {
         if(inHouse){
             mainMapLocation = classController.playerController.getMapCoordinates();
-            House house = currentMapController.getHouse(currentMapController.getHouseNumber(classController.playerController.getMapCoordinates(), currentVillage), currentVillage);
+            House house = currentMapController.getHouse(mainMapLocation, currentVillage);
             currentMapController = mapSwitchingController.switchMap(house.getID());
             inHouse = false;
         }

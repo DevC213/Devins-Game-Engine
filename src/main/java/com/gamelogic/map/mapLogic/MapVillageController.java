@@ -66,14 +66,14 @@ public class MapVillageController {
         }
     }
 
-    public int checkHouse(Coordinates coordinates, String villageName){
+    public boolean checkHouse(Coordinates coordinates, String villageName){
         return villageMap.get(villageName).atHouse(coordinates);
     }
     public NPC checkNPCs(Coordinates coordinates, String villageName){
         return villageMap.get(villageName).getNPC(coordinates);
     }
-    public House getHouseMap(int number, String villageName){
-        return villageMap.get(villageName).getHouseMap(number);
+    public House getHouseMap(Coordinates coordinates, String villageName){
+        return villageMap.get(villageName).getHouseMap(coordinates);
     }
     public boolean inVillage(){
         return inVillage;

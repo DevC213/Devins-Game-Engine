@@ -35,7 +35,7 @@ class PlayerHealth {
         health = 100;
         secondaryMaxHealth = 150;
         maxHealth = 100;
-        recoveryItems = new Vector<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+        recoveryItems = new ArrayList<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
     }
     public void clearHealingItems(){
         recoveryItems.clear();

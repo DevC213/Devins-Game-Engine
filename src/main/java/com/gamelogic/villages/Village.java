@@ -16,7 +16,7 @@ public class Village{
     String name;
     Coordinates topCoordinates;
     Coordinates bottomCoordinates;
-    Map<Integer, House> houseMap = new HashMap<>();
+    Map<Coordinates, House> houseMap = new HashMap<>();
     Map<Coordinates, NPC> NPCs = new HashMap<>();
 
 
@@ -35,9 +35,9 @@ public class Village{
         List<RHouse> tempHouseList = gson.fromJson(reader, listType);
         for(RHouse rHouse : tempHouseList) {
             Coordinates map = new Coordinates(rHouse.mapCoords()[0], rHouse.mapCoords()[1]);
-            Coordinates exit = new Coordinates(rHouse.exit()[1], rHouse.exit()[0]);
-            House house = new House(rHouse.houseNumber(), map, exit, rHouse.map(), rHouse.mapID());
-            houseMap.put(rHouse.houseNumber(), house);
+            Coordinates exit = new Coordinates(rHouse.exit()[0], rHouse.exit()[1]);
+            House house = new House(map, exit, rHouse.map(), rHouse.mapID());
+            houseMap.put(map, house);
         }
     }
     private void processNPCs(String filePath){
@@ -47,7 +47,7 @@ public class Village{
         Type listType = new TypeToken<List<RVillager>>() {}.getType();
         List<RVillager> tempNPCList = gson.fromJson(reader, listType);
         for(RVillager rVillager : tempNPCList) {
-            Coordinates location = new Coordinates(rVillager.location()[1], rVillager.location()[0]);
+            Coordinates location = new Coordinates(rVillager.location()[0], rVillager.location()[1]);
             NPC npc = new NPC(location,rVillager.name(), rVillager.quests());
             for(String dialogue: rVillager.messages()){
                 npc.addDialogue(dialogue);
@@ -64,19 +64,15 @@ public class Village{
     public String getName(){
         return name;
     }
-    public int atHouse(Coordinates coordinates){
-        for(House house: houseMap.values()){
-            if(coordinates.y() == house.mainCoordinates.x() && coordinates.x() == house.mainCoordinates.y()){
-                return house.houseNumber;
-            }
-        }
-        return -1;
+    public boolean atHouse(Coordinates coordinates){
+        return houseMap.containsKey(coordinates);
     }
     public NPC getNPC(Coordinates coordinates){
         return NPCs.get(coordinates);
     }
-    public House getHouseMap(int number){
-        return houseMap.get(number);
+    public House getHouseMap(Coordinates coordinates){
+        Coordinates flippedCoords = new Coordinates(coordinates.y(), coordinates.x());
+        return houseMap.get(flippedCoords);
     }
 
 }

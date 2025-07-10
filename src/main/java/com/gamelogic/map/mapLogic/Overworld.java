@@ -201,15 +201,15 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
         return mapData.getLevel(level).villages().checkVillage(location);
     }
 
-    public int getHouseNumber(Coordinates coordinates, String string) {
+    public boolean getHouseNumber(Coordinates coordinates, String string) {
         return mapData.getLevel(level).villages().checkHouse(coordinates, string);
     }
     public NPC getNPC(Coordinates location, String villageName) {
         return mapData.getLevel(level).villages().checkNPCs(location, villageName);
     }
 
-    public House getHouse(int houseNum, String village) {
-        return mapData.getLevel(level).villages().getHouseMap(houseNum, village);
+    public House getHouse(Coordinates coordinates, String village) {
+        return mapData.getLevel(level).villages().getHouseMap(coordinates, village);
     }
 
     public MapState getMapState() {

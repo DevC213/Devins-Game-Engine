@@ -9,7 +9,7 @@ import java.util.Vector;
 
 public class Messenger {
     private String message;
-    private Vector<Double> payloadDouble;
+    private List<Double> payloadDouble;
     private List<Messenger> messages;
     private String payloadString;
     private Weapon weapon;
@@ -23,7 +23,7 @@ public class Messenger {
     public Messenger(String message) {
         this.message = message;
     }
-    public void addPayloadD(Vector<Double> payload){
+    public void addPayloadD(List<Double> payload){
         payloadDouble = payload;
     }
     public void addMessengerPayload(Messenger messenger){
@@ -41,7 +41,7 @@ public class Messenger {
     public String getMessage() {
         return message;
     }
-    public Vector<Double> getPayloadD() {
+    public List<Double> getPayloadD() {
         return payloadDouble;
     }
     public Armor getArmor() {

@@ -19,8 +19,7 @@ public class House extends MapController implements IExitCoordinates {
     MapData mapData;
     MapType mapType;
 
-    House(int houseNumber, Coordinates mainCoordinates, Coordinates exitCoordinates, String fileMap, int ID) {
-        this.houseNumber = houseNumber;
+    House(Coordinates mainCoordinates, Coordinates exitCoordinates, String fileMap, int ID) {
         this.mainCoordinates = mainCoordinates;
         this.exitCoordinates = exitCoordinates;
         this.ID = ID;
@@ -94,6 +93,8 @@ public class House extends MapController implements IExitCoordinates {
             level += levelDelta;
         }
     }
-
+    public NPC getNPC(Coordinates location, String villageName) {
+        return null;
+    }
 
 }
