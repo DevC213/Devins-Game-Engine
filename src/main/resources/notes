@@ -9,15 +9,15 @@ Todo:
         villages
             NPCs
                 Quests
+                    Works with Save
         Attacking:
-            AOE and Single Target
-        Image pops up on UI for monster or villager
+            Image pops up on UI for monster or villager
      Low Priority:
         Cleanup warnings
         more tiles
+        AOE works with different monsters
         destructible tiles(and saving the map)
-
-
+        Add more NPCs
 
 Equipment:
 
