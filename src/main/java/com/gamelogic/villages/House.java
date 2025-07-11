@@ -52,6 +52,7 @@ public class House extends MapController implements IExitCoordinates {
         MapState mapState = new MapState();
         mapState.ID = this.ID;
         mapState.type = mapType.toString();
+        mapState.map = mapData.getMap();
         return mapState;
     }
     @Override
@@ -65,6 +66,7 @@ public class House extends MapController implements IExitCoordinates {
     }
     @Override
     public void loadData(MapState mapState) {
+        mapData.loadMap(mapState.map);
     }
     @Override
     public boolean areItemsOnTile(Coordinates location) {

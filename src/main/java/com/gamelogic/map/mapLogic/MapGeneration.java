@@ -57,4 +57,12 @@ public class MapGeneration {
         }
         return tempRow.get(x);
     }
+
+    public List<List<String>> getMapData() {
+        return mapData;
+    }
+
+    public void loadMap(List<List<String>> mapData) {
+        this.mapData = mapData;
+    }
 }

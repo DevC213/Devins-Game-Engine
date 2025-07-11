@@ -224,6 +224,7 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
             mapState.weaponList.put(i,levelData.item().getWeapons());
             mapState.armorList.put(i,levelData.item().getArmor());
             mapState.monsterList.put(i, levelData.monster().getMonsterState());
+            mapState.map = mapData.getMap();
         }
         return mapState;
     }
@@ -243,6 +244,7 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
             levelData.monster().loadMonsters(mapState.monsterList.get(i));
             levelData.item().loadArmor(mapState.armorList.get(i));
             levelData.item().loadWeapons(mapState.weaponList.get(i));
+            mapData.loadMap(mapState.map);
         }
     }
 

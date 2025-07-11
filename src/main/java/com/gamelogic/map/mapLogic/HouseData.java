@@ -43,4 +43,20 @@ public class HouseData extends MapData{
     public int getTotalLevels(){
         return levelDataList.size();
     }
+
+    @Override
+    public List<List<List<String>>> getMap() {
+        List<List<List<String>>> map = new ArrayList<>();
+        for(LevelData levelData : levelDataList){
+            map.add(levelData.map().getMapData());
+        }
+        return map;
+    }
+
+    @Override
+    public void loadMap(List<List<List<String>>> map) {
+        for(int i = 0; i < map.size(); i++){
+            levelDataList.get(i).map().loadMap(map.get(i));
+        }
+    }
 }
