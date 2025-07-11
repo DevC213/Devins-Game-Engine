@@ -1,20 +1,23 @@
 
 Todo:
+    High priority:
+        Dungeons
+            Bosses
      Medium priority:
         Create more items
         Create bigger maps
         villages
             NPCs
                 Quests
-        Dungeons
-            Bosses
         Attacking:
             AOE and Single Target
+        Image pops up on UI for monster or villager
      Low Priority:
         Cleanup warnings
+        more tiles
+        destructible tiles(and saving the map)
 
-monsters spawn,
-more tiles
+
 
 Equipment:
 

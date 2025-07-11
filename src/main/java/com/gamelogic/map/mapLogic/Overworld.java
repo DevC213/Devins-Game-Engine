@@ -98,7 +98,9 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
 
     //IDoesDamage
     public Messenger attackMonsters(String monster, int attack, Coordinates location) {
-        return mapData.getLevel(level).monster().attackMonsters(monster, attack, location);
+        Messenger rtnMessenger = mapData.getLevel(level).monster().attackMonsters(monster, attack, location);
+        mapData.getLevel(level).monster().removeMonsters(location);
+        return rtnMessenger;
     }
     public List<Messenger> attackAllMonsters(int attack, Coordinates location) {
         double damage = attack*0.85;

@@ -23,6 +23,7 @@ class MapMonsterController {
     Map<String, SpawnTable> spawnChanges;
     MonsterFactory monsterFactory;
     private final String monsterLocations;
+    boolean allMonstersKilled = false;
     MapMonsterController(String fileLocation) {
         this.monsterLocations = fileLocation;
         monsterFactory = new MonsterFactory();
@@ -109,13 +110,25 @@ class MapMonsterController {
         }
         return monstersNum;
     }
-    public synchronized Messenger attackMonsters(String monster, int attack, Coordinates location){
+
+    public boolean isAllMonstersKilled() {
+        return allMonstersKilled;
+    }
+    public void toggleAllMonstersKilled() {
+        allMonstersKilled =  !allMonstersKilled;
+    }
+    public Messenger attackMonsters(String monster, int attack, Coordinates location){
         Messenger rtnMessage = new Messenger();
         boolean monsterKilled = false;
         List<Monster> monsters = monsterVectorMap.get(location);
         Map<String,Integer> monstersNum = new HashMap<>();
 
         int index = 0;
+        if(allMonstersKilled){
+            rtnMessage.setMessage("All Monsters Killed");
+            allMonstersKilled = false;
+            return rtnMessage;
+        }
         if(monsters == null){
             rtnMessage.setMessage("No monster on tile");
             return rtnMessage;
@@ -143,9 +156,21 @@ class MapMonsterController {
             } else {
                 rtnMessage.setMessage(monsters.get(index).getName() + " Was killed");
             }
-            monsterVectorMap.get(location).remove(index);
         }
         return rtnMessage;
+    }
+    public void removeMonsters(Coordinates location){
+        List<Monster> monsters = monsterVectorMap.get(location);
+        List<Monster> newMonsters = new ArrayList<>();
+        for(Monster i: monsters){
+            if(i.getHealth() > 0){
+                newMonsters.add(i);
+            }
+        }
+        if(newMonsters.isEmpty()){
+            allMonstersKilled = true;
+        }
+        monsterVectorMap.put(location, newMonsters);
     }
     public void resetMonsters(){
         monsterVectorMap.clear();
@@ -205,8 +230,9 @@ class MapMonsterController {
         List<Monster> monsterList = monsterVectorMap.get(location);
         List<Messenger> rtnMessenger = new ArrayList<>();
         for(Monster i: monsterList){
-            rtnMessenger.add(attackMonsters(i.getName(),(int)Math.round(damage),location));
+            rtnMessenger.add(attackMonsters(i.getFullName(),(int)Math.round(damage),location));
         }
+        removeMonsters(location);
         return rtnMessenger;
     }
 }

@@ -68,7 +68,6 @@ public class EnvironmentChecker {
         }
     }
 
-
     private void checkForMonsters(CombatSystem combatSystem, CommandProcessor commandProcessor) {
         boolean monsterFound = mapController.isMonsterOnTile(playerController.getMapCoordinates());
         if (monsterFound) {

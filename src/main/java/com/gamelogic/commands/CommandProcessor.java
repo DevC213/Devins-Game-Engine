@@ -112,12 +112,13 @@ public class CommandProcessor {
     private void attack() {
 
         List<String> monstersOnTile = monsters.getMonsterNames(playerController.getMapCoordinates());
+
         if (monstersOnTile.isEmpty()) {
             controller.UIUpdate("No monster on tile", 0);
             commandState = CommandState.NONE;
             return;
         } else if (monstersOnTile.size() == 1) {
-            executePendingAction(monstersOnTile.getFirst());
+            attackMonster(monstersOnTile.getFirst());
             commandState = CommandState.NONE;
             return;
         }
@@ -182,7 +183,6 @@ public class CommandProcessor {
                     String message = combatSystem.attack(messenger).getMessage();
                     processAttacks(message);
                 }
-                attack();
             }case("single") -> {
                 controller.UIUpdate("Which Monster?", 0);
                 commandState = CommandState.ATTACK;

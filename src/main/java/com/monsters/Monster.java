@@ -25,7 +25,7 @@ public class Monster {
         return name;
     }
     public String getFullName(){
-        return name + "#" + number;
+        return name + " #" + number;
     }
     public void setHealth(int damage){
         this.health = damage;
