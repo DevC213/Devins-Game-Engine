@@ -2,6 +2,7 @@ package com.gamelogic.commands;
 
 import com.gamelogic.core.MainGameController;
 import com.gamelogic.combat.CombatSystem;
+import com.gamelogic.gameflow.ClassController;
 import com.gamelogic.map.IMonsters;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
@@ -27,33 +28,46 @@ public class CommandProcessor {
     private CommandState commandState = CommandState.NONE;
     Map<String, Runnable> charCommands;
     private boolean escape = false;
+
+
+    //MainGameController
     IGuiEventListener controller;
     IGuiCommandGetter commandGetter;
-    PlayerController playerController;
+
+    //Game Controller
     IUpdateMinimap updateMinimap;
     IUpdateGame updateGame;
+
+
     CombatSystem combatSystem;
     InventoryManager inventoryManager;
+    PlayerController playerController;
+
+    //mapController
     IMapState mapState;
     IMonsters monsters;
     IDoesDamage doesDamage;
     IAccessItems accessItems;
+
     Map<String, TileKey> tileKeyMap;
 
-    public CommandProcessor(MainGameController mainGameController, PlayerController playerController
-            , IUpdateMinimap updateMinimap, IUpdateGame updateGame, CombatSystem combatSystem, InventoryManager inventoryManager,
-                            IMonsters monsters, IAccessItems accessItems, IDoesDamage doesDamage, IMapState mapState, @NotNull Keybindings keybindings) {
-        this.controller = mainGameController;
-        this.playerController = playerController;
-        this.updateMinimap = updateMinimap;
-        this.combatSystem = combatSystem;
-        this.inventoryManager = inventoryManager;
-        this.updateGame = updateGame;
-        this.commandGetter = mainGameController;
-        this.mapState = mapState;
-        this.monsters = monsters;
-        this.doesDamage = doesDamage;
-        this.accessItems = accessItems;
+    public CommandProcessor(@NotNull Keybindings keybindings, ClassController classController) {
+        this.controller = classController.mainGameController;
+        this.playerController = classController.playerController;
+
+        this.updateGame = classController.gameController;
+        this.updateMinimap = classController.gameController;
+
+        this.combatSystem = classController.combatSystem;
+        this.inventoryManager = classController.inventoryManager;
+
+        this.commandGetter = classController.mainGameController;
+
+        this.mapState = classController.currentMapController;
+        this.monsters = classController.currentMapController;
+        this.doesDamage = classController.currentMapController;
+        this.accessItems = classController.currentMapController;
+
         HEALING = keybindings.heal().toUpperCase();
         ATTACKING = keybindings.attack().toUpperCase();
         GRAB_ITEM = keybindings.grabItem().toUpperCase();

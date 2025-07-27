@@ -3,15 +3,14 @@ package com.gamelogic.map.mapLogic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class OverworldMapData extends MapData {
     private final List<LevelData> levelDataList;
-    private final MapType mapType;
 
-    public OverworldMapData(MapType mapType) {
+    public OverworldMapData() {
         levelDataList = new ArrayList<>();
-        this.mapType = mapType;
     }
     public void processMap(int level, Map<String, String> levelMap, String theme, String voice, String sound) {
         MapGeneration mapGeneration = null;
@@ -38,6 +37,8 @@ public class OverworldMapData extends MapData {
 
                 }
                 case "Villages" -> mapVillageController = new MapVillageController(path);
+                case "Dungeons" -> {
+                }
                 default -> throw new RuntimeException("Unknown file found: " + path);
             }
 
@@ -45,14 +46,14 @@ public class OverworldMapData extends MapData {
         if(mapItemController == null ||  mapMonsterController == null) {
             throw new IllegalStateException("Incomplete MapData for level: " + level);
         }
-        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,mapVillageController,theme,voice,sound, mapType));
+        levelDataList.add(new LevelData(mapGeneration, mapItemController, mapMonsterController,mapVillageController,theme,voice,sound));
     }
 
     @Override
     public void processMap(String filePath) {}
 
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null, mapType));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null));
     }
 
     public LevelData getLevel(int level){

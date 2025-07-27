@@ -26,7 +26,7 @@ public class House extends MapController implements IExitCoordinates {
         this.level = super.level;
         mapType = MapType.HOUSE;
         super.mapType = this.mapType;
-        mapData = new HouseData(mapType);
+        mapData = new HouseData();
         mapData.processMap(fileMap);
         MapRegistry.addMap(this, ID);
     }

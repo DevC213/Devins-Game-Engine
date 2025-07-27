@@ -17,7 +17,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private final GameProgressController gameProgressController;
     private final MapSwitchingController  mapSwitchingController;
     private final GameProgression gameProgression;
-    private Difficulty difficulty;
     private final ClassController classController;
     Coordinates mainMapLocation;
     private int moves = 0;
@@ -26,19 +25,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private boolean inHouse = false;
     //Constructor
     public GameController(MainGameController mainGameController, Keybindings keybindings) {
-        classController = new ClassController(mainGameController,keybindings,this, difficulty);
+        classController = new ClassController(mainGameController,keybindings,this);
         currentMapController = classController.currentMapController;
         gameProgressController = new GameProgressController(this.classController);
         mapSwitchingController = new MapSwitchingController(this.classController);
         gameProgression = new GameProgression(this.classController);
     }
-    public void setDifficulty(String difficulty) {
-        switch(difficulty.toLowerCase()) {
-            case "normal" -> this.difficulty = Difficulty.NORMAL;
-            case "daredevil"  -> this.difficulty = Difficulty.HARDCORE;
-        }
-    }
-
     public void respawn() {
         gameProgressController.respawn();
         updateGameInfo();
@@ -71,7 +63,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     }
 
     public double tileHealthData(Coordinates location) {
-        return classController.getTileKey(currentMapController.getMapValue(location)).healthDelta();
+        return classController.tileKeyMap.get(currentMapController.getMapValue(location)).healthDelta();
     }
     public void handleInput(String keyPressed) {
         if(classController.playerController.isGameOver()){return;}
@@ -178,13 +170,16 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
         if(currentMapController.progressesGame()){
             gameProgression.levelProgression(currentMapController.getLevel(), deepestLevel, currentMapController);
+            if(currentMapController.getLevel() >  deepestLevel){
+                deepestLevel =  currentMapController.getLevel();
+            }
         }
         String village = gameProgression.checkProgression(currentMapController);
         if(village != null) {
             currentVillage = village;
             classController.environmentChecker.checkNPC(currentVillage, classController.playerController.getMapCoordinates());
         }
-        if(!classController.currentMapController.inVillage()){
+        if(!currentMapController.inVillage()){
             currentVillage = "";
         }
         if(!currentVillage.isEmpty()){

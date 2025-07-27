@@ -16,10 +16,10 @@ public class EnvironmentChecker {
     PlayerController playerController;
     MapController mapController;
 
-    EnvironmentChecker(MainGameController mainGameController, PlayerController playerController, MapController mapController) {
-        this.mainGameController = mainGameController;
-        this.playerController = playerController;
-        this.mapController = mapController;
+    EnvironmentChecker(ClassController classController) {
+        this.mainGameController = classController.mainGameController;
+        this.playerController = classController.playerController;
+        this.mapController = classController.currentMapController;
     }
 
     public void changeMap(MapController mapController) {

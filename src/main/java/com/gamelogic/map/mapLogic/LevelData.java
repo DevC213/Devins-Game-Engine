@@ -1,9 +1,13 @@
 package com.gamelogic.map.mapLogic;
 
-public record LevelData(MapGeneration map, MapItemController item, MapMonsterController monster, MapVillageController villages ,String theme, String voice, String sound, MapType type) {
+import java.util.Optional;
+
+public record LevelData(MapGeneration map, MapItemController item, MapMonsterController monster, MapVillageController villages , String theme, String voice, String sound) {
     public void resetGame() {
-        if( type() != MapType.HOUSE) {
+        if(item != null ) {
             item.resetMap();
+        }
+        if(monster != null) {
             monster.resetMonsters();
         }
     }

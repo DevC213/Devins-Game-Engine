@@ -14,11 +14,9 @@ import java.util.Objects;
 
 public class HouseData extends MapData{
     private final List<LevelData> levelDataList;
-    private final MapType mapType;
 
-    public HouseData(MapType mapType) {
+    public HouseData() {
         levelDataList = new ArrayList<>();
-        this.mapType = mapType;
     }
     public void processMap(int level, Map<String, String> levelMap, String theme, String voice, String sound) {}
     public void processMap(String filePath){
@@ -30,12 +28,12 @@ public class HouseData extends MapData{
         List<RHouseMap> tempHouseFloorList = gson.fromJson(reader, listType);
         for(RHouseMap rHouseMap : tempHouseFloorList) {
             mapGeneration = new MapGeneration(rHouseMap.map());
-            levelDataList.add(new LevelData(mapGeneration, null, null,null,rHouseMap.theme(),null,null, mapType));
+            levelDataList.add(new LevelData(mapGeneration, null, null,null,rHouseMap.theme(),null,null));
         }
 
     }
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null, mapType));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null));
     }
     public LevelData getLevel(int level){
         return levelDataList.get(level);

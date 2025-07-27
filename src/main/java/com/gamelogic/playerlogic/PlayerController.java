@@ -20,7 +20,6 @@ public class PlayerController implements PlayerDamageListener{
     PlayerEquipment playerEquipment;
     PlayerHealth playerHealth;
     PlayerInventory playerInventory;
-    Difficulty difficulty;
     double monstersKilled = 0;
     int playerLevel = 1;
     int level = 0;
@@ -30,13 +29,12 @@ public class PlayerController implements PlayerDamageListener{
     boolean gameOver = false;
 
     public PlayerController(Coordinates playerLocation, Coordinates maxCoordinates,
-                            IGuiEventListener guiEventListener, Difficulty difficulty) {
+                            IGuiEventListener guiEventListener) {
         playerEquipment = new PlayerEquipment();
         playerHealth = new PlayerHealth();
         playerInventory = new PlayerInventory();
         this.guiEventListener = guiEventListener;
         playerMovement = new PlayerMovement(playerLocation,maxCoordinates, this);
-        this.difficulty = difficulty;
         gold = 100;
     }
     public List<String> viewInventory(){
@@ -120,9 +118,6 @@ public class PlayerController implements PlayerDamageListener{
         playerEquipment.setArmor(armor);
     }
     public void gameOver(){
-        if(difficulty == Difficulty.HARDCORE) {
-            this.gameOver = true;
-        }
         guiEventListener.GameOver(false);
     }
 

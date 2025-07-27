@@ -86,7 +86,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         }
         activateFields();
         adventure.setCharacterID(character);
-        adventure.setDifficulty(difficulty);
         adventure.setHealth();
         script.clear();
         adventure.intro();
@@ -120,7 +119,7 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
                     
                     Thank you for playing my game. Press start to begin again.""");
             toggleItems();
-        } else if (difficultySelected == Difficulty.HARDCORE) {
+        } else if (difficultySelected.endGame()) {
             script.appendText("Game Over, press start to begin again.");
             if (!gameOver) {
                 toggleItems();
@@ -171,7 +170,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
             }
         }
     }
-
     @Override
     public void UIUpdate(Messenger message, int box) {
         //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
@@ -247,9 +245,3 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         script.requestFocus();
     }
 }
-/*
- Press 'start' to explore the island.
-                        Normal: Respawn on death
-                        Hardcore: Deletes save on death
-                        Both will save progress, but hardcore will delete save upon death.
- */

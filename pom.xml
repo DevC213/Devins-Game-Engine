@@ -80,7 +80,6 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-
             <!-- JavaFX Maven Plugin for launching -->
             <plugin>
                 <groupId>org.openjfx</groupId>

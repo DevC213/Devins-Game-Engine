@@ -16,8 +16,8 @@ public class Application extends javafx.application.Application {
     Adventure adventure;
     @Override
     public void start(final Stage stage) {
-        final int defaultV = 700;
-        final int defaultV1 = 500;
+        final float defaultV = 700f;
+        final float defaultV1 = 500f;
         adventure = Adventure.getAdventure();
         FXMLLoader mainGame = new FXMLLoader(Application.class.getResource("/com/gamelogic/mainGame.fxml"));
         FXMLLoader pauseMenu = new FXMLLoader(Application.class.getResource("/com/gamelogic/pauseMenu.fxml"));

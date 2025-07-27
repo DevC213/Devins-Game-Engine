@@ -40,7 +40,7 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
         mapType = type;
         this.ID = ID;
         validStart = new ValidStart(this, this, this);
-        mapData = new OverworldMapData(type);
+        mapData = new OverworldMapData();
         try {
             Gson gson = new Gson();
             InputStream input = Objects.requireNonNull(getClass().getResourceAsStream(filePath));
@@ -250,6 +250,9 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
 
     @Override
     public boolean inVillage() {
+        if(level > 0){
+            return false;
+        }
         return mapData.getLevel(level).villages().inVillage();
     }
 }

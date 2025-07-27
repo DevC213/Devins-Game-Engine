@@ -3,5 +3,6 @@
   "Items":"/MapData/information/levelOne/Items.json",
   "Monsters":"/MapData/information/levelOne/Monsters.json",
   "SpawnTable":"/MapData/information/levelOne/spawnTable.json",
-  "Villages": "/MapData/information/levelOne/villages.json"
+  "Villages": "/MapData/information/levelOne/villages.json",
+  "Dungeons": ""
 }

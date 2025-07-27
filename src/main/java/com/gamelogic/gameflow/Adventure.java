@@ -89,11 +89,6 @@ public class Adventure {
         }
         return kb;
     }
-
-    public void setDifficulty(String difficulty) {
-        gameController.setDifficulty(difficulty);
-    }
-
     public void respawn() {
         gameController.respawn();
     }

@@ -15,10 +15,10 @@ import com.gamelogic.playerlogic.PlayerController;
 
 import java.util.Map;
 
-public class ClassController {
+public final class ClassController {
     public final PlayerController playerController;
     public final MainGameController mainGameController;
-    public MapController currentMapController;
+    public final MapController currentMapController;
     public final InventoryManager inventoryManager;
     public final CombatSystem combatSystem;
     public final UIMapController uiMapController;
@@ -27,33 +27,45 @@ public class ClassController {
     public final EnvironmentChecker environmentChecker;
     public final GameController gameController;
     public final Map<String, TileKey> tileKeyMap;
-    public ClassController(MainGameController mainGameController, Keybindings keybindings, GameController gameController, Difficulty difficulty) {
-        this.gameController = gameController;
+    public ClassController(MainGameController mainGameController, Keybindings keybindings, GameController gameController) {
+
+        int startingVisibility;
+        final String TILE_PATH = "/key.json";
+        final String CHARACTERS_PATH = "/characters.json";
+        final String LEVEL_DATA_PATH = "/levelData.json";
+
+        //Initiate Tile Key
+        TileKeyRegistry.initialize(TILE_PATH);
         tileKeyMap = TileKeyRegistry.getTileKeyList();
-        scriptController = new ScriptController();
+
+
+        //Initiate game controllers
+        this.gameController = gameController;
+        this.scriptController = new ScriptController();
         this.mainGameController = mainGameController;
-        TileKeyRegistry.initialize("/key.json");
-        uiMapController = new UIMapController();
-        this.currentMapController = new Overworld("/levelData.json", MapType.OVERWORLD,0);
+
+        //Initiate UI + add characters
+        this.uiMapController = new UIMapController();
+        this.uiMapController.processCharacters(CHARACTERS_PATH);
+
+        //Generate maps
+        this.currentMapController = new Overworld(LEVEL_DATA_PATH, MapType.OVERWORLD,0);
         MapRegistry.addMap(currentMapController,0);
-        uiMapController.processCharacters("/characters.json");
         Coordinates startingCords = currentMapController.generateValidStartPosition();
-        this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), this.mainGameController, difficulty);
+
+        //Initiate player
+        this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), this.mainGameController);
         this.combatSystem = new CombatSystem(playerController);
-        inventoryManager = new InventoryManager(playerController, mainGameController);
-        commandProcessor = new CommandProcessor(mainGameController, playerController, this.gameController, this.gameController, combatSystem, inventoryManager,
-                currentMapController, currentMapController, currentMapController, currentMapController, keybindings);
-        int startingVisibility = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates())).visibility();
+        this.inventoryManager = new InventoryManager(playerController, mainGameController);
+        this.commandProcessor = new CommandProcessor(keybindings, this);
+        this.environmentChecker = new EnvironmentChecker(this);
+
+        //Set initial visibility
+        startingVisibility = tileKeyMap.get(currentMapController.getMapValue(playerController.getMapCoordinates())).visibility();
         uiMapController.setVisibility(startingVisibility);
-        if (startingVisibility != 2) {
-            mainGameController.UIUpdate("Player: The air is thick here", 0);
-        }
-        environmentChecker = new EnvironmentChecker(this.mainGameController,playerController,currentMapController);
+
     }
     public MapController getMapController(int mapId) {
         return MapRegistry.getMapController(mapId);
-    }
-    public TileKey getTileKey(String tile) {
-        return tileKeyMap.get(tile);
     }
 }

@@ -9,10 +9,10 @@ public class QuestRegistry {
 
     private static final Map<Integer, Quest> questRegistry = new HashMap<>();
 
-    public void addQuest(Quest quest){
+    public static void addQuest(Quest quest){
         questRegistry.put(quest.getReward(), quest);
     }
-    public Quest getQuest(int id){
+    public static Quest getQuest(int id){
         return questRegistry.get(id);
     }
 }
