@@ -1,7 +1,6 @@
 package com.gamelogic.gameflow;
 
 import com.gamelogic.commands.Keybindings;
-import com.gamelogic.core.MainGameController;
 import com.gamelogic.core.MapRegistry;
 import com.google.gson.Gson;
 import com.savesystem.GameState;

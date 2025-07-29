@@ -68,11 +68,6 @@ public abstract class MapController implements IDoesDamage, IMapState, IAccessIt
         }
         return mapData.getLevel(level).villages().checkVillage(location);
     }
-
-    public boolean getHouseNumber(Coordinates coordinates, String string) {
-        return mapData.getLevel(level).villages().checkHouse(coordinates, string);
-    }
-
     public House getHouse(Coordinates coordinates, String village) {
         return mapData.getLevel(level).villages().getHouseMap(coordinates, village);
     }

@@ -17,7 +17,7 @@ public class EnvironmentChecker {
     MapController mapController;
 
     EnvironmentChecker(ClassController classController) {
-        this.mainGameController = classController.mainGameController;
+        this.mainGameController = ClassController.mainGameController;
         this.playerController = classController.playerController;
         this.mapController = classController.currentMapController;
     }

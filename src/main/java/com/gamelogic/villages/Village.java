@@ -64,9 +64,6 @@ public class Village{
     public String getName(){
         return name;
     }
-    public boolean atHouse(Coordinates coordinates){
-        return houseMap.containsKey(coordinates);
-    }
     public NPC getNPC(Coordinates coordinates){
         return NPCs.get(coordinates);
     }

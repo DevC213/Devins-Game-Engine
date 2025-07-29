@@ -12,7 +12,6 @@ import com.savesystem.MapState;
 
 public class House extends MapController implements IExitCoordinates {
     int ID;
-    int houseNumber;
     int level;
     final Coordinates mainCoordinates;
     final Coordinates exitCoordinates;

@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 public class PauseMenuController {
@@ -14,9 +13,6 @@ public class PauseMenuController {
     public Button Resume;
     public Button SaveGame;
     public Button Quit;
-
-    @FXML
-    public AnchorPane pausePane;
 
     @FXML
     public GridPane gridPane;
@@ -29,11 +25,6 @@ public class PauseMenuController {
     private void QuitGame(){
         Platform.exit();
     }
-    @FXML
-    private void LoadGame(){}
-
-    @FXML
-    private void SaveGame(){}
 
     @FXML
     private void Resume(){

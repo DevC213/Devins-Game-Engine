@@ -1,7 +1,6 @@
 package com.gamelogic.playerlogic;
 
 import com.armor.Armor;
-import com.gamelogic.core.Difficulty;
 import com.recoveryitems.RecoveryItem;
 import com.savesystem.PlayerState;
 import com.weapons.Weapon;

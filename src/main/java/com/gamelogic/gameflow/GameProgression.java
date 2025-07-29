@@ -6,7 +6,6 @@ import com.gamelogic.messaging.Messenger;
 public class GameProgression {
     ClassController classController;
     int deepestLevel = 0;
-    MapController mapController;
     public GameProgression(ClassController classController) {
         this.classController = classController;
     }

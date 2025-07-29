@@ -22,15 +22,6 @@ public class MapRegistry {
         }
         return mapStates;
     }
-    public static int getMapId(MapController mapController){
-        for(MapController map: mapRegistry.values()){
-            if(map == mapController){
-                return map.getID();
-            }
-        }
-        return -1;
-    }
-
     public static void loadData(Map<Integer, MapState> mapStates) {
         for(int id: mapRegistry.keySet()){
             MapController mapController = mapRegistry.get(id);

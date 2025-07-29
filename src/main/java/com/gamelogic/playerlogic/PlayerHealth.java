@@ -68,9 +68,6 @@ class PlayerHealth {
     public double getSecondaryMaxHealth(){
         return secondaryMaxHealth;
     }
-    public double getMaxHealth(){
-        return maxHealth;
-    }
     public void setHealth(int health){
         this.health = health;
         maxHealth = this.health;

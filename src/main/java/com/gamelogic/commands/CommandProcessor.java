@@ -1,6 +1,5 @@
 package com.gamelogic.commands;
 
-import com.gamelogic.core.MainGameController;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.gameflow.ClassController;
 import com.gamelogic.map.IMonsters;
