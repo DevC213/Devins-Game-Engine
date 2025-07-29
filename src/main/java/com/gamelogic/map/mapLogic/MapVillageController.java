@@ -37,7 +37,7 @@ public class MapVillageController {
                 if (row <= bottom.x() && row >= top.x() && column <= bottom.y() && column >= top.y()) {
                     inVillage = true;
                     messenger.setMessage("Welcome to: " + village.getName());
-                    messenger.addPayloadS(village.getName());
+                    messenger.addPayloadString(village.getName());
                 }
             }
         } else{

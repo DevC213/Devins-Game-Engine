@@ -40,3 +40,8 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
+#gameTitle{
+    -fx-background-color: transparent; /* Makes the TextField background completely transparent */
+    -fx-font-weight: bold;
+    -fx-text-fill: white; /* Sets the text color to black (or any desired color) */
+}

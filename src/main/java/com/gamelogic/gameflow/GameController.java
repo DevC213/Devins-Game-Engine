@@ -24,8 +24,8 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private String currentVillage = "";
     private boolean inHouse = false;
     //Constructor
-    public GameController(MainGameController mainGameController, Keybindings keybindings) {
-        classController = new ClassController(mainGameController,keybindings,this);
+    public GameController(Keybindings keybindings) {
+        classController = new ClassController(keybindings,this);
         currentMapController = classController.currentMapController;
         gameProgressController = new GameProgressController(this.classController);
         mapSwitchingController = new MapSwitchingController(this.classController);
@@ -92,7 +92,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
         enterHouse();
         leaveHouse();
-        classController.uiMapController.minimap(classController.mainGameController, currentMapController, classController.playerController);
+        classController.uiMapController.minimap(ClassController.mainGameController, currentMapController, classController.playerController);
     }
 
     private void leaveHouse() {
@@ -147,7 +147,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     private void spawnMonster() {
         Messenger messenger = currentMapController.spawnMonsters(classController.playerController.getMapCoordinates(), moves);
         if (messenger != null && messenger.getMessage() != null) {
-            classController.mainGameController.UIUpdate(messenger.getMessage(), 0);
+            ClassController.mainGameController.UIUpdate(messenger.getMessage(), 0);
             moves = 0;
         }
     }
@@ -155,12 +155,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     //progression
     private void Victory(){
         classController.playerController.toggleGameOver();
-        classController.mainGameController.GameOver(true);
+        ClassController.mainGameController.GameOver(true);
     }
     @Override
     public void updateGameInfo() {
         if(classController.playerController.isGameOver()){return;}
-        classController.mainGameController.UIUpdate("(" + classController.playerController.getDisplayCoordinates().x() + "," + classController.playerController.getDisplayCoordinates().y() + ")", 2);
+        ClassController.mainGameController.UIUpdate("(" + classController.playerController.getDisplayCoordinates().x() + "," + classController.playerController.getDisplayCoordinates().y() + ")", 2);
         classController.inventoryManager.updateInventoryDisplay();
         checkEnvironment();
         checkProgression();

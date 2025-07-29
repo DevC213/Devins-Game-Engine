@@ -11,16 +11,16 @@ public class GameProgression {
         this.classController = classController;
     }
     public void levelProgression(int level, int deepestLevel, MapController currentMapController) {
-        if (level > deepestLevel) {
+        if (level > this.deepestLevel) {
             String sound = currentMapController.getSound();
             String voice = currentMapController.getVoice();
-            classController.mainGameController.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
+            ClassController.mainGameController.UIUpdate("You gain confidence delving deeper, and can take more hits!", 0);
             classController.playerController.increaseMaxHealth(25 * level);
             classController.playerController.increaseLevel();
-            deepestLevel = level;
+            this.deepestLevel = deepestLevel;
             String script = classController.scriptController.script(level);
             if(script != null) {
-                classController.mainGameController.UIUpdate(script, 0);
+                ClassController.mainGameController.UIUpdate(script, 0);
             } else {
                 if(sound != null) {
                     classController.scriptController.playSound(sound);
@@ -38,7 +38,7 @@ public class GameProgression {
             if (messenger != null) {
                 String village = messenger.getMessage();
                 if (village != null) {
-                    classController.mainGameController.UIUpdate(village, 0);
+                    ClassController.mainGameController.UIUpdate(village, 0);
                     rtnString = messenger.getPayloadString();
                 }
             }

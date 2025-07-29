@@ -16,8 +16,10 @@ import com.gamelogic.playerlogic.PlayerController;
 import java.util.Map;
 
 public final class ClassController {
+
+
     public final PlayerController playerController;
-    public final MainGameController mainGameController;
+    public static MainGameController mainGameController;
     public final MapController currentMapController;
     public final InventoryManager inventoryManager;
     public final CombatSystem combatSystem;
@@ -27,7 +29,7 @@ public final class ClassController {
     public final EnvironmentChecker environmentChecker;
     public final GameController gameController;
     public final Map<String, TileKey> tileKeyMap;
-    public ClassController(MainGameController mainGameController, Keybindings keybindings, GameController gameController) {
+    public ClassController(Keybindings keybindings, GameController gameController) {
 
         int startingVisibility;
         final String TILE_PATH = "/key.json";
@@ -42,7 +44,7 @@ public final class ClassController {
         //Initiate game controllers
         this.gameController = gameController;
         this.scriptController = new ScriptController();
-        this.mainGameController = mainGameController;
+        //this.mainGameController = mainGameController;
 
         //Initiate UI + add characters
         this.uiMapController = new UIMapController();
@@ -54,7 +56,7 @@ public final class ClassController {
         Coordinates startingCords = currentMapController.generateValidStartPosition();
 
         //Initiate player
-        this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), this.mainGameController);
+        this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), mainGameController);
         this.combatSystem = new CombatSystem(playerController);
         this.inventoryManager = new InventoryManager(playerController, mainGameController);
         this.commandProcessor = new CommandProcessor(keybindings, this);

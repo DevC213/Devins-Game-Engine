@@ -16,12 +16,13 @@ public class Application extends javafx.application.Application {
     Adventure adventure;
     @Override
     public void start(final Stage stage) {
-        final float defaultV = 700f;
-        final float defaultV1 = 500f;
+        final float defaultV = 1000f;
+        final float defaultV1 = 700f;
         adventure = Adventure.getAdventure();
         FXMLLoader mainGame = new FXMLLoader(Application.class.getResource("/com/gamelogic/mainGame.fxml"));
         FXMLLoader pauseMenu = new FXMLLoader(Application.class.getResource("/com/gamelogic/pauseMenu.fxml"));
         PauseMenuController pauseMenuController;
+        MainGameController mainGameController;
 
         Parent game = null;
         Parent pause = null;
@@ -29,9 +30,11 @@ public class Application extends javafx.application.Application {
         try {
             game = mainGame.load();
             pause = pauseMenu.load();
+            mainGameController = mainGame.getController();
             pauseMenuController = pauseMenu.getController();
             pauseMenuController.setAdventure();
             pauseMenuController.linkViews(game);
+            mainGameController.giveClass();
             StackPane root = new StackPane();
             pause.setVisible(false);
             root.getChildren().addAll(game, pause);
@@ -40,6 +43,7 @@ public class Application extends javafx.application.Application {
             stage.setTitle("Island Adventure");
             stage.setScene(scene);
             stage.show();
+            stage.setResizable(false);
             showInstructions();
             
         } catch (Exception e) {

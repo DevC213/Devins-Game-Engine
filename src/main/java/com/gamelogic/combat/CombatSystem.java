@@ -22,7 +22,7 @@ public class CombatSystem {
         return messenger;
     }
     public void monstersAttack(Messenger messenger){
-        for (Double damage : messenger.getPayloadD()) {
+        for (Double damage : messenger.getListPayloadDouble()) {
             monsterAttack(damage);
         }
     }

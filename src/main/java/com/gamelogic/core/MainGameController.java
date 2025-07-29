@@ -3,6 +3,7 @@ package com.gamelogic.core;
 import com.gamelogic.gameflow.Adventure;
 import com.gamelogic.commands.IGuiCommandGetter;
 import com.gamelogic.commands.IGuiEventListener;
+import com.gamelogic.gameflow.ClassController;
 import com.gamelogic.messaging.Messenger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -42,9 +43,8 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
     private boolean gameOver = false;
     private Difficulty difficultySelected;
 
-
-    public MainGameController() {
-        script = new TextArea();
+    public void giveClass(){
+        ClassController.mainGameController = this;
     }
 
     @FXML
@@ -68,7 +68,7 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
                 }
             }
 
-            adventure.startGame(this);
+            adventure.startGame();
             activated = true;
         }
         String character = characterSelection.getValue();

@@ -52,7 +52,7 @@ public class CommandProcessor {
     Map<String, TileKey> tileKeyMap;
 
     public CommandProcessor(@NotNull Keybindings keybindings, ClassController classController) {
-        this.controller = classController.mainGameController;
+        this.controller = ClassController.mainGameController;
         this.playerController = classController.playerController;
 
         this.updateGame = classController.gameController;
@@ -61,7 +61,7 @@ public class CommandProcessor {
         this.combatSystem = classController.combatSystem;
         this.inventoryManager = classController.inventoryManager;
 
-        this.commandGetter = classController.mainGameController;
+        this.commandGetter = ClassController.mainGameController;
 
         this.mapState = classController.currentMapController;
         this.monsters = classController.currentMapController;

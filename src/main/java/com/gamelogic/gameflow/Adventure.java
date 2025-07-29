@@ -29,8 +29,8 @@ public class Adventure {
         return adventure;
     }
 
-    public void startGame(final MainGameController control) {
-        gameController = new GameController(control, readCustomBindings());
+    public void startGame() {
+        gameController = new GameController(readCustomBindings());
     }
     public void setCharacterID(String characterID) {
         gameController.setCharacter(characterID);
@@ -114,7 +114,7 @@ public class Adventure {
         }
     }
     public void loadGame() {
-
+        ClassController.mainGameController.gameStart();
         try{
             Gson gson = new Gson();
             String json = Files.readString(Paths.get(getSystemPath() + "/savegame.json"));

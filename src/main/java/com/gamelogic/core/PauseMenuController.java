@@ -5,7 +5,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 
 public class PauseMenuController {
     public Button LoadGame;
@@ -15,6 +17,10 @@ public class PauseMenuController {
 
     @FXML
     public AnchorPane pausePane;
+
+    @FXML
+    public GridPane gridPane;
+    public TextArea activeQuests;
 
     private Node mainGame;
     private Adventure adventure;
@@ -31,7 +37,7 @@ public class PauseMenuController {
 
     @FXML
     private void Resume(){
-        pausePane.setVisible(false);
+        gridPane.setVisible(false);
         if(mainGame != null){
             mainGame.setVisible(true);
             mainGame.setDisable(false);
