@@ -11,11 +11,22 @@ module com.example.adventure {
     exports com.monsters;
     exports com.weapons;
     exports com.armor;
-    exports com.gamelogic.playerlogic;
-    exports com.gamelogic.map.mapLogic;
     exports com.recoveryitems;
 
-    opens com.gamelogic to javafx.fxml;
+    exports com.gamelogic.playerlogic;
+    exports com.gamelogic.map.mapLogic;
+    exports com.gamelogic.gameflow;
+    exports com.gamelogic.combat;
+    exports com.gamelogic.commands;
+    exports com.gamelogic.messaging;
+    exports com.gamelogic.inventory;
+    exports com.gamelogic.map;
+    exports com.gamelogic.villages;
+    exports com.gamelogic.core;
+    exports com.gamelogic.rawdataclasses;
+
+    exports com.savesystem to javafx.fxml;
+
     opens com.monsters to javafx.fxml;
     opens com.recoveryitems to javafx.fxml;
     opens com.weapons to javafx.fxml;
@@ -23,22 +34,14 @@ module com.example.adventure {
     opens com.gamelogic.playerlogic to javafx.fxml;
     opens com.gamelogic.rawdataclasses to com.google.gson;
     opens com.gamelogic.map.mapLogic to com.google.gson, javafx.fxml;
-    exports com.gamelogic.core;
-    opens com.gamelogic.core to javafx.fxml;
-    exports com.gamelogic.gameflow;
     opens com.gamelogic.gameflow to javafx.fxml;
-    exports com.gamelogic.combat;
     opens com.gamelogic.combat to javafx.fxml;
-    exports com.gamelogic.commands;
     opens com.gamelogic.commands to javafx.fxml;
-    exports com.gamelogic.messaging;
     opens com.gamelogic.messaging to javafx.fxml;
-    exports com.gamelogic.inventory;
     opens com.gamelogic.inventory to javafx.fxml;
-    exports com.gamelogic.map;
     opens com.gamelogic.map to javafx.fxml;
-    exports com.gamelogic.villages;
     opens com.gamelogic.villages to javafx.fxml;
-    exports com.savesystem to javafx.fxml;
+    opens com.gamelogic.core to  javafx.fxml;
     opens com.savesystem to javafx.fxml,com.google.gson;
+
 }

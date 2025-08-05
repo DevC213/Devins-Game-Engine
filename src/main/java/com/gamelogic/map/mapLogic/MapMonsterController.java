@@ -9,6 +9,8 @@ import com.gamelogic.map.SpawnTable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.savesystem.MonsterState;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 
 import java.io.InputStream;
@@ -18,7 +20,7 @@ import java.util.*;
 
 class MapMonsterController {
 
-    Map<Coordinates, List<Monster>> monsterVectorMap;
+    Map<Coordinates, ObservableList<Monster>> monsterVectorMap;
     Map<String, SpawnTable> spawnChanges;
     MonsterFactory monsterFactory;
     private final String monsterLocations;
@@ -38,7 +40,7 @@ class MapMonsterController {
         List<RMonster> tempMonsterList = gson.fromJson(reader, listType);
         for(RMonster rMonster : tempMonsterList) {
             Coordinates coordinates = new Coordinates(rMonster.position()[0], rMonster.position()[1]);
-            List<Monster> tempList = new ArrayList<>();
+            ObservableList<Monster> tempList = FXCollections.observableArrayList();
             for (int i = 0; i < rMonster.quantity(); i++) {
                 tempList.add(monsterFactory.MonsterFac(rMonster.damage(), rMonster.health(), rMonster.name(), i + 1));
             }
@@ -61,7 +63,7 @@ class MapMonsterController {
         for(String j: spawnChanges.keySet()) {
             cumulative += spawnChanges.get(j).weight();
             if (number < cumulative) {
-                monsterVectorMap.put(location, new ArrayList<>(Collections.singletonList(monsterFactory.MonsterFac(spawnChanges.get(j).damage(), spawnChanges.get(j).hp(), j, 1))));
+                monsterVectorMap.put(location, FXCollections.observableArrayList(Collections.singletonList(monsterFactory.MonsterFac(spawnChanges.get(j).damage(), spawnChanges.get(j).hp(), j, 1))));
                 return;
             }
         }
@@ -70,7 +72,7 @@ class MapMonsterController {
 
         List<Monster> monsters = monsterVectorMap.get(location);
         Map<String,Integer> monstersNum = getMonsterNumbers(location);
-        List<String> rtnStrVec = new ArrayList<>();
+        List<String> rtnStrVec = FXCollections.observableArrayList();
         if(monsters == null){
             return rtnStrVec;
         }
@@ -159,17 +161,14 @@ class MapMonsterController {
         return rtnMessage;
     }
     public void removeMonsters(Coordinates location){
-        List<Monster> monsters = monsterVectorMap.get(location);
-        List<Monster> newMonsters = new ArrayList<>();
-        for(Monster i: monsters){
-            if(i.getHealth() > 0){
-                newMonsters.add(i);
+        ObservableList<Monster> monsters = monsterVectorMap.get(location);
+        if(monsters != null){
+            monsters.removeIf(monster -> monster.getHealth() <=0);
+            if(monsters.isEmpty()){
+                allMonstersKilled = true;
             }
+
         }
-        if(newMonsters.isEmpty()){
-            allMonstersKilled = true;
-        }
-        monsterVectorMap.put(location, newMonsters);
     }
     public void resetMonsters(){
         monsterVectorMap.clear();
@@ -211,13 +210,12 @@ class MapMonsterController {
         Monster monster;
         for(MonsterState monsterState: monsterList){
             coordinates = new Coordinates(monsterState.x, monsterState.y);
-
             if(monsterVectorMap.get(coordinates) != null){
                 number++;
                 monster = monsterFactory.MonsterFac((int)monsterState.damage, monsterState.health, monsterState.name, number);
                 monsterVectorMap.get(coordinates).add(monster);
             } else{
-                monsterVectorMap.put(coordinates, new ArrayList<>());
+                monsterVectorMap.put(coordinates, FXCollections.observableArrayList());
                 number = 1;
                 monster = monsterFactory.MonsterFac((int)monsterState.damage, monsterState.health, monsterState.name, number);
                 monsterVectorMap.get(coordinates).add(monster);
@@ -233,5 +231,8 @@ class MapMonsterController {
         }
         removeMonsters(location);
         return rtnMessenger;
+    }
+    public ObservableList<Monster> getMonsterList(Coordinates location){
+        return monsterVectorMap.get(location);
     }
 }

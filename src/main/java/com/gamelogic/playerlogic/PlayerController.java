@@ -7,6 +7,7 @@ import com.weapons.Weapon;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.commands.IGuiEventListener;
 import com.gamelogic.messaging.Messenger;
+import javafx.collections.ObservableList;
 
 import java.util.List;
 
@@ -157,6 +158,8 @@ public class PlayerController implements PlayerDamageListener{
 
     public void monsterKilled(){ //<- this is my XP system
         monstersKilled = monstersKilled + (1 + Math.floor(1.5 * level));
+    }
+    public void levelUp(){
         if(monstersKilled >= levelUp){
             increaseMaxHealth((playerHealth.getSecondaryMaxHealth() * 0.1));
             guiEventListener.UIUpdate("You gain more confidence, and can withstand more",0);
@@ -232,5 +235,9 @@ public class PlayerController implements PlayerDamageListener{
 
     public int getDefence() {
         return playerEquipment.getDefence();
+    }
+
+    public ObservableList<RecoveryItem> getRecoveryItems() {
+        return playerHealth.getRecoveryItems();
     }
 }

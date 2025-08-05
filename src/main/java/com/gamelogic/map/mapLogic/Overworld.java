@@ -14,9 +14,11 @@ import com.gamelogic.villages.House;
 import com.gamelogic.villages.NPC;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.monsters.Monster;
 import com.recoveryitems.RecoveryItem;
 import com.savesystem.MapState;
 import com.weapons.Weapon;
+import javafx.collections.ObservableList;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -176,7 +178,9 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
     public List<String> getMonsters(Coordinates location) {
         return mapData.getLevel(level).monster().getMonsters(location);
     }
-
+    public ObservableList<Monster> getMonstersObs(Coordinates location) {
+        return mapData.getLevel(level).monster().getMonsterList(location);
+    }
     public boolean isMonsterOnTile(Coordinates location) {
         return (mapType.hasMonsters() && !mapData.getLevel(level).monster().getMonsters(location).isEmpty());
     }

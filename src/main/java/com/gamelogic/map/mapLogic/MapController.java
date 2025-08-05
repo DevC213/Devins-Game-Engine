@@ -3,6 +3,7 @@ package com.gamelogic.map.mapLogic;
 import com.armor.Armor;
 import com.gamelogic.villages.House;
 import com.gamelogic.villages.NPC;
+import com.monsters.Monster;
 import com.savesystem.MapState;
 import com.weapons.Weapon;
 import com.gamelogic.map.IMonsters;
@@ -13,6 +14,7 @@ import com.gamelogic.messaging.Messenger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recoveryitems.RecoveryItem;
+import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -153,6 +155,10 @@ public abstract class MapController implements IDoesDamage, IMapState, IAccessIt
             return false;
         }
         return mapData.getLevel(level).villages().inVillage();
+    }
+
+    public ObservableList<Monster> getMonstersObs(Coordinates mapCoordinates) {
+        return mapData.getLevel(level).monster().getMonsterList(mapCoordinates);
     }
 }
 

@@ -20,4 +20,8 @@ public class RecoveryItem {
         return healing;
     }
 
+    @Override
+    public String toString() {
+        return getName() + " - " + getHealValue();
+    }
 }

@@ -18,9 +18,10 @@ public class Application extends javafx.application.Application {
     public void start(final Stage stage) {
         final float defaultV = 1000f;
         final float defaultV1 = 700f;
+        final String folderPath = "/com/gameData/";
         adventure = Adventure.getAdventure();
-        FXMLLoader mainGame = new FXMLLoader(Application.class.getResource("/com/gamelogic/mainGame.fxml"));
-        FXMLLoader pauseMenu = new FXMLLoader(Application.class.getResource("/com/gamelogic/pauseMenu.fxml"));
+        FXMLLoader mainGame = new FXMLLoader(Application.class.getResource(folderPath + "mainGame.fxml"));
+        FXMLLoader pauseMenu = new FXMLLoader(Application.class.getResource(folderPath + "pauseMenu.fxml"));
         PauseMenuController pauseMenuController;
         MainGameController mainGameController;
 
@@ -39,11 +40,10 @@ public class Application extends javafx.application.Application {
             pause.setVisible(false);
             root.getChildren().addAll(game, pause);
             scene = new Scene(root, defaultV, defaultV1);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/gamelogic/game.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(folderPath + "game.css")).toExternalForm());
             stage.setTitle("Island Adventure");
             stage.setScene(scene);
             stage.show();
-            stage.setResizable(false);
             showInstructions();
             
         } catch (Exception e) {

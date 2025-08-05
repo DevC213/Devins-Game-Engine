@@ -1,16 +1,18 @@
 package com.gamelogic.playerlogic;
 
 import com.recoveryitems.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.*;
 
 class PlayerHealth {
-    private List<RecoveryItem> recoveryItems;
+    private ObservableList<RecoveryItem> recoveryItems;
     private double health;
     private double maxHealth;
     private double secondaryMaxHealth;
     public PlayerHealth(){
-        recoveryItems = new ArrayList<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+        recoveryItems = defaultHealthList();
     }
     public double UpdateHealth(double change){
         health += change;
@@ -31,11 +33,14 @@ class PlayerHealth {
         }
         return "";
     }
+    private ObservableList<RecoveryItem> defaultHealthList(){
+        return FXCollections.observableArrayList(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+    }
     public void reset(){
         health = 100;
         secondaryMaxHealth = 150;
         maxHealth = 100;
-        recoveryItems = new ArrayList<>(Arrays.asList(new RecoveryItem("Bread", 10), new RecoveryItem("Health Pot", 20)));
+        recoveryItems = defaultHealthList();
     }
     public void clearHealingItems(){
         recoveryItems.clear();
@@ -85,8 +90,11 @@ class PlayerHealth {
         }
         return rtnMap;
     }
-
     public double getHealth() {
         return this.health;
+    }
+
+    public ObservableList<RecoveryItem> getRecoveryItems() {
+        return recoveryItems;
     }
 }

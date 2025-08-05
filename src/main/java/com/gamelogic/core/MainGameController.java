@@ -5,12 +5,14 @@ import com.gamelogic.commands.IGuiCommandGetter;
 import com.gamelogic.commands.IGuiEventListener;
 import com.gamelogic.gameflow.ClassController;
 import com.gamelogic.messaging.Messenger;
+import com.monsters.Monster;
+import com.recoveryitems.RecoveryItem;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -28,6 +30,12 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
     public TextField money;
     public ComboBox<String> characterSelection;
     public ComboBox<String> difficulty;
+    public GridPane enemySelection;
+    public GridPane healthItems;
+    public Button AOEAttack;
+    public Button singleAttack;
+    public ComboBox<Monster> enemyList;
+    public ComboBox<RecoveryItem> healthItemList;
     @FXML
     private TextField commandInput;
     @FXML
@@ -85,6 +93,7 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
             default -> throw new IllegalArgumentException("Invalid difficulty");
         }
         activateFields();
+        bindHealingItems(adventure.getRecoveryItems());
         adventure.setCharacterID(character);
         adventure.setHealth();
         script.clear();
@@ -105,6 +114,8 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         miniMap.setVisible(true);
         money.setVisible(true);
         difficulty.setVisible(false);
+        enemySelection.setVisible(true);
+        healthItems.setVisible(true);
         Platform.runLater(() -> script.setScrollTop(0));
     }
 
@@ -141,6 +152,8 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         miniMap.setVisible(false);
         money.setVisible(false);
         difficulty.setVisible(true);
+        enemySelection.setVisible(false);
+        healthItems.setVisible(false);
         gameOver = true;
     }
     @Override
@@ -243,5 +256,67 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
 
     public void textAreaFocus() {
         script.requestFocus();
+    }
+
+    public void enableEnemy(ObservableList<Monster> monsters) {
+        enemyList.setItems(monsters);
+
+        enemyList.setCellFactory(monsterListView -> new ListCell<>() {
+            private final ChangeListener<Number> healthListener = (obs, oldVal, newVal) -> updateItem(getItem(), false);
+
+            @Override
+            protected void updateItem(Monster monster, boolean isEmpty) {
+                if (getItem() != null) {
+                    getItem().healthProperty().removeListener(healthListener);
+                }
+                super.updateItem(monster, isEmpty);
+                if (isEmpty || monster == null) {
+                    setText(null);
+                } else {
+                    setText(monster.toString());
+                }
+            }
+        });
+
+        enemyList.setDisable(false);
+        singleAttack.setDisable(false);
+        AOEAttack.setDisable(false);
+    }
+    public void bindHealingItems(ObservableList<RecoveryItem> recoveryItems) {
+        healthItemList.setItems(recoveryItems);
+    }
+
+    public void useHealingItem(){
+        RecoveryItem item = healthItemList.getValue();
+        if(item == null){
+            script.appendText("no Item selected.");
+            script.positionCaret(script.getText().length());
+        } else {
+            adventure.useHealingItem(item);
+        }
+    }
+    public void attackMonster(){
+        Monster monster = enemyList.getValue();
+        if(monster == null){
+            script.appendText("no Monster selected.");
+        }
+        adventure.Attack(monster);
+        if(enemyList.getItems().isEmpty()){
+            disableEnemy();
+        }
+        enemyList.getSelectionModel().clearSelection();
+    }
+    public void AOE(){
+        adventure.AOE();
+        if(enemyList.getItems().isEmpty()){
+            disableEnemy();
+        }
+        enemyList.getSelectionModel().clearSelection();
+    }
+    public void disableEnemy(){
+        enemyList.setDisable(true);
+        singleAttack.setDisable(true);
+        AOEAttack.setDisable(true);
+
     }
 }

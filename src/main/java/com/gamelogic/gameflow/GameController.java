@@ -5,7 +5,9 @@ import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.villages.House;
+import com.recoveryitems.RecoveryItem;
 import com.savesystem.PlayerState;
+import javafx.collections.ObservableList;
 
 import java.util.Objects;
 
@@ -59,6 +61,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
     public void setDeepestLevel(int deepestLevel) {
         this.deepestLevel = deepestLevel;
+        gameProgression.setDeepestLevel(deepestLevel);
     }
 
     public double tileHealthData(Coordinates location) {
@@ -73,7 +76,12 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             spawnMonster();
         }
     }
-
+    public void attackMonster(String monster){
+        classController.commandProcessor.attackMonster(monster);
+    }
+    public void monsterAttack(){
+        classController.commandProcessor.monstersTurn();
+    }
     //dialog
     public void intro() {
         gameProgressController.intro();
@@ -166,11 +174,11 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     }
 
     private void checkProgression() {
-
+        int level = currentMapController.getLevel();
         if(currentMapController.progressesGame()){
-            gameProgression.levelProgression(currentMapController.getLevel(), deepestLevel, currentMapController);
-            if(currentMapController.getLevel() >  deepestLevel){
-                deepestLevel =  currentMapController.getLevel();
+            gameProgression.levelProgression(level, currentMapController);
+            if(level > deepestLevel){
+                deepestLevel = level;
             }
         }
         String village = gameProgression.checkProgression(currentMapController);
@@ -206,6 +214,16 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         classController.playerController.loadFromPlayerState(playerState);
         updateGameInfo();
         renderMinimap();
+    }
+
+    public void useRecoveryItem(RecoveryItem item) {
+        classController.playerController.useHealing(item.getName());
+    }
+    public ObservableList<RecoveryItem> getRecoveryItems() {
+        return classController.playerController.getRecoveryItems();
+    }
+    public void AOE() {
+        classController.commandProcessor.AOEAttack();
     }
 }
 

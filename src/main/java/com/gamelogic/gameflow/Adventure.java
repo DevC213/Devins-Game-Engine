@@ -3,7 +3,10 @@ package com.gamelogic.gameflow;
 import com.gamelogic.commands.Keybindings;
 import com.gamelogic.core.MapRegistry;
 import com.google.gson.Gson;
+import com.monsters.Monster;
+import com.recoveryitems.RecoveryItem;
 import com.savesystem.GameState;
+import javafx.collections.ObservableList;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -139,5 +142,23 @@ public class Adventure {
             saveDir = System.getProperty("user.home") + "/.islandadventure";
         }
         return saveDir;
+    }
+
+    public void useHealingItem(RecoveryItem item) {
+        gameController.useRecoveryItem(item);
+    }
+
+    public ObservableList<RecoveryItem> getRecoveryItems() {
+        return gameController.getRecoveryItems();
+    }
+    public void Attack(Monster monster) {
+        if (monster != null) {
+            gameController.attackMonster(monster.getFullName());
+        }
+        gameController.monsterAttack();
+    }
+
+    public void AOE() {
+        gameController.AOE();
     }
 }

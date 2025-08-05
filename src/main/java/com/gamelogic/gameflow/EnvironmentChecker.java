@@ -73,6 +73,7 @@ public class EnvironmentChecker {
         if (monsterFound) {
             mainGameController.UIUpdate("Monsters at location: " +
                     mapController.getMonsters(playerController.getMapCoordinates()), 0);
+            mainGameController.enableEnemy(mapController.getMonstersObs(playerController.getMapCoordinates()));
             if (!combatSystem.isMonsterOnTile()) {
                 combatSystem.toggleMonster();
             }

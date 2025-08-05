@@ -88,7 +88,7 @@ public class CommandProcessor {
         if (commandState != CommandState.NONE && !keyPressed.equals("ENTER")) {
             return;
         }
-        if (combatSystem.isMonsterOnTile() && !Objects.equals(keyPressed, ATTACKING) && !Objects.equals(keyPressed, HEALING)) {
+        if (monsters.isMonsterOnTile(playerController.getMapCoordinates()) && !Objects.equals(keyPressed, ATTACKING) && !Objects.equals(keyPressed, HEALING)) {
             if (move != Movement.DEFAULT) {
                 if (!attemptEscape()) return;
             }
@@ -128,10 +128,6 @@ public class CommandProcessor {
 
         if (monstersOnTile.isEmpty()) {
             controller.UIUpdate("No monster on tile", 0);
-            commandState = CommandState.NONE;
-            return;
-        } else if (monstersOnTile.size() == 1) {
-            attackMonster(monstersOnTile.getFirst());
             commandState = CommandState.NONE;
             return;
         }
@@ -190,13 +186,8 @@ public class CommandProcessor {
     private void attackChoice(String command) {
         String choice = command.toLowerCase();
         switch (choice) {
-            case("aoe") -> {
-                List<Messenger> messengers = doesDamage.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
-                for(Messenger messenger : messengers) {
-                    String message = combatSystem.attack(messenger).getMessage();
-                    processAttacks(message);
-                }
-            }case("single") -> {
+            case("aoe") -> AOEAttack();
+            case ("single") -> {
                 controller.UIUpdate("Which Monster?", 0);
                 commandState = CommandState.ATTACK;
                 controller.commandFocus();
@@ -208,18 +199,29 @@ public class CommandProcessor {
             }
         }
     }
-    private void attackMonster(String command) {
+    public void attackMonster(String command) {
         String message = combatSystem.attack(doesDamage.attackMonsters(command,
                 playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
         processAttacks(message);
-        attack();
+        playerController.levelUp();
+        //attack();
+    }
+    public void AOEAttack(){
+        List<Messenger> messengers = doesDamage.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
+        for(Messenger messenger : messengers) {
+            String message = combatSystem.attack(messenger).getMessage();
+            processAttacks(message);
+        }
+        playerController.levelUp();
+    }
+    public void monstersTurn(){
+        combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
     }
     private void processAttacks(String message){
         if (message != null) {
             playerController.monsterKilled();
             controller.UIUpdate(message, 0);
         }
-        combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
         controller.textAreaFocus();
     }
     private void takeItem(String command) {
