@@ -1,4 +1,4 @@
-package com.gamelogic.inventory;
+package com.gamelogic.playerlogic.inventory;
 
 import com.armor.Armor;
 import com.weapons.Weapon;

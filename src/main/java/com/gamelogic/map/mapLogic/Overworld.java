@@ -5,7 +5,7 @@ import com.gamelogic.map.IMonsters;
 import com.gamelogic.core.MapRegistry;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.gameflow.ValidStart;
-import com.gamelogic.inventory.IAccessItems;
+import com.gamelogic.playerlogic.inventory.IAccessItems;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.IMapState;
 import com.gamelogic.messaging.Messenger;

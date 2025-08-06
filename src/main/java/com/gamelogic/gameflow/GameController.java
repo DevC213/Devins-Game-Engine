@@ -217,6 +217,9 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
     public void useRecoveryItem(RecoveryItem item) {
         classController.playerController.useHealing(item.getName());
+        if(currentMapController.isMonsterOnTile(classController.playerController.getMapCoordinates())){
+            classController.gameController.monsterAttack();
+        }
     }
     public ObservableList<RecoveryItem> getRecoveryItems() {
         return classController.playerController.getRecoveryItems();

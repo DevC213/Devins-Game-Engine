@@ -19,7 +19,7 @@ module com.example.adventure {
     exports com.gamelogic.combat;
     exports com.gamelogic.commands;
     exports com.gamelogic.messaging;
-    exports com.gamelogic.inventory;
+    exports com.gamelogic.playerlogic.inventory;
     exports com.gamelogic.map;
     exports com.gamelogic.villages;
     exports com.gamelogic.core;
@@ -38,7 +38,7 @@ module com.example.adventure {
     opens com.gamelogic.combat to javafx.fxml;
     opens com.gamelogic.commands to javafx.fxml;
     opens com.gamelogic.messaging to javafx.fxml;
-    opens com.gamelogic.inventory to javafx.fxml;
+    opens com.gamelogic.playerlogic.inventory to javafx.fxml;
     opens com.gamelogic.map to javafx.fxml;
     opens com.gamelogic.villages to javafx.fxml;
     opens com.gamelogic.core to  javafx.fxml;
