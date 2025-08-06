@@ -168,7 +168,6 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
     public void updateGameInfo() {
         if(classController.playerController.isGameOver()){return;}
         ClassController.mainGameController.UIUpdate("(" + classController.playerController.getDisplayCoordinates().x() + "," + classController.playerController.getDisplayCoordinates().y() + ")", 2);
-        classController.inventoryManager.updateInventoryDisplay();
         checkEnvironment();
         checkProgression();
     }

@@ -4,7 +4,6 @@ import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.commands.CommandProcessor;
 import com.gamelogic.commands.Keybindings;
 import com.gamelogic.core.*;
-import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.TileKey;
 import com.gamelogic.map.UIMapController;
@@ -21,7 +20,6 @@ public final class ClassController {
     public final PlayerController playerController;
     public static MainGameController mainGameController;
     public final MapController currentMapController;
-    public final InventoryManager inventoryManager;
     public final CombatSystem combatSystem;
     public final UIMapController uiMapController;
     public final CommandProcessor commandProcessor;
@@ -58,7 +56,6 @@ public final class ClassController {
         //Initiate player
         this.playerController = new PlayerController(startingCords, currentMapController.getCoordinates(), mainGameController);
         this.combatSystem = new CombatSystem(playerController);
-        this.inventoryManager = new InventoryManager(playerController, mainGameController);
         this.commandProcessor = new CommandProcessor(keybindings, this);
         this.environmentChecker = new EnvironmentChecker(this);
 

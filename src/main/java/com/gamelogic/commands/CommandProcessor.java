@@ -7,7 +7,6 @@ import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.IDoesDamage;
 import com.gamelogic.inventory.IAccessItems;
-import com.gamelogic.inventory.InventoryManager;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ public class CommandProcessor {
     IUpdateGame updateGame;
 
     CombatSystem combatSystem;
-    InventoryManager inventoryManager;
+
     PlayerController playerController;
 
     //mapController
@@ -49,8 +48,6 @@ public class CommandProcessor {
         this.updateMinimap = classController.gameController;
 
         this.combatSystem = classController.combatSystem;
-        this.inventoryManager = classController.inventoryManager;
-
 
         this.mapState = classController.currentMapController;
         this.monsters = classController.currentMapController;

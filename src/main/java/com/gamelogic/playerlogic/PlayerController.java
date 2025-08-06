@@ -59,16 +59,6 @@ public class PlayerController implements PlayerDamageListener{
     public void EmergencyUse(){
         playerHealth.EmergencyUse();
         guiEventListener.UIUpdate("Out of Health, using healing item.", 0);
-        StringBuilder sendString = new StringBuilder();
-        if (viewInventory() != null){
-            for (String i : viewInventory()) {
-                sendString.append(i).append("\n");
-            }
-        }
-        if(!(getHealingItems().isEmpty())){
-            sendString.append(getHealingItems());
-        }
-        guiEventListener.UIUpdate(sendString.toString(),1);
         guiEventListener.UIUpdate("Health: " + playerHealth.UpdateHealth(0),3);
     }
     public void sendMessage(String message){
