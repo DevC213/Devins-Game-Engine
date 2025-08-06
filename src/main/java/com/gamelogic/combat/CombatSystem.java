@@ -2,6 +2,7 @@ package com.gamelogic.combat;
 
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerDamageListener;
+import com.monsters.Monster;
 
 public class CombatSystem {
     private final PlayerDamageListener playerDamageListener;
@@ -22,12 +23,12 @@ public class CombatSystem {
         return messenger;
     }
     public void monstersAttack(Messenger messenger){
-        for (Double damage : messenger.getListPayloadDouble()) {
-            monsterAttack(damage);
+        for (Monster i : messenger.getMonsters()) {
+            monsterAttack(i.getBaseAttack(),i.getFullName());
         }
     }
-    private void monsterAttack(Double damage) {
-        playerDamageListener.damage(damage);
+    private void monsterAttack(Double damage, String monsterName) {
+        playerDamageListener.damage(damage, monsterName);
     }
     public boolean isMonsterOnTile() {
         return monsterOnTile;

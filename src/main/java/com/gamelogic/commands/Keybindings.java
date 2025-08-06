@@ -1,4 +1,4 @@
 package com.gamelogic.commands;
 
-public record Keybindings(String attack, String heal,String enterArea,String grabItem) {
+public record Keybindings(String enterArea,String grabItem) {
 }

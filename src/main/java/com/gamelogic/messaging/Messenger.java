@@ -1,6 +1,7 @@
 package com.gamelogic.messaging;
 
 import com.armor.Armor;
+import com.monsters.Monster;
 import com.weapons.Weapon;
 import com.recoveryitems.RecoveryItem;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 public class Messenger {
     private String message;
+    private List<Monster> monsters;
     private List<Double> payloadDouble;
     private String payloadString;
     private Weapon weapon;
@@ -32,7 +34,9 @@ public class Messenger {
     public List<Double> getListPayloadDouble() {
         return payloadDouble;
     }
-
+    public void addMonsters(List<Monster> monsters) {
+        this.monsters = monsters;
+    }
     public void addPayloadString(String string){
         payloadString = string;
     }
@@ -66,5 +70,9 @@ public class Messenger {
 
     public int getItemType() {
         return itemType;
+    }
+
+    public List<Monster> getMonsters() {
+        return monsters;
     }
 }

@@ -1,15 +1,12 @@
 package com.gamelogic.core;
 
 import com.gamelogic.gameflow.Adventure;
-import com.gamelogic.commands.IGuiCommandGetter;
 import com.gamelogic.commands.IGuiEventListener;
 import com.gamelogic.gameflow.ClassController;
-import com.gamelogic.messaging.Messenger;
 import com.monsters.Monster;
 import com.recoveryitems.RecoveryItem;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -19,7 +16,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Objects;
 
-public class MainGameController implements IGuiEventListener, IGuiCommandGetter {
+public class MainGameController implements IGuiEventListener{
 
     public TextField health;
     public TextField defence;
@@ -36,8 +33,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
     public Button singleAttack;
     public ComboBox<Monster> enemyList;
     public ComboBox<RecoveryItem> healthItemList;
-    @FXML
-    private TextField commandInput;
     @FXML
     private TextField cords;
     @FXML
@@ -108,8 +103,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         health.setVisible(true);
         defence.setVisible(true);
         cords.setVisible(true);
-        commandInput.setVisible(true);
-        commandInput.setEditable(true);
         weapon.setVisible(true);
         miniMap.setVisible(true);
         money.setVisible(true);
@@ -146,8 +139,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         health.setVisible(false);
         defence.setVisible(false);
         cords.setVisible(false);
-        commandInput.setVisible(false);
-        commandInput.setEditable(false);
         weapon.setVisible(false);
         miniMap.setVisible(false);
         money.setVisible(false);
@@ -157,13 +148,8 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         gameOver = true;
     }
     @Override
-    public void clearInput() {
-        commandInput.clear();
-    }
-
-    @Override
     public void UIUpdate(String message, int box) {
-        //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
+        //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence, 5-> weapon, 6-> money
         String rtn = message + "\n";
         switch (box) {
             case 0 -> {
@@ -179,27 +165,6 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
             case 4 -> defence.setText(rtn);
             case 5 -> weapon.setText(rtn);
             case 6 -> money.setText(rtn);
-            default -> {
-            }
-        }
-    }
-    @Override
-    public void UIUpdate(Messenger message, int box) {
-        //box: 0 -> script, 1 -> inventory, 2->cords, 3-> health, 4-> defence
-        String rtn = message + "\n";
-        switch (box) {
-            case 0 -> {
-                script.appendText(rtn);
-                script.positionCaret(script.getText().length());
-            }
-            case 1 -> {
-                inventory.clear();
-                inventory.appendText(rtn);
-            }
-            case 2 -> cords.setText(rtn);
-            case 3 -> health.setText(rtn);
-            case 4 -> defence.setText(message.getArmor().name() + ": " + message.getArmor().defence());
-            case 5 -> weapon.setText(message.getWeapon().name() + ": " + message.getWeapon().damage());
             default -> {
             }
         }
@@ -242,27 +207,15 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
         }
     }
 
-    public String getCommand() {
-        return commandInput.getText();
-    }
-
     public void scroll() {
         script.positionCaret(0);
-    }
-
-    public void commandFocus() {
-        commandInput.requestFocus();
-    }
-
-    public void textAreaFocus() {
-        script.requestFocus();
     }
 
     public void enableEnemy(ObservableList<Monster> monsters) {
         enemyList.setItems(monsters);
 
-        enemyList.setCellFactory(monsterListView -> new ListCell<>() {
-            private final ChangeListener<Number> healthListener = (obs, oldVal, newVal) -> updateItem(getItem(), false);
+        enemyList.setCellFactory(_ -> new ListCell<>() {
+            private final ChangeListener<Number> healthListener = (_, _, _) -> updateItem(getItem(), false);
 
             @Override
             protected void updateItem(Monster monster, boolean isEmpty) {
@@ -298,20 +251,21 @@ public class MainGameController implements IGuiEventListener, IGuiCommandGetter 
     public void attackMonster(){
         Monster monster = enemyList.getValue();
         if(monster == null){
-            script.appendText("no Monster selected.");
+            script.appendText("No monster was selected.\n");
         }
+        enemyList.getSelectionModel().clearSelection();
         adventure.Attack(monster);
         if(enemyList.getItems().isEmpty()){
             disableEnemy();
         }
-        enemyList.getSelectionModel().clearSelection();
     }
     public void AOE(){
+        enemyList.getSelectionModel().clearSelection();
         adventure.AOE();
         if(enemyList.getItems().isEmpty()){
             disableEnemy();
         }
-        enemyList.getSelectionModel().clearSelection();
+
     }
     public void disableEnemy(){
         enemyList.setDisable(true);

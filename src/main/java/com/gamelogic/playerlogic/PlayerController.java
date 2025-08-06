@@ -122,14 +122,14 @@ public class PlayerController implements PlayerDamageListener{
     }
 
     @Override
-    public void damage(double damage) {
+    public void damage(double damage, String monsterName) {
         double finalDamage;
         if (damage * 1.25 - playerEquipment.getDefence() > 1) {
             finalDamage = damage * 1.25 - playerEquipment.getDefence();
         } else {
             finalDamage = 1.0;
         }
-        guiEventListener.UIUpdate("Monster hits you for: " + finalDamage, 0);
+        guiEventListener.UIUpdate( monsterName + " hits you for: " + finalDamage, 0);
         changeHealth(-finalDamage);
 
         if (getHealth() <= 0) {

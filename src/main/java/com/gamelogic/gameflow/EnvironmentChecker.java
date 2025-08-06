@@ -84,7 +84,6 @@ public class EnvironmentChecker {
             } else if (combatSystem.isMonsterOnTile()) {
                 mainGameController.UIUpdate("Monsters Killed", 0);
                 combatSystem.toggleMonster();
-                commandProcessor.clearCommandState();
             }
         }
     }

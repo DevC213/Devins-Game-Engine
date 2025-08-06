@@ -32,7 +32,6 @@ public class GameProgressController {
                 After hearing the voice you feel a chill go down you back,
                 something isn't right!
                 """, 0);
-        ClassController.mainGameController.clearInput();
         ClassController.mainGameController.scroll();
     }
     public void resetGame(MapController currentMapController) {

@@ -11,7 +11,7 @@
     <Label id="welcomeText" GridPane.hgrow="SOMETIMES" GridPane.vgrow="SOMETIMES" />
 
     <!-- Text Areas -->
-    <TextField fx:id="commandInput" editable="false" opacity="0.0" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="4" GridPane.vgrow="SOMETIMES" />
+
     <TextArea fx:id="script" editable="false" text=" Press 'Start Game' to explore the island, if you have saved game, click 'load game' on pause menu first." GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="0" GridPane.rowSpan="4" />
 
     <Button fx:id="start" onAction="#gameStart" prefHeight="58.0" prefWidth="224.0" text="Start Game" GridPane.columnIndex="3" GridPane.columnSpan="1" GridPane.halignment="CENTER" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="SOMETIMES">

@@ -176,15 +176,12 @@ class MapMonsterController {
     }
     public Messenger getMonsterAttack(Coordinates location){
         Messenger rtnMessenger = new Messenger();
-        List<Double> rtnList = new ArrayList<>();
         if(monsterVectorMap.get(location) == null){
             rtnMessenger = new Messenger("No monster on tile");
             return rtnMessenger;
         }
-        for(Monster i: monsterVectorMap.get(location)){
-            rtnList.add(i.getBaseAttack());
-        }
-        rtnMessenger.addListPayloadDouble(rtnList);
+        List<Monster> rtnList = new ArrayList<>(monsterVectorMap.get(location));
+        rtnMessenger.addMonsters(rtnList);
         return rtnMessenger;
     }
     public List<MonsterState> getMonsterState(){

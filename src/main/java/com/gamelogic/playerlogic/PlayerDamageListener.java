@@ -1,5 +1,5 @@
 package com.gamelogic.playerlogic;
 
 public interface PlayerDamageListener {
-    void damage(double damage);
+    void damage(double damage, String monsterName);
 }

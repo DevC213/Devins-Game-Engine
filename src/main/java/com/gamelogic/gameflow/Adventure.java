@@ -61,7 +61,7 @@ public class Adventure {
             InputStreamReader reader = new InputStreamReader(input);
             return gson.fromJson(reader, Keybindings.class);
         } catch (Exception e) {
-            return new Keybindings("v","c","x","b");
+            return new Keybindings("z","x");
         }
     }
     private Keybindings readCustomBindings() {
@@ -77,7 +77,7 @@ public class Adventure {
                 Files.write(Paths.get("keyBindings.json"), json.getBytes());
             } catch (Exception e) {
                 System.out.println("Error saving keybindings");
-                kb = new Keybindings("v","c","x","b");
+                kb = new Keybindings("z","x");
             }
         } else {
             try {
@@ -86,7 +86,7 @@ public class Adventure {
                 kb = gson.fromJson(json, Keybindings.class);
             } catch (Exception e) {
                 System.out.println("Error loading keybindings");
-                kb = new Keybindings("v","c","x","b");
+                kb = new Keybindings("z","x");
             }
         }
         return kb;
@@ -160,5 +160,6 @@ public class Adventure {
 
     public void AOE() {
         gameController.AOE();
+        gameController.monsterAttack();
     }
 }

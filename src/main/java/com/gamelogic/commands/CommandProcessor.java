@@ -14,29 +14,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 
 public class CommandProcessor {
 
 
-    private String HEALING;
-    private String ATTACKING;
-    private String GRAB_ITEM;
-    private String ENTER_AREA;
-    private CommandState commandState = CommandState.NONE;
     Map<String, Runnable> charCommands;
     private boolean escape = false;
 
 
     //MainGameController
     IGuiEventListener controller;
-    IGuiCommandGetter commandGetter;
 
     //Game Controller
     IUpdateMinimap updateMinimap;
     IUpdateGame updateGame;
-
 
     CombatSystem combatSystem;
     InventoryManager inventoryManager;
@@ -60,23 +51,15 @@ public class CommandProcessor {
         this.combatSystem = classController.combatSystem;
         this.inventoryManager = classController.inventoryManager;
 
-        this.commandGetter = ClassController.mainGameController;
 
         this.mapState = classController.currentMapController;
         this.monsters = classController.currentMapController;
         this.doesDamage = classController.currentMapController;
         this.accessItems = classController.currentMapController;
 
-        HEALING = keybindings.heal().toUpperCase();
-        ATTACKING = keybindings.attack().toUpperCase();
-        GRAB_ITEM = keybindings.grabItem().toUpperCase();
-        ENTER_AREA = keybindings.enterArea().toUpperCase();
         charCommands = Map.of(
-                HEALING, this::healing,
-                ATTACKING, this::attack,
-                GRAB_ITEM, this::grabItem,
-                ENTER_AREA, this::enterArea,
-                "ENTER", () -> handleTextCommand(commandGetter.getCommand())
+                keybindings.grabItem().toUpperCase(), this::grabItem,
+                keybindings.enterArea().toUpperCase(), this::enterArea
         );
         tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
@@ -85,10 +68,8 @@ public class CommandProcessor {
     }
     public void handleKeyInput(@NotNull String keyPressed) {
         Movement move = Movement.getMovement(keyPressed.toUpperCase());
-        if (commandState != CommandState.NONE && !keyPressed.equals("ENTER")) {
-            return;
-        }
-        if (monsters.isMonsterOnTile(playerController.getMapCoordinates()) && !Objects.equals(keyPressed, ATTACKING) && !Objects.equals(keyPressed, HEALING)) {
+
+        if (monsters.isMonsterOnTile(playerController.getMapCoordinates())) {
             if (move != Movement.DEFAULT) {
                 if (!attemptEscape()) return;
             }
@@ -99,7 +80,6 @@ public class CommandProcessor {
             return;
         }
         handleAction(keyPressed);
-        controller.clearInput();
     }
 
     private void handleAction(@NotNull String keyPressed) {
@@ -109,49 +89,19 @@ public class CommandProcessor {
         }
         updateGame.updateGameInfo();
     }
-
     private void grabItem() {
-        commandState = CommandState.TAKE;
-        controller.clearInput();
         if (!accessItems.areItemsOnTile(playerController.getMapCoordinates())) {
             controller.UIUpdate("No items on tile", 0);
         } else{
             String item = accessItems.getItemName(playerController.getMapCoordinates());
-            executePendingAction(item);
-        }
-        commandState = CommandState.NONE;
-    }
-
-    private void attack() {
-
-        List<String> monstersOnTile = monsters.getMonsterNames(playerController.getMapCoordinates());
-
-        if (monstersOnTile.isEmpty()) {
-            controller.UIUpdate("No monster on tile", 0);
-            commandState = CommandState.NONE;
-            return;
-        }
-        controller.UIUpdate("AOE or Single", 0);
-        commandState = CommandState.ATTACK_CHOICE;
-        controller.commandFocus();
-    }
-
-    private void healing() {
-        controller.UIUpdate("Which healing item?", 0);
-        controller.commandFocus();
-        if (commandState == CommandState.ATTACK) {
-            commandState = CommandState.HEAL_IN_COMBAT;
-        } else {
-            commandState = CommandState.HEAL;
+            takeItem(item);
         }
     }
-
     private boolean attemptEscape() {
         int number = (int) (Math.floor(Math.random() * 10));
         if (number < 3) {
             controller.UIUpdate("Escape success", 0);
             escape = true;
-            commandState = CommandState.NONE;
         } else {
             controller.UIUpdate("Failed Escape!", 0);
             combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
@@ -160,51 +110,11 @@ public class CommandProcessor {
         return true;
     }
 
-    private void handleTextCommand(String command) {
-        executePendingAction(command);
-        if (commandState == CommandState.HEAL_IN_COMBAT) {
-            commandState = CommandState.ATTACK;
-        } else {
-            if (commandState == CommandState.TAKE || commandState == CommandState.ATTACK || commandState == CommandState.ATTACK_CHOICE) {
-                return;
-            }
-            commandState = CommandState.NONE;
-        }
-        controller.clearInput();
-    }
-
-    private void executePendingAction(String command) {
-        switch (commandState) {
-            case TAKE -> takeItem(command);
-            case HEAL -> inventoryManager.useHealthItem(command);
-            case ATTACK -> attackMonster(command);
-            case ATTACK_CHOICE -> attackChoice(command);
-            default -> controller.UIUpdate("Unexpected command state", 0);
-        }
-    }
-
-    private void attackChoice(String command) {
-        String choice = command.toLowerCase();
-        switch (choice) {
-            case("aoe") -> AOEAttack();
-            case ("single") -> {
-                controller.UIUpdate("Which Monster?", 0);
-                commandState = CommandState.ATTACK;
-                controller.commandFocus();
-            } default ->{
-                controller.UIUpdate("Invalid choice", 0);
-                controller.UIUpdate("Defaulting to Single. Which Monster?",0);
-                commandState = CommandState.ATTACK;
-                controller.commandFocus();
-            }
-        }
-    }
     public void attackMonster(String command) {
         String message = combatSystem.attack(doesDamage.attackMonsters(command,
                 playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
         processAttacks(message);
         playerController.levelUp();
-        //attack();
     }
     public void AOEAttack(){
         List<Messenger> messengers = doesDamage.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
@@ -222,14 +132,11 @@ public class CommandProcessor {
             playerController.monsterKilled();
             controller.UIUpdate(message, 0);
         }
-        controller.textAreaFocus();
     }
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
         switch (messenger.getItemType()) {
             case -1:
-                commandState = CommandState.NONE;
-                controller.textAreaFocus();
                 return;
             case 0:
                 if (messenger.getWeapon().damage() < playerController.getAttack()) {
@@ -237,7 +144,7 @@ public class CommandProcessor {
                     return;
                 }
                 controller.UIUpdate("Grabbed weapon: " + messenger.getWeapon().name(), 0);
-                controller.UIUpdate(messenger, 5);
+                controller.UIUpdate(messenger.getWeapon().name() + ": " + messenger.getWeapon().damage(), 5);
                 playerController.equipWeapon(messenger.getWeapon());
                 break;
             case 1:
@@ -246,7 +153,7 @@ public class CommandProcessor {
                     return;
                 }
                 controller.UIUpdate("Grabbed armor: " + messenger.getArmor().name(), 0);
-                controller.UIUpdate(messenger, 4);
+                controller.UIUpdate(messenger.getArmor().name() + ": " + messenger.getArmor().defence(), 4);
                 playerController.equipArmor(messenger.getArmor());
                 break;
             case 2:
@@ -256,8 +163,6 @@ public class CommandProcessor {
             default:
                 throw new IllegalArgumentException("Unexpected value: " + messenger.getItemType());
         }
-        controller.textAreaFocus();
-        commandState = CommandState.NONE;
     }
 
     //Command Processing for movement
@@ -294,15 +199,5 @@ public class CommandProcessor {
     }
     public void toggleEscape() {
         escape = !escape;
-    }
-    public void updateKeyBindings(@NotNull Keybindings keybindings) {
-        HEALING = keybindings.heal();
-        ENTER_AREA = keybindings.enterArea();
-        ATTACKING = keybindings.attack();
-        GRAB_ITEM = keybindings.grabItem();
-    }
-
-    public void clearCommandState() {
-        commandState = CommandState.NONE;
     }
 }

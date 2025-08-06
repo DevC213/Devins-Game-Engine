@@ -1,6 +1,4 @@
 {
-  "attack":"v",
-  "enterArea": "x",
-  "grabItem": "b",
-  "heal": "c"
+  "enterArea": "z",
+  "grabItem": "x"
 }
