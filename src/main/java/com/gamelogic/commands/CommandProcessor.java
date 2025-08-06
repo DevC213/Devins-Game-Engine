@@ -7,6 +7,7 @@ import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.*;
 import com.gamelogic.map.mapLogic.IDoesDamage;
 import com.gamelogic.inventory.IAccessItems;
+import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class CommandProcessor {
 
 
     Map<String, Runnable> charCommands;
-    private boolean escape = false;
+    private boolean escapeThisTurn = false;
 
 
     //MainGameController
@@ -27,9 +28,7 @@ public class CommandProcessor {
     //Game Controller
     IUpdateMinimap updateMinimap;
     IUpdateGame updateGame;
-
     CombatSystem combatSystem;
-
     PlayerController playerController;
 
     //mapController
@@ -60,8 +59,11 @@ public class CommandProcessor {
         );
         tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
-    public void changeMapState(IMapState mapState){
-        this.mapState = mapState;
+    public void changeMapState(MapController mapController) {
+        this.mapState = mapController;
+        this.monsters = mapController;
+        this.doesDamage = mapController;
+        this.accessItems = mapController;
     }
     public void handleKeyInput(@NotNull String keyPressed) {
         Movement move = Movement.getMovement(keyPressed.toUpperCase());
@@ -98,7 +100,7 @@ public class CommandProcessor {
         int number = (int) (Math.floor(Math.random() * 10));
         if (number < 3) {
             controller.UIUpdate("Escape success", 0);
-            escape = true;
+            escapeThisTurn = true;
         } else {
             controller.UIUpdate("Failed Escape!", 0);
             combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
@@ -133,9 +135,9 @@ public class CommandProcessor {
     private void takeItem(String command) {
         Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
         switch (messenger.getItemType()) {
-            case -1:
+            case NONE:
                 return;
-            case 0:
+            case WEAPON:
                 if (messenger.getWeapon().damage() < playerController.getAttack()) {
                     controller.UIUpdate("Current weapon is better.", 0);
                     return;
@@ -144,7 +146,7 @@ public class CommandProcessor {
                 controller.UIUpdate(messenger.getWeapon().name() + ": " + messenger.getWeapon().damage(), 5);
                 playerController.equipWeapon(messenger.getWeapon());
                 break;
-            case 1:
+            case ARMOR:
                 if(messenger.getArmor().defence() < playerController.getDefence()){
                     controller.UIUpdate("Current armor is better.", 0);
                     return;
@@ -153,10 +155,11 @@ public class CommandProcessor {
                 controller.UIUpdate(messenger.getArmor().name() + ": " + messenger.getArmor().defence(), 4);
                 playerController.equipArmor(messenger.getArmor());
                 break;
-            case 2:
+            case HEALING:
                 controller.UIUpdate("Grabbed healing item: " + messenger.getHealingItem().getName(), 0);
                 playerController.addToInventory(messenger);
                 break;
+                //Expansion options for items that are not a weapon, armor, healing. Quest, Key or other items.
             default:
                 throw new IllegalArgumentException("Unexpected value: " + messenger.getItemType());
         }
@@ -192,9 +195,9 @@ public class CommandProcessor {
         }
     }
     public boolean escaped() {
-        return escape;
+        return escapeThisTurn;
     }
     public void toggleEscape() {
-        escape = !escape;
+        escapeThisTurn = !escapeThisTurn;
     }
 }

@@ -1,6 +1,7 @@
 package com.gamelogic.messaging;
 
 import com.armor.Armor;
+import com.gamelogic.commands.ItemType;
 import com.monsters.Monster;
 import com.weapons.Weapon;
 import com.recoveryitems.RecoveryItem;
@@ -15,7 +16,7 @@ public class Messenger {
     private Weapon weapon;
     private Armor armor;
     private RecoveryItem recoveryItem;
-    private int itemType = -1;
+    private ItemType itemType = ItemType.NONE;
 
     public Messenger(){}
     public Messenger(String message) {
@@ -48,7 +49,7 @@ public class Messenger {
         return armor;
     }
     public void setArmor(Armor armor) {
-        itemType = 1;
+        itemType = ItemType.ARMOR;
         this.armor = armor;
     }
 
@@ -56,7 +57,7 @@ public class Messenger {
         return recoveryItem;
     }
     public void setHealingItem(RecoveryItem recoveryItem) {
-        itemType = 2;
+        itemType = ItemType.HEALING;
         this.recoveryItem = recoveryItem;
     }
 
@@ -64,11 +65,11 @@ public class Messenger {
         return weapon;
     }
     public void setWeapon(Weapon weapon){
-        itemType = 0;
+        itemType = ItemType.WEAPON;
         this.weapon = weapon;
     }
 
-    public int getItemType() {
+    public ItemType getItemType() {
         return itemType;
     }
 
