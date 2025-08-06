@@ -2,11 +2,9 @@ package com.gamelogic.commands;
 
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.gameflow.ClassController;
-import com.gamelogic.map.IMonsters;
 import com.gamelogic.core.TileKeyRegistry;
+import com.gamelogic.gameflow.GameController;
 import com.gamelogic.map.*;
-import com.gamelogic.map.mapLogic.IDoesDamage;
-import com.gamelogic.inventory.IAccessItems;
 import com.gamelogic.map.mapLogic.MapController;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.playerlogic.PlayerController;
@@ -21,37 +19,22 @@ public class CommandProcessor {
     Map<String, Runnable> charCommands;
     private boolean escapeThisTurn = false;
 
-
     //MainGameController
     IGuiEventListener controller;
 
-    //Game Controller
-    IUpdateMinimap updateMinimap;
-    IUpdateGame updateGame;
+    GameController gameController;
     CombatSystem combatSystem;
     PlayerController playerController;
-
-    //mapController
-    IMapState mapState;
-    IMonsters monsters;
-    IDoesDamage doesDamage;
-    IAccessItems accessItems;
+    MapController mapController;
 
     Map<String, TileKey> tileKeyMap;
 
     public CommandProcessor(@NotNull Keybindings keybindings, ClassController classController) {
         this.controller = ClassController.mainGameController;
         this.playerController = classController.playerController;
-
-        this.updateGame = classController.gameController;
-        this.updateMinimap = classController.gameController;
-
+        this.gameController = classController.gameController;
         this.combatSystem = classController.combatSystem;
-
-        this.mapState = classController.currentMapController;
-        this.monsters = classController.currentMapController;
-        this.doesDamage = classController.currentMapController;
-        this.accessItems = classController.currentMapController;
+        this.mapController = classController.currentMapController;
 
         charCommands = Map.of(
                 keybindings.grabItem().toUpperCase(), this::grabItem,
@@ -60,22 +43,19 @@ public class CommandProcessor {
         tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
     public void changeMapState(MapController mapController) {
-        this.mapState = mapController;
-        this.monsters = mapController;
-        this.doesDamage = mapController;
-        this.accessItems = mapController;
+        this.mapController = mapController;
     }
     public void handleKeyInput(@NotNull String keyPressed) {
         Movement move = Movement.getMovement(keyPressed.toUpperCase());
 
-        if (monsters.isMonsterOnTile(playerController.getMapCoordinates())) {
+        if (mapController.isMonsterOnTile(playerController.getMapCoordinates())) {
             if (move != Movement.DEFAULT) {
                 if (!attemptEscape()) return;
             }
         }
         if (move != Movement.DEFAULT) {
             moveOnLevel(move);
-            updateGame.updateGameInfo();
+            gameController.updateGameInfo();
             return;
         }
         handleAction(keyPressed);
@@ -86,13 +66,13 @@ public class CommandProcessor {
         if (runnable != null) {
             runnable.run();
         }
-        updateGame.updateGameInfo();
+        gameController.updateGameInfo();
     }
     private void grabItem() {
-        if (!accessItems.areItemsOnTile(playerController.getMapCoordinates())) {
+        if (!mapController.areItemsOnTile(playerController.getMapCoordinates())) {
             controller.UIUpdate("No items on tile", 0);
         } else{
-            String item = accessItems.getItemName(playerController.getMapCoordinates());
+            String item = mapController.getItemName(playerController.getMapCoordinates());
             takeItem(item);
         }
     }
@@ -103,20 +83,20 @@ public class CommandProcessor {
             escapeThisTurn = true;
         } else {
             controller.UIUpdate("Failed Escape!", 0);
-            combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
+            combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getMapCoordinates()));
             return false;
         }
         return true;
     }
 
     public void attackMonster(String command) {
-        String message = combatSystem.attack(doesDamage.attackMonsters(command,
+        String message = combatSystem.attack(mapController.attackMonsters(command,
                 playerController.getAttack(), playerController.getMapCoordinates())).getMessage();
         processAttacks(message);
         playerController.levelUp();
     }
     public void AOEAttack(){
-        List<Messenger> messengers = doesDamage.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
+        List<Messenger> messengers = mapController.attackAllMonsters(playerController.getAttack(), playerController.getMapCoordinates());
         for(Messenger messenger : messengers) {
             String message = combatSystem.attack(messenger).getMessage();
             processAttacks(message);
@@ -124,7 +104,7 @@ public class CommandProcessor {
         playerController.levelUp();
     }
     public void monstersTurn(){
-        combatSystem.monstersAttack(doesDamage.getMonstersAttack(playerController.getMapCoordinates()));
+        combatSystem.monstersAttack(mapController.getMonstersAttack(playerController.getMapCoordinates()));
     }
     private void processAttacks(String message){
         if (message != null) {
@@ -133,7 +113,7 @@ public class CommandProcessor {
         }
     }
     private void takeItem(String command) {
-        Messenger messenger = accessItems.grabItem(playerController.getMapCoordinates(), command);
+        Messenger messenger = mapController.grabItem(playerController.getMapCoordinates(), command);
         switch (messenger.getItemType()) {
             case NONE:
                 return;
@@ -170,14 +150,14 @@ public class CommandProcessor {
         int deltaX = movement.dx;
         int deltaY = movement.dy;
         Coordinates playerCoords = playerController.getMapCoordinates();
-        updateMinimap.setVisibility(playerController.movement(new Coordinates(deltaX, deltaY),
-                mapState.getMapValue(playerCoords),
-                mapState.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
-        updateMinimap.setDirection(deltaX, deltaY);
-        updateMinimap.renderMinimap();
+        gameController.setVisibility(playerController.movement(new Coordinates(deltaX, deltaY),
+                mapController.getMapValue(playerCoords),
+                mapController.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
+        gameController.setDirection(deltaX, deltaY);
+        gameController.renderMinimap();
     }
     public void enterArea() {
-        TileKey tile = tileKeyMap.get(mapState.getMapValue(playerController.getMapCoordinates()));
+        TileKey tile = tileKeyMap.get(mapController.getMapValue(playerController.getMapCoordinates()));
         if(tile == null) {
             controller.UIUpdate("Invalid tile found.", 0);
             return;
@@ -185,11 +165,11 @@ public class CommandProcessor {
         int levelDelta = tile.levelDelta();
         String mapTile = tile.name();
         if (mapTile.equals("house")) {
-            updateMinimap.toggleHouse();
-            updateMinimap.renderMinimap();
+            gameController.toggleHouse();
+            gameController.renderMinimap();
         }else if (levelDelta != 0) {
-            mapState.changeLevel(levelDelta);
-            updateMinimap.renderMinimap();
+            mapController.changeLevel(levelDelta);
+            gameController.renderMinimap();
         } else {
             controller.UIUpdate("Can only change level on a ladder, cave, or stairs", 0);
         }
