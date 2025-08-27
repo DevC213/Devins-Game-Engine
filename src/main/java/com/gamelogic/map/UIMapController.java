@@ -44,10 +44,10 @@ public class UIMapController {
         int startColumn = Math.max(0, Math.min(playerCoordinates.x() - mapMiddle, maxCoordinates.x() - mapSize));
         int startRow = Math.max(0, Math.min(playerCoordinates.y() - mapMiddle, maxCoordinates.y() - mapSize));
 
-        for (int column = 0; column < maxCoordinates.y(); column++) {
-            for (int row = 0; row < maxCoordinates.x(); row++) {
+        for (int column = 0; column < mapSize; column++) {
+            int mapColumn = startColumn + column;
+            for (int row = 0; row < mapSize; row++) {
 
-                int mapColumn = startColumn + column;
                 int mapRow = startRow + row;
 
                 int deltaX = mapColumn - playerCoordinates.x();

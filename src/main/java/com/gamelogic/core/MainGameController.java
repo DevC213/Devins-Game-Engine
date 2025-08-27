@@ -9,10 +9,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 
 import java.util.Objects;
 
@@ -22,8 +23,8 @@ public class MainGameController implements IGuiEventListener{
     public TextField defence;
     public TextField weapon;
     public GridPane mainGrid;
-    public GridPane miniMap;
-    private static final int SIZE = 5;
+    public StackPane miniMap;
+    private MiniMapCanvas miniMapCanvas;
     public TextField money;
     public ComboBox<String> characterSelection;
     public ComboBox<String> difficulty;
@@ -61,16 +62,7 @@ public class MainGameController implements IGuiEventListener{
             adventure.resetGame();
             gameOver = false;
         } else {
-            for (int i = 0; i < SIZE; i++) {
-                for (int j = 0; j < SIZE; j++) {
-                    ImageView img = new ImageView();
-                    img.fitWidthProperty().bind(miniMap.widthProperty().divide(SIZE));
-                    img.fitHeightProperty().bind(miniMap.heightProperty().divide(SIZE));
-                    img.setPreserveRatio(false);
-                    miniMap.add(img, i, j);
-                }
-            }
-
+            initializeMinimap();
             adventure.startGame();
             activated = true;
         }
@@ -110,6 +102,16 @@ public class MainGameController implements IGuiEventListener{
         enemySelection.setVisible(true);
         healthItems.setVisible(true);
         Platform.runLater(() -> script.setScrollTop(0));
+    }
+    private void initializeMinimap() {
+        miniMapCanvas = new MiniMapCanvas();
+        miniMap.getChildren().clear();
+        miniMap.getChildren().add(miniMapCanvas);
+
+        StackPane.setMargin(miniMapCanvas, Insets.EMPTY);
+
+        miniMapCanvas.prefWidthProperty().bind(miniMap.widthProperty());
+        miniMapCanvas.prefHeightProperty().bind(miniMap.heightProperty());
     }
 
     @FXML
@@ -172,17 +174,7 @@ public class MainGameController implements IGuiEventListener{
 
     public void modifyImage(final int row, final int col, final String imagePath) {
         try {
-            for (javafx.scene.Node node : miniMap.getChildren()) {
-                Integer r = GridPane.getRowIndex(node);
-                Integer c = GridPane.getColumnIndex(node);
-                r = (r == null ? 0 : r);
-                c = (c == null ? 0 : c);
-                if (r == row && c == col && node instanceof ImageView) {
-                    ((ImageView) node).setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
-                    break;
-                }
-            }
-
+            miniMapCanvas.setImage(col, row, new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
         } catch (Exception e) {
             UIUpdate(e.getMessage(), 0);
         }
@@ -190,18 +182,7 @@ public class MainGameController implements IGuiEventListener{
 
     public void modifyImage(final int row, final int col, final Image image) {
         try {
-            for (javafx.scene.Node node : miniMap.getChildren()) {
-                Integer r = GridPane.getRowIndex(node);
-                Integer c = GridPane.getColumnIndex(node);
-                r = (r == null ? 0 : r);
-                c = (c == null ? 0 : c);
-
-                if (r == row && c == col && node instanceof ImageView) {
-                    ((ImageView) node).setImage(image);
-                    break;
-                }
-            }
-
+            miniMapCanvas.setImage(col, row, image);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -44,6 +44,8 @@ public class Application extends javafx.application.Application {
             stage.setTitle("Island Adventure");
             stage.setScene(scene);
             stage.show();
+            stage.setMinWidth(stage.getWidth());
+            stage.setMinHeight(stage.getHeight());
             showInstructions();
             
         } catch (Exception e) {
@@ -73,23 +75,16 @@ public class Application extends javafx.application.Application {
         alert.setHeaderText("How to Play: ");
         alert.setContentText(
                 """
-                Press B to grab item.
-                Press C then enter name of healing item to use.
-                Press V to attack, and then enter monster name.
-                Will auto attack when only one monster.
-               
-                Press enter after item or monster name.
-                
-                If multiple monsters of the same name are on tile:
-                Enter name + number, ex: Zombie #2, or Goblin #4.
                 
                 Use X to explore area: whether it is a cave, house or dungeon
                 
                 Shown keys are default values, change values in keyBindings.json
                 
+                During fight select monster to attack then click enter or AOE
+                
                 Use arrow keys for movement.
                 
-                Player information is on the side of map.
+                Player information is on the side and below map.
                 Max health increases each level you descend,
                 and as you kill monsters.
                 
