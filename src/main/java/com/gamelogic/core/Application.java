@@ -16,8 +16,6 @@ public class Application extends javafx.application.Application {
     Adventure adventure;
     @Override
     public void start(final Stage stage) {
-        final float defaultV = 1000f;
-        final float defaultV1 = 700f;
         final String folderPath = "/com/gameData/";
         adventure = Adventure.getAdventure();
         FXMLLoader mainGame = new FXMLLoader(Application.class.getResource(folderPath + "mainGame.fxml"));
@@ -39,7 +37,7 @@ public class Application extends javafx.application.Application {
             StackPane root = new StackPane();
             pause.setVisible(false);
             root.getChildren().addAll(game, pause);
-            scene = new Scene(root, defaultV, defaultV1);
+            scene = new Scene(root, GameConfig.WIN_WIDTH, GameConfig.WIN_HEIGHT);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(folderPath + "game.css")).toExternalForm());
             stage.setTitle("Island Adventure");
             stage.setScene(scene);

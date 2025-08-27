@@ -1,5 +1,6 @@
 package com.gamelogic.map;
 
+import com.gamelogic.core.GameConfig;
 import com.gamelogic.core.MainGameController;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.mapLogic.MapController;
@@ -36,7 +37,7 @@ public class UIMapController {
         this.visibility = visibility;
     }
     public void minimap(MainGameController mainGameController, MapController mapController, PlayerController playerController) {
-        int mapSize = 5;
+        int mapSize = GameConfig.MINI_MAP_SIZE;
         int mapMiddle = mapSize / 2;
         Coordinates playerCoordinates = playerController.getMapCoordinates();
         Coordinates maxCoordinates = mapController.getCoordinates();

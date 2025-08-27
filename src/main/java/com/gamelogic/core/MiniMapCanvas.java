@@ -7,7 +7,7 @@ import javafx.scene.layout.Region;
 
 public class MiniMapCanvas extends Region {
 
-    private static final int SIZE = 5;
+    private static final int SIZE = GameConfig.MINI_MAP_SIZE;
     private final Canvas canvas = new Canvas();
     private final Image[][] tiles = new Image[SIZE][SIZE];
 

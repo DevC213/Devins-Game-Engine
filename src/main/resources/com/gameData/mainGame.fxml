@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane fx:id="mainGrid" prefHeight="960.0" prefWidth="1080" stylesheets="/com/gameData/game.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gamelogic.core.MainGameController">
+<GridPane fx:id="mainGrid" prefHeight="960.0" prefWidth="1080" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gamelogic.core.MainGameController">
 
     <Label id="welcomeText" GridPane.hgrow="SOMETIMES" GridPane.vgrow="SOMETIMES" />
 
