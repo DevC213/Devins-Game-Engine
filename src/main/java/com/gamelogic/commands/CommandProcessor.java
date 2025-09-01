@@ -155,6 +155,7 @@ public class CommandProcessor {
                 mapController.getMapValue(new Coordinates(playerCoords.x() + deltaX, playerCoords.y() + deltaY))));
         gameController.setDirection(deltaX, deltaY);
         gameController.renderMinimap();
+        System.out.println(playerController.getMapCoordinates());
     }
     public void enterArea() {
         TileKey tile = tileKeyMap.get(mapController.getMapValue(playerController.getMapCoordinates()));

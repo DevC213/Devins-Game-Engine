@@ -2,32 +2,29 @@ package com.gamelogic.playerlogic;
 import com.gamelogic.core.TileKeyRegistry;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.TileKey;
-
-import java.awt.geom.Point2D;
 import java.util.Map;
 
 class PlayerMovement {
 
     Coordinates maxCoords;
+    Coordinates coordinates;
     PlayerController playerController;
-    Point2D player;
-
     Map<String, TileKey> tileKeyMap;
 
 
     PlayerMovement(Coordinates playerStart, Coordinates maxCoords,
                    PlayerController playerController) {
-        player = new Point2D.Double(playerStart.x(), playerStart.y());
-        this.maxCoords = new Coordinates(maxCoords.x(), maxCoords.y());
+        this.maxCoords = maxCoords;
+        coordinates = playerStart;
         this.playerController = playerController;
         tileKeyMap = TileKeyRegistry.getTileKeyList();
     }
     public int move(Coordinates delta, String currTile, String newTile) {
         boolean withinBoundaries;
         if(delta.x() != 0){
-            withinBoundaries = (player.getX() < maxCoords.x()  || player.getX() > 0);
+            withinBoundaries = (coordinates.x() < maxCoords.x()  || coordinates.x() > 0);
         }else if(delta.y() != 0){
-            withinBoundaries = (player.getY() < maxCoords.y() || player.getY() > 0);
+            withinBoundaries = (coordinates.y() < maxCoords.y() || coordinates.y() > 0);
         } else{
             withinBoundaries = false;
         }
@@ -36,7 +33,7 @@ class PlayerMovement {
         if (withinBoundaries && playerController.getHealth() > 0) {
             double tileDamageNew = tileKeyMap.get(newTile).healthDelta();
             if (tileKeyMap.get(newTile).walkable()) {
-                player.setLocation(player.getX() + delta.x(), player.getY() + delta.y());
+                coordinates = new Coordinates(coordinates.x() + delta.x(), coordinates.y() + delta.y());
             } else if (tileDamageNew != 0){
                 playerController.changeHealth(tileDamageNew);
                 playerController.sendMessage("PLayer: Ouch!");
@@ -71,17 +68,17 @@ class PlayerMovement {
         return visibilityNew;
     }
     public Coordinates getMapCoordinates() {
-        return new Coordinates((int)player.getX() , (int)player.getY());
+        return coordinates;
     }
     public Coordinates getDisplayCoordinates() {
-        return new Coordinates((int)player.getX() - maxCoords.x()/2, -((int)player.getY()- maxCoords.y()/2));
+        return new Coordinates(coordinates.x() - maxCoords.x()/2, -(coordinates.y() - maxCoords.y()/2));
     }
     public void resetLocation(Coordinates coords) {
-        player.setLocation(coords.x(), coords.y());
+        coordinates = coords;
     }
 
     public void setLocation(int x, int y) {
-        player.setLocation(x, y);
+        coordinates = new Coordinates(x, y);
     }
     public void setMaxCoords(Coordinates maxCoords) {
         this.maxCoords = maxCoords;

@@ -74,7 +74,8 @@ public class Application extends javafx.application.Application {
         alert.setContentText(
                 """
                 
-                Use X to explore area: whether it is a cave, house or dungeon
+                Use Z to explore area: whether it is a cave, house or dungeon.
+                Use X to accept quest or pick-up item.
                 
                 Shown keys are default values, change values in keyBindings.json
                 

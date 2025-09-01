@@ -4,6 +4,6 @@
     "topCoords": [2,34],
     "bottomCoords": [8,52],
     "houses": "/MapData/information/levelOne/Villages/Rasenville/rasenville.json",
-    "npcs": "/MapData/information/levelOne/Villages/Rasenville/npcs.json"
+    "npcs": "/MapData/information/levelOne/Villages/Rasenville/villagers.json"
   }
 ]

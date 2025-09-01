@@ -55,7 +55,7 @@ public class EnvironmentChecker {
     public void checkNPC(String villageName, Coordinates coordinates) {
         NPC npc;
         npc = mapController.getNPC(coordinates, villageName);
-
+        System.out.println(npc);
         if (npc == null) {return;}
         String dialogue = npc.getName() + ": " + npc.getDialogue();
         mainGameController.UIUpdate(dialogue, 0);
@@ -85,6 +85,7 @@ public class EnvironmentChecker {
                 mainGameController.UIUpdate("Monsters Killed", 0);
                 combatSystem.toggleMonster();
             }
+            mainGameController.disableEnemy();
         }
     }
 }

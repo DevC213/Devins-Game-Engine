@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Lina",
+    "messages": ["*waves*"],
+    "quest": [],
+    "location": [4,48]
+  },
+  {
+    "name": "Mike",
+    "messages": ["*waves*"],
+    "quest": [],
+    "location": [4,48]
+  }
+]

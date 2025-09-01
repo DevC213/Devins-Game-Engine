@@ -1,5 +1,6 @@
 package com.gamelogic.map.mapLogic;
 
+import com.gamelogic.core.GameConfig;
 import com.gamelogic.map.Coordinates;
 
 import java.util.*;
@@ -8,8 +9,7 @@ public class MapGeneration {
 
     private Coordinates maxCoords;
     private List<List<String>> mapData;
-    private static final int DEFAULT_COLUMNS = 10;
-    private static final int DEFAULT_ROWS = 10;
+    private static final int DEFAULT = GameConfig.DEFAULT_MAP_SIZE;
 
     public MapGeneration() {
         defaultMap();
@@ -20,12 +20,12 @@ public class MapGeneration {
     private void defaultMap() {
         List<List<String>> temp = new ArrayList<>();
 
-        maxCoords = new Coordinates(DEFAULT_COLUMNS, DEFAULT_ROWS);
+        maxCoords = new Coordinates(DEFAULT, DEFAULT);
 
-        for (int i = 0; i < DEFAULT_COLUMNS; i++) {
+        for (int i = 0; i < DEFAULT; i++) {
             List<String> tempRow = new ArrayList<>();
-            for (int j = 0; j < DEFAULT_ROWS; j++) {
-                tempRow.add(".");
+            for (int j = 0; j < DEFAULT; j++) {
+                tempRow.add(GameConfig.DEFAULT_TILE);
             }
             temp.add(tempRow);
         }
@@ -49,11 +49,11 @@ public class MapGeneration {
         int x = coordinates.x();
         int y = coordinates.y();
         if(y < 0 || y >= maxCoords.y()){
-            return "-";
+            return GameConfig.FOG_TILE;
         }
         List<String> tempRow = mapData.get(y);
         if (x < 0 || x >= maxCoords.x()){
-            return "-";
+            return GameConfig.FOG_TILE;
         }
         return tempRow.get(x);
     }

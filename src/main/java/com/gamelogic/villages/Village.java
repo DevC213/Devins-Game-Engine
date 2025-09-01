@@ -1,5 +1,6 @@
 package com.gamelogic.villages;
 
+import com.gamelogic.core.NonPlayableCharacterRegistry;
 import com.gamelogic.map.Coordinates;
 
 import com.gamelogic.rawdataclasses.RHouse;
@@ -17,7 +18,7 @@ public class Village{
     Coordinates topCoordinates;
     Coordinates bottomCoordinates;
     Map<Coordinates, House> houseMap = new HashMap<>();
-    Map<Coordinates, NPC> NPCs = new HashMap<>();
+    Map<Coordinates, Integer> NPCs = new HashMap<>();
 
 
     public Village(String name, Coordinates topCoordinates, Coordinates bottomCoordinates, String filePath, String npcData){
@@ -47,12 +48,12 @@ public class Village{
         Type listType = new TypeToken<List<RVillager>>() {}.getType();
         List<RVillager> tempNPCList = gson.fromJson(reader, listType);
         for(RVillager rVillager : tempNPCList) {
-            Coordinates location = new Coordinates(rVillager.location()[0], rVillager.location()[1]);
+            Coordinates location = new Coordinates(rVillager.location()[1], rVillager.location()[0]);
             NPC npc = new NPC(location,rVillager.name(), rVillager.quests());
             for(String dialogue: rVillager.messages()){
                 npc.addDialogue(dialogue);
             }
-            NPCs.put(location, npc);
+            NPCs.put(location, NonPlayableCharacterRegistry.addNPC(npc,location));
         }
     }
     public Coordinates getTopCoordinates(){
@@ -65,11 +66,10 @@ public class Village{
         return name;
     }
     public NPC getNPC(Coordinates coordinates){
-        return NPCs.get(coordinates);
+            return NonPlayableCharacterRegistry.getNPC(coordinates);
     }
     public House getHouseMap(Coordinates coordinates){
         Coordinates flippedCoords = new Coordinates(coordinates.y(), coordinates.x());
         return houseMap.get(flippedCoords);
     }
-
 }

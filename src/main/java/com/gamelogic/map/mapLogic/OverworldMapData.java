@@ -26,7 +26,7 @@ public class OverworldMapData extends MapData {
                     if (mapGeneration == null) {
                         throw new IllegalStateException("MapGeneration has not been set for: " + level);
                     }
-                    mapItemController = new MapItemController(path, mapGeneration.getColumnsAndRows());
+                    mapItemController = new MapItemController(path);
                 }
                 case "Monsters" -> mapMonsterController = new MapMonsterController(path);
                 case "SpawnTable" -> {

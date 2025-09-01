@@ -101,6 +101,7 @@ public class MainGameController implements IGuiEventListener{
         difficulty.setVisible(false);
         enemySelection.setVisible(true);
         healthItems.setVisible(true);
+        miniMap.setDisable(false);
         Platform.runLater(() -> script.setScrollTop(0));
     }
     private void initializeMinimap() {
@@ -127,6 +128,7 @@ public class MainGameController implements IGuiEventListener{
             toggleItems();
         } else if (difficultySelected.endGame()) {
             script.appendText("Game Over, press start to begin again.");
+            adventure.deleteFile();
             if (!gameOver) {
                 toggleItems();
             }
@@ -147,6 +149,7 @@ public class MainGameController implements IGuiEventListener{
         difficulty.setVisible(true);
         enemySelection.setVisible(false);
         healthItems.setVisible(false);
+        miniMap.setDisable(true);
         gameOver = true;
     }
     @Override

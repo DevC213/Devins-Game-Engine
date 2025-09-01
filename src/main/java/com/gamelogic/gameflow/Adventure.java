@@ -162,4 +162,16 @@ public class Adventure {
         gameController.AOE();
         gameController.monsterAttack();
     }
+
+    public void deleteFile(){
+
+        try {
+            Path savePath = Paths.get(getSystemPath(), "savegame.json");
+            if (Files.exists(savePath)) {
+                Files.delete(savePath);
+            }
+        } catch (Exception e) {
+            System.out.println("Error deleting file");
+        }
+    }
 }

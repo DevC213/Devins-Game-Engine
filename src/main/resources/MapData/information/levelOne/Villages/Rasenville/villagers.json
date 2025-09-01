@@ -4,5 +4,11 @@
     "messages": ["Hello","Welcome to Rasenville"],
     "quest": [],
     "location": [6,40]
+  },
+  {
+    "name": "Jane",
+    "messages": ["Hi","*waves*"],
+    "quest": [],
+    "location": [4,48]
   }
 ]
