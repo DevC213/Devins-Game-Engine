@@ -8,3 +8,10 @@ good for anyone wanting to do a simple JRPG, and not have to pay for an expensiv
 engine.
 
 Cannont use for commercial use without my explicit permission.
+
+## License
+
+This engine is licensed under the [Polyform Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/).  
+Commercial use is not permitted without prior written permission.
+
+If you'd like to use this engine in a commercial project, please contact me at mariorules.devin@gmail.com or add an issue with your contact infomation
