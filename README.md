@@ -7,7 +7,7 @@ and include instructions of how to use it. It will be a basic engine, but
 good for anyone wanting to do a simple JRPG, and not have to pay for an expensive
 engine.
 
-Cannont use for commercial use without my explicit permission.
+Engine can be modified, copied, and distributed for non-commercial projects.
 
 ## License
 
