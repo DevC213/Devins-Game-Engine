@@ -85,6 +85,9 @@ public abstract class MapController implements IDoesDamage, IMapState, IAccessIt
     public NPC getNPC(Coordinates location, String villageName) {
         return mapData.getLevel(level).villages().checkNPCs(location, villageName);
     }
+    public NPC getNPC(Coordinates location) {
+        return mapData.getLevel(level).NPCs().getNPC(location);
+    }
 
     public abstract void loadData(MapState mapState);
     @Override

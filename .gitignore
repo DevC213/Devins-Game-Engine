@@ -6,7 +6,12 @@ out
 src/main/resources/MapPics
 src/main/resources/PlayerImages
 src/main/resources/Sound
+src/main/resources/MapData
 src/main/resources/usedUnicodeCodes
 src/main/resources/unusedUnicodeCodes
 src/main/resources/notes
 savegame.json
+src/main/resources/characters.json
+src/main/resources/key.json
+src/main/resources/keyBindings.json
+src/main/resources/levelData.json

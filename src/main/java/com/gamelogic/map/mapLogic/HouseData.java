@@ -28,12 +28,12 @@ public class HouseData extends MapData{
         List<RHouseMap> tempHouseFloorList = gson.fromJson(reader, listType);
         for(RHouseMap rHouseMap : tempHouseFloorList) {
             mapGeneration = new MapGeneration(rHouseMap.map());
-            levelDataList.add(new LevelData(mapGeneration, null, null,null,rHouseMap.theme(),null,null));
+            levelDataList.add(new LevelData(mapGeneration, null, null,null,null,rHouseMap.theme(),null,null));
         }
 
     }
     public void defaultLevel(){
-        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,"Default",null,null));
+        levelDataList.add(new LevelData(new MapGeneration(),null,null,null,null,"Default",null,null));
     }
     public LevelData getLevel(int level){
         return levelDataList.get(level);

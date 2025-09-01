@@ -97,5 +97,7 @@ public class House extends MapController implements IExitCoordinates {
     public NPC getNPC(Coordinates location, String villageName) {
         return null;
     }
-
+    public NPC getNPC(Coordinates location) {
+        return null;
+    }
 }

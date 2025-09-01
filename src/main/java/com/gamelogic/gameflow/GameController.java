@@ -183,14 +183,15 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         String village = gameProgression.checkProgression(currentMapController);
         if(village != null) {
             currentVillage = village;
-            classController.environmentChecker.checkNPC(currentVillage, classController.playerController.getMapCoordinates());
+            classController.environmentChecker.checkVillager(currentVillage, classController.playerController.getMapCoordinates());
         }
         if(!currentMapController.inVillage()){
             currentVillage = "";
         }
         if(!currentVillage.isEmpty()){
-            classController.environmentChecker.checkNPC(currentVillage, classController.playerController.getMapCoordinates());
+            classController.environmentChecker.checkVillager(currentVillage, classController.playerController.getMapCoordinates());
         }
+        ;
     }
 
     private void checkEnvironment() {
@@ -200,7 +201,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
         }
         double effect =  tileHealthData(classController.playerController.getMapCoordinates());
         classController.environmentChecker.checkTile(classController.combatSystem, classController.commandProcessor, effect);
-
+        classController.environmentChecker.checkNPC(classController.playerController.getMapCoordinates());
     }
 
     public int getDeepestLevel() {
