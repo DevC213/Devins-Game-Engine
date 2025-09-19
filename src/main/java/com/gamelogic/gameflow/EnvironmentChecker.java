@@ -3,8 +3,10 @@ package com.gamelogic.gameflow;
 import com.gamelogic.combat.CombatSystem;
 import com.gamelogic.commands.CommandProcessor;
 import com.gamelogic.core.MainGameController;
+import com.gamelogic.core.NonPlayableCharacterRegistry;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.map.mapLogic.MapController;
+import com.gamelogic.map.mapLogic.MapNPCController;
 import com.gamelogic.playerlogic.PlayerController;
 import com.gamelogic.villages.NPC;
 
@@ -51,27 +53,16 @@ public class EnvironmentChecker {
         checkTileEffect(effect);
 
     }
-
-    public void checkVillager(String villageName, Coordinates coordinates) {
-        NPC npc;
-        npc = mapController.getNPC(coordinates, villageName);
-        System.out.println(npc);
-        if (npc == null) {
-            return;
-        }
-        String dialogue = npc.getName() + ": " + npc.getDialogue();
-        mainGameController.UIUpdate(dialogue, 0);
-    }
     public void checkNPC(Coordinates coordinates) {
         NPC npc;
-        npc = mapController.getNPC(coordinates);
-        if (npc == null) {
+        int id = mapController.getNPC(coordinates);
+        if (id == -1) {
             return;
         }
+        npc = NonPlayableCharacterRegistry.getNPC(id);
         String dialogue = npc.getName() + ": " + npc.getDialogue();
         mainGameController.UIUpdate(dialogue, 0);
     }
-
     private void checkForItems() {
         String string = mapController.itemList(playerController.getMapCoordinates()).toString();
         if (!string.isEmpty()) {

@@ -26,7 +26,7 @@ public class Village{
         this.topCoordinates = topCoordinates;
         this.bottomCoordinates = bottomCoordinates;
         processMap(filePath);
-        processNPCs(npcData);
+        //processNPCs(npcData);
     }
     private void processMap(String filePath){
         Gson gson = new Gson();
@@ -53,7 +53,7 @@ public class Village{
             for(String dialogue: rVillager.messages()){
                 npc.addDialogue(dialogue);
             }
-            NPCs.put(location, NonPlayableCharacterRegistry.addNPC(npc,location));
+            NPCs.put(location, NonPlayableCharacterRegistry.addNPC(npc));
         }
     }
     public Coordinates getTopCoordinates(){
@@ -64,9 +64,6 @@ public class Village{
     }
     public String getName(){
         return name;
-    }
-    public NPC getNPC(Coordinates coordinates){
-            return NonPlayableCharacterRegistry.getNPC(coordinates);
     }
     public House getHouseMap(Coordinates coordinates){
         Coordinates flippedCoords = new Coordinates(coordinates.y(), coordinates.x());

@@ -8,6 +8,7 @@ public class CombatSystem {
     private final PlayerDamageListener playerDamageListener;
     private boolean monsterOnTile = false;
 
+
     public CombatSystem(PlayerDamageListener playerDamageListener) {
         this.playerDamageListener = playerDamageListener;
     }

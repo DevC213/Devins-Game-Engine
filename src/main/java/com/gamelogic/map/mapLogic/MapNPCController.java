@@ -1,5 +1,6 @@
 package com.gamelogic.map.mapLogic;
 
+import com.gamelogic.core.NonPlayableCharacterRegistry;
 import com.gamelogic.map.Coordinates;
 import com.gamelogic.rawdataclasses.RVillager;
 import com.gamelogic.villages.NPC;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 public class MapNPCController {
 
-    private final Map<Coordinates, NPC> NPCs = new HashMap<>();
+    private final Map<Coordinates, Integer>NPC = new HashMap<>();
     private final String mapPath;
 
     public MapNPCController(String mapPath) {
@@ -36,17 +37,18 @@ public class MapNPCController {
             for(String dialogue: rVillager.messages()){
                 npc.addDialogue(dialogue);
             }
-            NPCs.put(location, npc);
+            int id = NonPlayableCharacterRegistry.addNPC(npc);
+            NPC.put(location, id);
         }
     }
-    public NPC getNPC(Coordinates coordinates) {
-        return NPCs.get(coordinates);
-    }
-    public void addNPC(Coordinates coordinates, NPC npc) {
-        NPCs.put(coordinates, npc);
+    public int getNPCid(Coordinates coordinates) {
+        if(NPC.containsKey(coordinates)) {
+            return NPC.get(coordinates);
+        }
+        return -1;
     }
     public void resetNPCS() {
-        NPCs.clear();
+        NPC.clear();
         processFile();
     }
 }

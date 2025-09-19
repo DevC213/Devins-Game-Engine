@@ -2,7 +2,6 @@ package com.gamelogic.map.mapLogic;
 
 import com.armor.Armor;
 import com.gamelogic.villages.House;
-import com.gamelogic.villages.NPC;
 import com.monsters.Monster;
 import com.savesystem.MapState;
 import com.weapons.Weapon;
@@ -82,11 +81,12 @@ public abstract class MapController implements IDoesDamage, IMapState, IAccessIt
     public boolean progressesGame(){
         return mapType.progressesGame();
     }
-    public NPC getNPC(Coordinates location, String villageName) {
-        return mapData.getLevel(level).villages().checkNPCs(location, villageName);
-    }
-    public NPC getNPC(Coordinates location) {
-        return mapData.getLevel(level).NPCs().getNPC(location);
+
+    public int getNPC(Coordinates location) {
+        if(mapData.getLevel(level).NPCs() == null) {
+            return -1;
+        }
+        return mapData.getLevel(level).NPCs().getNPCid(location);
     }
 
     public abstract void loadData(MapState mapState);

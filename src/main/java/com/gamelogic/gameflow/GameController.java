@@ -181,17 +181,14 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             }
         }
         String village = gameProgression.checkProgression(currentMapController);
+        classController.environmentChecker.checkNPC(classController.playerController.getMapCoordinates());
         if(village != null) {
             currentVillage = village;
-            classController.environmentChecker.checkVillager(currentVillage, classController.playerController.getMapCoordinates());
+
         }
         if(!currentMapController.inVillage()){
             currentVillage = "";
         }
-        if(!currentVillage.isEmpty()){
-            classController.environmentChecker.checkVillager(currentVillage, classController.playerController.getMapCoordinates());
-        }
-        ;
     }
 
     private void checkEnvironment() {

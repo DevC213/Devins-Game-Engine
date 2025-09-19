@@ -94,10 +94,10 @@ public class House extends MapController implements IExitCoordinates {
             level += levelDelta;
         }
     }
-    public NPC getNPC(Coordinates location, String villageName) {
-        return null;
-    }
-    public NPC getNPC(Coordinates location) {
-        return null;
+    public int getNPC(Coordinates location) {
+        if(mapData.getLevel(level).NPCs() == null) {
+            return -1;
+        }
+        return mapData.getLevel(level).NPCs().getNPCid(location);
     }
 }

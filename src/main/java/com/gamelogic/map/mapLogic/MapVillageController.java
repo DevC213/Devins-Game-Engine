@@ -66,9 +66,6 @@ public class MapVillageController {
         }
     }
 
-    public NPC checkNPCs(Coordinates coordinates, String villageName){
-        return villageMap.get(villageName).getNPC(coordinates);
-    }
     public House getHouseMap(Coordinates coordinates, String villageName){
         return villageMap.get(villageName).getHouseMap(coordinates);
     }

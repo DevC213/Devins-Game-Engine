@@ -10,6 +10,9 @@ public class Quest {
     String prologueDialogue;
     List<String> activeDialogues;
     String epilogueDialogue;
+    boolean completed;
+    boolean active;
+
 
     public Quest(String title, int id, int reward, String prologueDialogue, String epilogueDialogue) {
         this.title = title;
@@ -18,14 +21,33 @@ public class Quest {
         this.prologueDialogue = prologueDialogue;
         this.activeDialogues = new ArrayList<>();
         this.epilogueDialogue = epilogueDialogue;
+        this.completed = false;
     }
     public void addActiveDialogues(String dialogue){
         activeDialogues.add(dialogue);
     }
+    public List<String> getActiveDialogues(){
+        return activeDialogues;
+    }
     public int getId() {
         return id;
     }
+
+    public String startQuest(){
+        active = true;
+        return prologueDialogue;
+    }
+
+    public String completeQuest(){
+        completed = true;
+        active = false;
+        return epilogueDialogue;
+    }
     public int getReward() {
         return reward;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

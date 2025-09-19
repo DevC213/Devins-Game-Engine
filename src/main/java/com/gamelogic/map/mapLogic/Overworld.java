@@ -11,7 +11,6 @@ import com.gamelogic.map.IMapState;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.rawdataclasses.RMap;
 import com.gamelogic.villages.House;
-import com.gamelogic.villages.NPC;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.monsters.Monster;
@@ -206,11 +205,11 @@ public class Overworld extends MapController implements IDoesDamage, IMapState, 
     public Messenger checkForVillages(Coordinates location) {
         return mapData.getLevel(level).villages().checkVillage(location);
     }
-    public NPC getNPC(Coordinates location, String villageName) {
-        return mapData.getLevel(level).villages().checkNPCs(location, villageName);
-    }
-    public NPC getNPC(Coordinates location) {
-        return mapData.getLevel(level).NPCs().getNPC(location);
+    public int getNPC(Coordinates location) {
+        if(mapData.getLevel(level).NPCs() == null) {
+            return -1;
+        }
+        return mapData.getLevel(level).NPCs().getNPCid(location);
     }
 
     public House getHouse(Coordinates coordinates, String village) {
