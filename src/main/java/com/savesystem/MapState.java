@@ -12,6 +12,7 @@ public class MapState {
     public Map<Integer,List<ItemState>> recoveryItemsList;
     public Map<Integer,List<WeaponState>> weaponList;
     public Map<Integer,List<MonsterState>> monsterList;
+
     public List<List<List<String>>> map;
     public MapState(){
         armorList = new HashMap<>();

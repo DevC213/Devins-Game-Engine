@@ -11,6 +11,17 @@ public class OverworldMapData extends MapData {
     public OverworldMapData() {
         levelDataList = new ArrayList<>();
     }
+
+    /**
+     *
+     * @param level - Level number
+     * @param levelMap - level information
+     * @param theme - theme
+     * @param voice - voice file(on first load) location
+     * @param sound - sound file(on first load) location
+     *
+     * process the map information and creates classes for the map, Items, Monsters, Villages, and NPCs
+     */
     public void processMap(int level, Map<String, String> levelMap, String theme, String voice, String sound) {
         MapGeneration mapGeneration = null;
         MapItemController mapItemController = null;

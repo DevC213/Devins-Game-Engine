@@ -2,6 +2,8 @@ package com.gamelogic.gameflow;
 
 import com.gamelogic.commands.Keybindings;
 import com.gamelogic.core.MapRegistry;
+import com.gamelogic.core.NonPlayableCharacterRegistry;
+import com.gamelogic.villages.NPC;
 import com.google.gson.Gson;
 import com.monsters.Monster;
 import com.recoveryitems.RecoveryItem;
@@ -97,6 +99,9 @@ public class Adventure {
 
     public void saveGame() {
         GameState gameState = new GameState();
+        for (Integer integer : NonPlayableCharacterRegistry.getNonPlayableCharacters().keySet()) {
+            gameState.NPCList.put(integer, NonPlayableCharacterRegistry.getNPC(integer).createNPCState());
+        }
         gameState.playerState =  gameController.getPlayerState();
         gameState.mapStates = MapRegistry.getMapStates();
         gameState.currentMapID = gameController.getID();

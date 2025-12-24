@@ -28,7 +28,9 @@ public class HouseData extends MapData{
         List<RHouseMap> tempHouseFloorList = gson.fromJson(reader, listType);
         for(RHouseMap rHouseMap : tempHouseFloorList) {
             mapGeneration = new MapGeneration(rHouseMap.map());
-            levelDataList.add(new LevelData(mapGeneration, null, null,null,null,rHouseMap.theme(),null,null));
+            levelDataList.add(new LevelData(mapGeneration,
+                    new MapItemController(rHouseMap.items()),
+                    null,null,null,rHouseMap.theme(),null,null));
         }
 
     }
