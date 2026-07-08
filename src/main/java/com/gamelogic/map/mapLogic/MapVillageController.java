@@ -4,7 +4,6 @@ import com.gamelogic.map.Coordinates;
 import com.gamelogic.messaging.Messenger;
 import com.gamelogic.rawdataclasses.RVillage;
 import com.gamelogic.villages.House;
-import com.gamelogic.villages.NPC;
 import com.gamelogic.villages.Village;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,7 +39,7 @@ public class MapVillageController {
                     messenger.addPayloadString(village.getName());
                 }
             }
-        } else{
+        } else {
             for (String coords : villageMap.keySet()) {
                 village = villageMap.get(coords);
                 top = village.getTopCoordinates();
@@ -48,6 +47,8 @@ public class MapVillageController {
                 if (row < top.x() || row > bottom.x() || column < top.y() || column > bottom.y()) {
                     inVillage = false;
                     messenger.setMessage("Now Leaving: " + village.getName());
+                } else {
+                    messenger.addPayloadString(village.getName());
                 }
             }
         }

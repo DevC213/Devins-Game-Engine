@@ -35,12 +35,13 @@ public class GameProgression {
         String rtnString = null;
         if(currentMapController.getLevel() == 0) {
             Messenger messenger = currentMapController.checkForVillages(classController.playerController.getMapCoordinates());
-            if (messenger != null) {
-                String village = messenger.getMessage();
-                if (village != null) {
-                    ClassController.mainGameController.UIUpdate(village, 0);
-                    rtnString = messenger.getPayloadString();
-                }
+            String payload = messenger.getPayloadString();
+            String villageMessage = messenger.getMessage();
+            if (payload != null) {
+                rtnString = payload;
+            }
+            if(villageMessage != null){
+                ClassController.mainGameController.UIUpdate(villageMessage, 0);
             }
         }
         return rtnString;

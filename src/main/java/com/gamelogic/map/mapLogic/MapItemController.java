@@ -61,7 +61,7 @@ class MapItemController {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + " " + map);
         }
     }
     private void processWeapons(String map){

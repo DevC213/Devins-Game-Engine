@@ -56,7 +56,7 @@ public class Application extends javafx.application.Application {
         scene.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.F1) {
                 showInstructions();
-            } else if (event.getCode() == KeyCode.F2) {
+            } else if (event.getCode() == KeyCode.ESCAPE) {
                 finalPause.setVisible(true);
                 finalGame.setVisible(false);
             } else {

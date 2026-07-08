@@ -99,6 +99,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
 
         enterHouse();
         leaveHouse();
+        checkProgression();
         classController.uiMapController.minimap(ClassController.mainGameController, currentMapController, classController.playerController);
     }
 
@@ -110,9 +111,11 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
                 currentMapController = mapSwitchingController.returnToMainMap(mainMapLocation);
             }
         }
+
     }
 
     private void enterHouse() {
+        checkProgression();
         if(inHouse){
             mainMapLocation = classController.playerController.getMapCoordinates();
             House house = currentMapController.getHouse(mainMapLocation, currentVillage);
@@ -186,7 +189,7 @@ public class GameController implements IUpdateMinimap, IUpdateGame {
             currentVillage = village;
 
         }
-        if(!currentMapController.inVillage()){
+        if(!currentMapController.inVillage() && village == null){
             currentVillage = "";
         }
     }
