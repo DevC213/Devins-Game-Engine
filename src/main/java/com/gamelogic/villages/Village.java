@@ -26,7 +26,7 @@ public class Village{
         this.topCoordinates = topCoordinates;
         this.bottomCoordinates = bottomCoordinates;
         processMap(filePath);
-        //processNPCs(npcData);
+        processNPCs(npcData);
     }
     private void processMap(String filePath){
         Gson gson = new Gson();

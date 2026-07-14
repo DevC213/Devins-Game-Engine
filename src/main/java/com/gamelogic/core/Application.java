@@ -97,5 +97,7 @@ public class Application extends javafx.application.Application {
         );
         alert.showAndWait();
     }
-    public static void main(final String[] args) {launch();}
+    @SuppressWarnings("unused")
+    public static void main(String[] args) {
+        launch();}
 }
